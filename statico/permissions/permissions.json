@@ -1,0 +1,236 @@
+{
+    "66c2d7cb243d005c34dcf389": {
+        "admin_page": {
+            "view": {"allow": false }
+        },
+        "permissions_page": {
+            "view": {"allow": false }
+        },
+        "bulk_operations": {
+            "exe": {"allow": false}
+        },
+
+        "user": {
+            "list": {"allow": false },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "page": {
+            "list": {"allow": false },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "post": {
+            "list": {"allow": false },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false},
+            "publish": {"allow": false }
+        },
+        "comment": {
+            "list": {"allow":  true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "role": {
+            "list": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        }
+    },
+
+    "66c2d7cb243d005c34dcf38b": {
+        "admin_page": {
+            "view": {"allow": true }
+        },
+        "permissions_page": {
+            "view": {"allow": false }
+        },
+        "bulk_operations": {
+            "exe": {"allow": false}
+        },
+
+        "user": {
+            "list": {"allow": false },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "page": {
+            "list": {"allow": false },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "post": {
+            "list": {"allow": true, "where": { "authorId": "user.id" } },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": { "authorId": "user.id" } },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "comment": {
+            "list": {"allow":  true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false}
+        },
+        "role": {
+            "list": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false},
+            "publish": {"allow": false }
+        }
+    },
+
+    "66c2d7cb243d005c34dcf388": {
+        "admin_page": {
+            "view": {"allow": true }
+        },
+        "permissions_page": {
+            "view": {"allow": false }
+        },
+        "bulk_operations": {
+            "exe": {"allow": false}
+        },
+
+        "user": {
+            "list": {"allow": true, "where": { "roleId": "66c2d7cb243d005c34dcf388"} },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "page": {
+            "list": {"allow": false },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "post": {
+            "list": {"allow": true, "where": { "authorId": "user.id" } },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": { "authorId": "user.id" } },
+            "delete": {"allow": false},
+            "publish": {"allow": true, "where": { "authorId": "user.id" } }
+        },
+        "comment": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": { "authorId": "user.id" } },
+            "delete": {"allow": true, "where": { "authorId": "user.id" } },
+            "publish": {"allow": false }
+        },
+        "role": {
+            "list": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        }
+    },
+
+    "66c2d7be243d005c34dcf384": {
+        "admin_page": {
+            "view": {"allow": true }
+        },
+        "permissions_page": {
+            "view": {"allow": false }
+        },
+        "bulk_operations": {
+            "exe": {"allow": true}
+        },
+
+        "user": {
+            "list": {"allow": true, "where": { "OR": [ { "roleId": "66c2d7cb243d005c34dcf388" }, { "roleId": "66c2d7be243d005c34dcf384" }, { "roleId": "66c2d7cb243d005c34dcf38b"}  ] } },
+            "create": {"allow": false },
+            "edit": {"allow": false },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "page": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        },
+        "post": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": false },
+            "publish": {"allow": true, "where": {} }
+        },
+        "comment": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true, "where": {}  },
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": true, "where": {} },
+            "publish": {"allow": true,  "where": {}  }
+        },
+        "role": {
+            "list": {"allow": true, "where": {} },
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": false },
+            "publish": {"allow": false }
+        }
+    },
+
+    "66c2d7cb243d005c34dcf38a": {
+        "admin_page": {
+            "view": {"allow": true }
+        },
+        "permissions_page": {
+            "view": {"allow": true}
+        },
+        "bulk_operations": {
+            "exe": {"allow": true }
+        },
+
+        "user": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true},
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": true, "where": {}},
+            "publish": {"allow": true, "where": {} }
+        },
+        "page": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": true, "where": {} },
+            "publish": {"allow": true, "where": {} }
+        },
+        "post": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": true, "where": {}},
+            "publish": {"allow": true, "where": {} }
+        },
+        "comment": {
+            "list": {"allow": true, "where": {} },
+            "create": {"allow": true },
+            "edit": {"allow": true, "where": {} },
+            "delete": {"allow": true, "where": {} },
+            "publish": {"allow": true, "where": {} }
+        },
+        "role": {
+            "list": {"allow": true, "where": {} },
+            "edit": {"allow": true, "where": {}},
+            "delete": {"allow": false},
+            "publish": {"allow": true, "where": {} }
+        }
+    }
+}
