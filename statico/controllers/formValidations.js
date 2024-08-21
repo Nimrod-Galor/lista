@@ -122,6 +122,10 @@ const listValidation = () => [
         .trim()
         .notEmpty().withMessage('Body can not be empty.')
         .escape(),
+    body('description')
+        .optional()
+        .trim()
+        .escape(),
     body('publish')
         .optional(),
     body('viewPermission')

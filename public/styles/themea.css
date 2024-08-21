@@ -120,7 +120,7 @@ fieldset.comment-voting{
     color: rgba(var(--bs-body-color-rgb),.65);
 }
 
-
+/*  Home page */
 .typesoflists > li{
     display: inline-block;
     padding: 20px;
@@ -128,4 +128,13 @@ fieldset.comment-voting{
 
 .typesoflists > li strong{
     font-size: large;
+}
+
+/*List Page */
+.save-btn{
+    display: none;
+}
+
+.Create .save-btn{
+    display: block;
 }

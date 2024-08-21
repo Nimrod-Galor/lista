@@ -145,7 +145,43 @@ function cancelUpdate(objId, currentList = listData){
     renderList()
 }
 
+function removeEditItems(currentList = listData){
+    for(let i = 0 ; i < currentList.items.length; i++){
+        if("edit" in currentList.items[i]){
+            if(confirm('You have unsaved changes that will be lost')){
+                // remove this object from array
+                currentList.items.splice(i, 1)
+                return true
+            }
+
+            return false
+        }
+        if("items" in currentList.items[i]){
+            return removeEditItems(currentList.items[i])
+        }
+    }
+    return
+}
+
+function removeEmptySubLists(currentList = listData){
+    for(let i = 0 ; i < currentList.items.length; i++){
+        if("items" in currentList.items[i]){
+            if(currentList.items[i].items.length === 0){
+                //remove empty list
+                currentList.items.splice(i, 1)
+            }else{
+                // loop sublist
+                removeEmptySubLists(currentList.items[i])
+            }
+        }
+    }
+}
+
 function listadd(event, type){
+    // remove all open edit items
+    if(removeEditItems() === false){
+        return
+    }
     // add item to list object
     const listId = event.currentTarget.closest('ul').dataset.id
     const activeList = getObjectById(listId, listData)
@@ -199,4 +235,59 @@ function newItemObject(type){
             return { type, id, items: [] }
         break
     }
+}
+
+function saveList(){
+    // check title not empty
+    const listTitle = document.getElementById('listTitle')
+    if(listTitle.value.trim() === ''){
+        listTitle.classList.remove('is-valid')
+        listTitle.classList.add('is-invalid')
+        return
+    }else{
+        listTitle.classList.remove('is-invalid')
+        listTitle.classList.add('is-valid')
+    }
+
+    // remove all open edit items
+    const editFound = removeEditItems()
+    if(editFound === false){
+        return
+    }
+    if(editFound === true){
+        // clear open Edit
+        renderList()
+    }
+
+    // remove empty Sub lists
+    removeEmptySubLists()
+
+    // check list is not empty
+    if(listData.items.length === 0){
+        alert("List cannot be empty!\nAdd items to list.")
+        return
+    }
+
+    const form = document.getElementById('form-meta')
+    const formData = new FormData(form);
+    const dataToSend = Object.fromEntries(formData);
+    dataToSend.body = JSON.stringify(listData)
+    // POST list
+    fetchData('/api/create/list', 'POST', dataToSend)
+    .then(data => {
+        console.log(data)
+        // {
+        //     "messageBody": "List \"list 1\" was created successfuly",
+        //     "messageTitle": "List Created",
+        //     "messageType": "success"
+        // }
+        if(data){
+            if(data.messageType === 'success'){
+                topAlert('alert-success', data.messageTitle, data.messageBody)
+                
+            }else{
+                topAlert('alert-warning', data.messageTitle, data.messageBody)
+            }
+        }
+    })
 }

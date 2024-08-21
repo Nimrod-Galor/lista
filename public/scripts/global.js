@@ -3,10 +3,17 @@ async function fetchData(action, method, dataToSend){
         method,
         body: JSON.stringify(dataToSend),
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getCookie('jwt')}`
         }
     })
-    .then(res => res.json())
+    .then(res => {
+        if(res.ok){
+            return res.json()
+        }else{
+            topAlert('alert-warning', res.status, res.statusText)
+        }
+    })
     .catch(err => {
         console.log('error', err)
     })

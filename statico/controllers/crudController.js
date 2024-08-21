@@ -426,7 +426,7 @@ export async function createList(req, res, next){
         return next()
     }
     //  Get user data
-    let {title, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
+    let {title, description, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
@@ -436,9 +436,9 @@ export async function createList(req, res, next){
         // Set new List object
         const tmpList = {
             title,
+            description,
             body,
             publish,
-            slug,
             author: {
                 connect: {id: req.user.id}
             },

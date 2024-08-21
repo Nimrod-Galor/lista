@@ -45,11 +45,16 @@ export function auth_post_login(req, res, next){
         return next(err)
       }
 
+      // set jwt token
+      const jwtToken = jwt.sign({ id: user.id, username: user.userName, roleId: user.roleId }, process.env.JWT_SECRET, { expiresIn: '1h' })
+      res.cookie('jwt', jwtToken, { path: '/', maxAge: 60 * 60 * 1000 }); // 1h
+
       if (req.body.remember) {  
         try{
           const token = crypto.randomBytes(32).toString('hex')
           await createRow('RememberMeToken', { token, userId: req.user.id })
           res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 14 * 24 * 60 * 60 * 1000 }); // 14 days
+          
         }catch(err){
           return next(err)
         }

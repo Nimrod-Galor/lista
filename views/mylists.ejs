@@ -78,13 +78,13 @@
                 <header>
 
                 </header>
-                <table class="table table-hover caption-top my-5">
+                <table class="table table-hover caption-top my-3">
                     <caption class="text-center fs-4 bg-warning-subtle">My Lists</caption>
                     <thead class="table-primary">
                         <tr>
                             
                             <% modelHeaders.forEach((field) => {%>
-                                <th scope="col">
+                                <th scope="col" class="<%if(field.key == 'createDate'){%>d-none d-md-table-cell<%}else if(field.key == 'updated'){%>d-none d-xl-table-cell<%}else if(field.key == 'publish'){%>d-none d-lg-table-cell<%}else if(field.key == 'viewCount'){%>d-none d-xl-table-cell<%}%>">
                                     <%if(path.endsWith('/desc/' + field.key)){%>
                                         <a href="<%=baseUrl%>/asc/<%=field.key%>" class="asc">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sort-alpha-down-alt" viewBox="0 0 16 16">
@@ -108,6 +108,8 @@
                                 </th>
                             <%})%>
                             
+                            <th>&nbsp;</th>
+                            
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
@@ -115,7 +117,7 @@
                             <tr>
                                 
                                 <% modelHeaders.forEach((field) => {%>
-                                    <td>
+                                    <td class="<%if(field.key == 'createDate'){%>d-none d-md-table-cell<%}else if(field.key == 'updated'){%>d-none d-xl-table-cell<%}else if(field.key == 'publish'){%>d-none d-lg-table-cell<%}else if(field.key == 'viewCount'){%>d-none d-xl-table-cell<%}%>">
                                         <% if(field.linkRelation){ %>
                                             <a href="/admin/<%-field.linkRelation + '/' + field.filter + '/' + data[field.filterKey]%>">
                                                 <%-data[field.key]%>
@@ -133,15 +135,15 @@
                                     <td class="text-end">
                                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                             <%if(permissions.list.delete.allow === true && (!permissions.list.delete.where.authorId || permissions.list.delete.where.authorId === data.authorId)){%>
-                                            <form action="/admin/delete/<%-contentType.toLowerCase()%>" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
+                                            <form action="/admin/delete/list" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
                                                 <input type="hidden" name="id" value="<%=data.id%>"/>
                                                 <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
-                                                <button type="submit" class="btn btn-warning">Delete</button>
+                                                <button type="submit" class="btn btn-warning btn-sm">Delete</button>
                                             </form>
                                             <%}%>
                                             
                                             <%if(!("authorId" in permissions.list.edit.where) || permissions.list.edit.where.authorId === data.authorId){%>
-                                                <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
+                                                <a href="/list/<%=data.id%>?edit" class="btn btn-primary btn-sm" role="button">Edit</a>
                                             <%}%>
                                         </div>
                                     </td>
@@ -179,7 +181,7 @@
     </div>
 
     <footer class="footer mt-auto py-3 bg-body-tertiary">
-        <div class="container">
+        <div class="container text-center">
             <span class="text-body-secondary">2024 &copy; Lista.</span>
         </div>
     </footer>
@@ -189,5 +191,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     <script type="text/javascript" src="/scripts/themea.js"></script>
     <script type="text/javascript" src="/scripts/global.js"></script>
+    <script type="text/javascript">
+        function deleteItemClick(header){
+            return confirm(`Delete Item (${header})?`)
+        }
+    </script>
+
+
 </body>
 </html>

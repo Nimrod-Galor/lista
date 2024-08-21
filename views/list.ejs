@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="/styles/themea.css">
     <title><%=mode%> List</title>
 </head>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 <%=mode%>">
     <nav class="navbar navbar-expand-lg py-2 bg-body-tertiary border-bottom">
         <div class="container d-flex flex-wrap align-items-end">
             <a href="/" class="navbar-brand">
@@ -53,17 +53,44 @@
     </nav>
 
     <div class="container">
-        <main>
-            <div class="form-floating my-3">
-                <input type="text" class="form-control" id="listaTitle" placeholder="List Title">
-                <label for="listaTitle">List Title</label>
+        <div id="top-alert" class="mt-4 top-alert <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
+            <div>
+                <div class="alert alert-<%-locals.messageType%>">
+                    <div id="top-alert-closebtn" class="top-alert-closebtn cursorPoint">
+                        <div class="close-btn" onclick="toggleClass('top-alert', 'open')"></div>
+                    </div>
+                    <div id="top-alert-title" class="top-alert-title">
+                        <%= locals.messageTitle %>
+                    </div>
+                    <div id="top-alert-body" class="top-alert-body">
+                        <ul class="mb-0">
+                            <% messages.forEach(function(message) { %>
+                                <li><%= message %></li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="form-floating">
-                <textarea class="form-control" placeholder="List Description" id="listaDescription" style="height: 100px"></textarea>
-                <label for="listaDescription">List Description</label>
+        </div>
+
+        <main>
+            <form id="form-meta">
+                <div class="form-floating my-3">
+                    <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title">
+                    <label for="listTitle">List Title</label>
+                    <div id="validationTitleFeedback" class="invalid-feedback">
+                        List title cannot be empty.
+                    </div>            
+                </div>
+                <div class="form-floating">
+                    <textarea class="form-control" placeholder="List Description" id="listDescription" name="description" style="height: 100px"></textarea>
+                    <label for="listDescription">List Description</label>
+                </div>
+            </form>
+            <div class="col-md my-3 save-btn float-end">
+                <button type="button" class="btn btn-warning" style="position: relative;z-index:99;" onclick="saveList()">Save</button>
             </div>
 
-            
             <div id="lista-main">
                 <div class="dropdown">
                     <span class="my-3 p-2 badge rounded-pill bg-primary pointer" data-bs-toggle="dropdown" title="Add Item" aria-expanded="false">
@@ -85,12 +112,11 @@
                 <ul id="<%=listData.id%>"></ul>
             </div>
             
-
         </main>
     </div>
 
     <footer class="footer mt-auto py-3 bg-body-tertiary">
-        <div class="container">
+        <div class="container text-center">
             <span class="text-body-secondary">2024 &copy; Lista.</span>
         </div>
     </footer>
