@@ -46,7 +46,7 @@ function createDomList(parentDom, currentList){
 
             // add event listeners
             editItemDom.querySelector('.btn-success').addEventListener('click', () => updateItem(event, objectId))
-            editItemDom.querySelector('.btn-link').addEventListener('click', () => cancelUpdate(event, objectId))
+            editItemDom.querySelector('.btn-link').addEventListener('click', () => cancelUpdate(objectId))
 
             // Append to DOM
             itemWrapperDom.appendChild(editItemDom)
@@ -68,7 +68,8 @@ function createDomList(parentDom, currentList){
             case 'bigtext':
                 itemDom = document.createElement('div')
                 itemDom.id = objectId
-                itemDom.innerText = currentItemObj.value
+                itemDom.style.whiteSpace = 'pre-wrap'
+                itemDom.textContent = currentItemObj.value
                 itemWrapperDom.appendChild(itemDom)
             break
             case 'checkbox':
@@ -110,7 +111,7 @@ function updateItem(event, objId){
             currentObj.value = document.getElementById(currentObj.id).value
         break
         case 'bigtext':
-            currentObj.value = document.getElementById(currentObj.id).innerHTML
+            currentObj.value = document.getElementById(currentObj.id).value
         break
         case 'checkbox':
             currentObj.label = document.getElementById(currentObj.id).value
@@ -128,10 +129,20 @@ function updateItem(event, objId){
     renderList()
 }
 
-function cancelUpdate(event, objId){
-    const currentObj = getObjectById(objId, listData)
+function cancelUpdate(objId, currentList = listData){
+    for(let i = 0 ; i < currentList.items.length; i++){
+        if(currentList.items[i].id === objId){
+            // remove this object from array
+            currentList.items.splice(i, 1)
+            break
+        }
+        if("items" in currentList.items[i]){
+            cancelUpdate(objId, currentList.items[i])
+        }
+    }
 
-    
+    // re render DOM
+    renderList()
 }
 
 function listadd(event, type){
