@@ -73,13 +73,13 @@ function createDomList(parentDom, currentList){
                 itemWrapperDom.appendChild(itemDom)
             break
             case 'checkbox':
-                itemDom = document.createElement('input')
-                itemDom.id = objectId
+                let tmpCheckbox = document.getElementById('checkbox-item-template')
+                itemDom = tmpCheckbox.content.cloneNode(true);
+                itemDom.querySelector('.form-check-input').id = objectId
+                const labelDom = itemDom.querySelector('.form-check-label')
+                labelDom.htmlFor = objectId
+                labelDom.textContent = currentItemObj.label
                 itemWrapperDom.appendChild(itemDom)
-                labelDom = document.createElement('label')
-                labelDom.for = objectId
-                labelDom.innreText = currentItemObj.label
-                itemWrapperDom.appendChild(labelDom)
             break
             case 'link':
                 itemDom = document.createElement('a')
@@ -117,8 +117,8 @@ function updateItem(event, objId){
             currentObj.label = document.getElementById(currentObj.id).value
         break
         case 'link':
-            currentObj.href = document.getElementById(href-`${currentObj.id}`)
-            currentObj.anchor = document.getElementById(anchor-`${currentObj.id}`)
+            currentObj.href = document.getElementById(`href-${currentObj.id}`).value
+            currentObj.anchor = document.getElementById(`anchor-${currentObj.id}`).value
         break
     }
 
@@ -164,7 +164,10 @@ function getObjectById(objId, currentItemObj){
             return item
         }
         if("items" in item){
-            return getObjectById(objId, item)
+            const fountItem = getObjectById(objId, item)
+            if(fountItem){
+                return fountItem
+            }
         }
     }
     
@@ -181,7 +184,7 @@ function newItemObject(type){
             return { type, id, value: '', edit }
         break
         case 'checkbox':
-            return { type, id, lable: '', edit }
+            return { type, id, label: '', edit }
         break
         case 'link':
             return { type, id, href: '', anchor: '', edit }
