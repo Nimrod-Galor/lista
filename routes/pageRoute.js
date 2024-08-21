@@ -22,7 +22,7 @@ router.get("/create", ensureLoggedIn('/login'), setRoleLocalsPermissions, (req, 
         "id": '1',
         "title": '',
         "description": '',
-        "type": 'unordered',
+        "type": 'ul',
         "items": []
     }
     
