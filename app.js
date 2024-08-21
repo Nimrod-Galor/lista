@@ -16,7 +16,7 @@ import { errorPage } from './controllers/pageController.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
-import postRouter from './routes/postRoute.js'
+// import postRouter from './routes/postRoute.js'
 import authRouter from './routes/authRoute.js'
 import adminRouter from './statico/routes/adminRoute.js'
 import apiRouter from './statico/routes/apiRoute.js'
@@ -103,7 +103,7 @@ app.use('/api', apiRouter)
 app.use('/admin', adminRouter)
 app.use('/', authRouter)
 app.use('/', pageRouter)
-app.use('/', postRouter)
+// app.use('/', postRouter)
 // app.use('/json-alert', jsonAlerts)
 
 // catch 404 and forward to error handler

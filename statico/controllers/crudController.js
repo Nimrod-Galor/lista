@@ -369,12 +369,6 @@ export async function editPage(req, res, next){
                 return
             }
 
-            const postWithSlug = await findUnique('post', {slug})
-            if(postWithSlug){
-                // post with same slug exist
-                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
             // update page object
             tmpPage.slug = slug
         }
@@ -420,11 +414,11 @@ export async function deletePage(req, res, next){
 
 
 /****************************************/
-/** Post                                */
+/** list                                */
 /****************************************/
 
-/*  Create Post */
-export async function createPost(req, res, next){
+/*  Create list */
+export async function createList(req, res, next){
     const result = validationResult(req);
     if (!result.isEmpty()) {
         //  Send Error json
@@ -432,31 +426,15 @@ export async function createPost(req, res, next){
         return next()
     }
     //  Get user data
-    let {title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
+    let {title, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
 
     try{
-        if(slug != ''){
-            // check if slug exist
-            const postWithSlug = await findUnique('post', {slug})
-            if(postWithSlug){
-                // post with same slug exist
-                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
 
-            const pageWithSlug = await findUnique('page', {slug})
-            if(pageWithSlug){
-                // page with same slug exist
-                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
-        }
-
-        // Set new Post object
-        const tmpPost = {
+        // Set new List object
+        const tmpList = {
             title,
             body,
             publish,
@@ -464,15 +442,15 @@ export async function createPost(req, res, next){
             author: {
                 connect: {id: req.user.id}
             },
-            metatitle,
-            metadescription
+            viewPermission,
+            editPermission
         }
 
-        // Create Post
-        await createRow('post', tmpPost)
+        // Create List
+        await createRow('list', tmpList)
 
         // Send Success json
-        req.crud_response = {messageBody: `Post "${title}" was created successfuly`, messageTitle: 'Post Created', messageType: 'success'}
+        req.crud_response = {messageBody: `List "${title}" was created successfuly`, messageTitle: 'List Created', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
@@ -482,8 +460,8 @@ export async function createPost(req, res, next){
     }
 }
 
-/*  Edit Post */
-export async function editPost(req, res, next){
+/*  Edit List */
+export async function editList(req, res, next){
     const result = validationResult(req);
     if (!result.isEmpty()) {
         //  Send Error json
@@ -491,56 +469,37 @@ export async function editPost(req, res, next){
         return next()
     }
     //  Get user data
-    let {id, title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
+    let {id, title, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
 
     try{
-        // Validate user Post
-        const selectedPost = await findUnique('post', {id})
-        if(!selectedPost){
-            throw new Error('Invalid Post')
+        // Validate user List
+        const selectedList = await findUnique('list', { id })
+        if(!selectedList){
+            throw new Error('Invalid List')
         }
 
-        // Set new Post object
-        const tmpPost = {
+        // Set new List object
+        const tmpList = {
             title,
             body,
             publish,
-            metatitle,
-            metadescription
+            viewPermission,
+            editPermission
         }
 
         // check if user have publisg permission
-        if(isAuthorized('publish_post', req.user.roleId)){
-            tmpPost.publish = publish
+        if(isAuthorized('publish_list', req.user.roleId)){
+            tmpList.publish = publish
         }
 
-        if(slug != '' && slug != selectedPost.slug){
-            // check if slug exist
-            const postWithSlug = await findUnique('post', {slug})
-            if(postWithSlug){
-                // post with same slug exist
-                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
-
-            const pageWithSlug = await findUnique('page', {slug})
-            if(pageWithSlug){
-                // page with same slug exist
-                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
-            // update post object
-            tmpPost.slug = slug
-        }
-
-        // Update Post
-        await updateRow('post', {id: selectedPost.id}, tmpPost)
+        // Update List
+        await updateRow('list', { id: selectedList.id }, tmpList)
 
         // Send Success json
-        req.crud_response = {messageBody: `Post "${title}" was updated successfuly`, messageTitle: 'Post Updated', messageType: 'success'}
+        req.crud_response = {messageBody: `List "${ title }" was updated successfuly`, messageTitle: 'List Updated', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
@@ -550,8 +509,8 @@ export async function editPost(req, res, next){
     }
 }
 
-/*  Delete Post */
-export async function deletePost(req, res, next){
+/*  Delete List */
+export async function deleteList(req, res, next){
     const result = validationResult(req);
     if (!result.isEmpty()) {
         //  Send Error json
@@ -562,298 +521,19 @@ export async function deletePost(req, res, next){
      let {id, header} = matchedData(req, { includeOptionals: true });
 
      try{
-         // Delete all Post Comments
-         await deleteRows('comment', {postId: id})
+         // Delete all List Comments
+         await deleteRows('comment', {listId: id})
  
-         //  Delete Post
-         await deleteRow('post', {id})
+         //  Delete List
+         await deleteRow('list', {id})
  
          // Send Success json
-         req.crud_response = {messageBody: `Post "${header}" was successfuly deleted`, messageTitle: 'Post Delete', messageType: 'success'}
+         req.crud_response = {messageBody: `List "${ header }" was successfuly deleted`, messageTitle: 'List Delete', messageType: 'success'}
      }catch(errorMsg){
          // Send Error json
          req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
      }
      finally{
-        next()
-    }
-}
-
-async function fetchAllComments(parentId, flaten, publish) {
-    const query = {
-        "where": {parentId},
-        "select": {
-            id: true,
-            createdAt: true,
-            comment: true,
-            author: {
-                select: {
-                    userName: true
-                }
-            },
-            replies: true,
-            likes: true,
-            dislikes: true
-        }
-    }
-
-    if(publish != undefined){// allow selection of publish true, false and all
-        query.where.publish = publish
-    }
-
-    // Get replies comments
-    let comments = await readRows('comment', query)
-    // Recursively fetch replies
-    for(let i=0; i<comments.length; i++){
-        if(comments[i].replies && comments[i].replies.length > 0){
-            // get replies
-            const nestedComments = await fetchAllComments(comments[i].id, flaten, publish);
-            if(flaten){
-                comments.push(...nestedComments)
-            }else{
-                comments[i].replies = [...nestedComments]
-            }
-        }
-    }
-    return comments
-}
-
-/*  Get comments    */
-export async function listComments(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    const {post, page = 1, order} = matchedData(req, { includeOptionals: true });
-    const commentsPerPage = 5
-    try{
-        const query = {
-            "skip": parseInt(page - 1) * commentsPerPage,
-            "take": commentsPerPage,
-            "where": {postId: post, publish: true, parent: null},
-            "select": {
-                id: true,
-                createdAt: true,
-                comment: true,
-                author: {
-                    select: {
-                        userName: true
-                    }
-                },
-                replies: true,
-                likes: true,
-                dislikes: true
-            },
-            // "orderBy": {}
-        }
-
-        if(order){
-            const commentModel = modelsInterface['comment']//.find(item => item.name == 'Comment')
-            if( order in commentModel.orderBy){
-                query.orderBy = commentModel.orderBy[order]
-            }
-        } 
-
-        // Get comments
-        let comments = await readRows('comment', query)
-        // Recursively fetch replies
-        for(let i=0; i<comments.length; i++){
-            if(comments[i].replies && comments[i].replies.length > 0){
-                // get replies
-                const nestedComments = await fetchAllComments(comments[i].id, false, true);
-                comments[i].replies = [...nestedComments]
-            }
-        }
-
-        req.crud_response = {messageBody: comments, messageTitle: '', messageType: 'data'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
-
-/*  Create Comment  */
-export async function createComment(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    const {post, parent, comment } = matchedData(req, { includeOptionals: true });
-
-    try{
-        // Set new Comment object
-        const tmpComment = {
-            post: {
-                connect: {id: post}
-            },
-            author: {
-                connect: {id: req.user.id}
-            },
-            comment
-        }
-
-        if(parent){
-            tmpComment.parent = {
-                connect: {id: parent}
-            }
-        }
-
-        // Create Comment
-        await createRow('comment', tmpComment)
-
-        // Send Success json
-        req.crud_response = {messageBody: 'Your comment is awaiting moderation.', messageTitle: 'Comment Created', messageType: 'success'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
-
-/*  Edit Comment    */
-export async function editComment(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-
-    let {id, parent, comment, publish } = matchedData(req, { includeOptionals: true });
-
-    // Convert publish checkbox to boolean
-    publish = publish ? true : false
-
-    try{
-        const tmpComment = {
-            comment,
-            publish
-        }
-
-        // Delete Comment
-        await updateRow('comment', {id}, tmpComment)
-
-        // Send Success json
-        req.crud_response = {messageBody: `Comment "${comment}" was successfuly updated`, messageTitle: 'Comment Delete', messageType: 'success'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
-
-
-/*  Delete Comment and replies*/
-export async function deleteComment(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    const {id, header} = matchedData(req, { includeOptionals: true });
-
-    try {
-        // get comment to delete
-        const commentsToDelete = [await findUnique('comment', {id})]
-        // Fetch all comments and replies recursively
-        commentsToDelete.push(... await fetchAllComments(id, true))
-
-        // Delete comments and replies
-        for (const comment of commentsToDelete.reverse()) {
-            await deleteRow('comment', {id: comment.id})
-        }
-
-        req.crud_response = {messageBody: `Deleted comment "${header}" And all its replies.`, messageTitle: 'Comment Delete', messageType: 'success'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
-
-/*  Count Comments  */
-export async function countComments(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    const {id} = matchedData(req, { includeOptionals: true });
-
-    try {
-        const messageBody = await countRows('comment', {
-            postId: id,
-            publish: true,
-            parent: null
-        })
-
-        req.crud_response = {messageBody, messageTitle: 'Count Comments', messageType: 'data'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
-
-/*  Like Comments  */
-export async function likeComment(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    const {id} = matchedData(req, { includeOptionals: true });
-
-    try {
-        await updateRow('comment', {id}, { likes: { increment: 1 } })
-
-        req.crud_response = {messageBody: `Like Comment ${id}`, messageTitle: 'Count Comments', messageType: 'data'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
-
-/*  dislike Comments  */
-export async function dislikeComment(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    const {id} = matchedData(req, { includeOptionals: true });
-
-    try {
-        await updateRow('comment', {id}, { dislikes: { increment: 1 } })
-
-        req.crud_response = {messageBody: `Dislike Comment ${id}`, messageTitle: 'Count Comments', messageType: 'data'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
         next()
     }
 }

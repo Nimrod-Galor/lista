@@ -252,7 +252,7 @@
                             </fieldset>
                         </form>
                     </div>
-                    <!-- Post -->
+                    <!-- LList
                     <div id="model-post" class="content-type-wrapp pt-0 d-none" style="padding: 5% 10%;">
                         <form id="create-post" action="/admin/create/post" method="POST" style="max-width: 80%;" onsubmit="return validateForm(event)" novalidate>
                             <fieldset form="create-post">
@@ -280,14 +280,14 @@
                                         Please enter your post in the textarea.
                                     </div>
                                 </div>
-                                <%if(permissions.post.publish.allow === true){%>
+                                < % if(permissions.post.publish.allow === true){%>
                                     <div class="form-check mb-3">
                                         <input class="form-check-input" type="checkbox" value="true" id="post-publish" name="publish" checked="true">
                                         <label class="form-check-label" for="publish">
                                             Publish
                                         </label>
                                     </div>
-                                <%}%>
+                                < %}%>
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="post-slug" name="slug" pattern="[a-zA-Z0-9\-_]{3,64}">
                                     <label for="slug">Slug</label>
@@ -332,45 +332,8 @@
                                 </button>
                             </fieldset>
                         </form>
-                    </div>
-                    <!-- Comments -->
-                    <div id="model-comment" class="content-type-wrapp d-none">
-                        <form id="create-comment" action="/admin/create/comment" method="POST" onsubmit="return validateForm(event)" novalidate>
-                            <fieldset form="create-comment">
-                                <legend class="create mb-2">Create Comment</legend>
-                                <legend class="edit mb-2">Edit Comment</legend>
-                                <input type="hidden" id="comment-id" name="id" value="" />
-                                <div class="form-floating mb-3">
-                                    <textarea class="form-control comment-body-textarea" id="comment-body" name="comment" minlength="4" style="height: 200px" required></textarea>
-                                    <label for="comment">Body</label>
-                                    <div class="valid-feedback">
-                                        Looks good!
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        Please enter your comment in the textarea.
-                                    </div>
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" value="true" id="comment-publish" name="publish" checked="true">
-                                    <label class="form-check-label" for="publish">
-                                        Publish
-                                    </label>
-                                </div>
-                                <button type="submit" class="create btn btn-primary">
-                                    <div class="spinner-border" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                    Create
-                                </button>
-                                <button type="submit" class="edit btn btn-primary">
-                                    <div class="spinner-border" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                    Update
-                                </button>
-                            </fieldset>
-                        </form>
-                    </div>
+                    </div> -->
+                    
                     <!-- Roles -->
                     <div id="model-role" class="content-type-wrapp d-none">
                         <form id="create-role" action="/admin/create/role" method="POST" onsubmit="return validateForm(event)" novalidate>
@@ -583,11 +546,11 @@
     </script>
 
     <script type="module">
-        import {ClassicEditor, Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing, AutoLink, Link, List} from 'ckeditor5';
+        import {ClassicEditor, GeneralHtmlSupport, Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing, AutoLink, Link, List} from 'ckeditor5';
 
         // Page
         ClassicEditor.create( document.querySelector( '#pageEditor' ), {
-            plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
+            plugins: [ Essentials, GeneralHtmlSupport, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
             toolbar: {
                 items: [
                     'sourceEditing', '|',
@@ -598,6 +561,13 @@
                     'link', '|',
                     'bulletedList', 'numberedList', '|',
                 ]
+            },
+            htmlSupport: {
+                allow: [{
+                    name: /.*/,
+                    attributes: true,
+                    classes: true
+                }]
             },
             placeholder: 'Enter your Page text here...'
         })
@@ -607,33 +577,6 @@
                 textarea.value = newEditor.getData()
             } );
             window.pageEditor = newEditor
-        })
-        .catch( error => {
-            console.error( error )
-        });
-
-        // Post
-        ClassicEditor.create( document.querySelector( '#postEditor' ), {
-            plugins: [ Essentials, Bold, Italic, Font, Alignment, Paragraph, Heading, Indent, IndentBlock, SourceEditing,AutoLink, Link, List ],
-            toolbar: {
-                items: [
-                    'sourceEditing', '|',
-                    'undo', 'redo', '|',
-                    'heading', 'bold', 'italic','|',
-                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-                    'alignment', 'outdent', 'indent', '|',
-                    'link', '|',
-                    'bulletedList', 'numberedList', '|',
-                ]
-            },
-            placeholder: 'Enter your Post here...'
-        })
-        .then( newEditor => {
-            const textarea = document.getElementById('post-body')
-            newEditor.model.document.on( 'change:data', () => {
-                textarea.value = newEditor.getData()
-            } );
-            window.postEditor = newEditor
         })
         .catch( error => {
             console.error( error )

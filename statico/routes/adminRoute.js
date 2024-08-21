@@ -1,11 +1,10 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import { userValidation, deleteValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation } from '../controllers/formValidations.js'
+import { userValidation, deleteValidation, bulkValidation, listValidation, postValidation, roleValidation } from '../controllers/formValidations.js'
 import  { listContent,
     createUser, editUser, deleteUser,
     createPage, editPage, deletePage,
-    createPost, editPost, deletePost,
-    editComment, deleteComment,
+    createList, editList, deleteList,
     editeRole,
     bulkDelete, bulkPublish, bulkDeleteUser
 } from '../controllers/crudController.js'
@@ -28,7 +27,7 @@ function setSessionMessages(req, res, next){
     
 
 // list Users
-router.get(["/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list', '/'), filterByPermissions('user'), listContent('user'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list', '/'), filterByPermissions('user'), listContent('user'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/user`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -90,63 +89,35 @@ router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
     res.redirect('/admin/page')
 })
 
-// list Posts
-router.get(["/", "/post", "/post?/*"], ensureLoggedIn('/login'), ensureAuthorized('post', 'list', '/'), filterByPermissions('post'), listContent('post'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
-    const baseUrl = `${req.baseUrl}/post`
+// list Lists
+router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('list', 'list', '/'), filterByPermissions('list'), listContent('list'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+    const baseUrl = `${req.baseUrl}/list`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
-//  Create Post
-router.post("/create/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'create'), postValidation(), createPost, setSessionMessages, (req, res) => {
-    res.redirect('/admin/post')
+//  Create list
+router.post("/create/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'create'), listValidation(), createList, setSessionMessages, (req, res) => {
+    res.redirect('/admin/list')
 })
-//  Edit Post
-router.post("/edit/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'edit'), postValidation(), editPost, setSessionMessages, (req, res) => {
-    res.redirect('/admin/post')
+//  Edit list
+router.post("/edit/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), listValidation(), editList, setSessionMessages, (req, res) => {
+    res.redirect('/admin/list')
 })
-//  Delete Post
-router.post("/delete/post", ensureLoggedIn('/login'), ensureAuthorized('post', 'delete'), deleteValidation(), deletePost, setSessionMessages, (req, res) => {
-    res.redirect('/admin/post')
-})
-// bulk delete
-router.post("/post/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'delete'), bulkValidation(), bulkDelete('post'), setSessionMessages, (req, res) => {
-    res.redirect('/admin/post')
-})
-//bulk publish
-router.post("/post/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), bulkValidation(), bulkPublish('post', true), setSessionMessages, (req, res) => {
-    res.redirect('/admin/post')
-})
-//bulk unpublish
-router.post("/post/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('post', 'edit'), bulkValidation(), bulkPublish('post', false), setSessionMessages, (req, res) => {
-    res.redirect('/admin/post')
-})
-
-
-// list Comments
-router.get(["/comment", "/comment?/*"], ensureLoggedIn('/login'), ensureAuthorized('comment', 'list', '/'), filterByPermissions('comment'), commentsListValidation(), listContent('comment'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
-    const baseUrl = `${req.baseUrl}/comment`
-    const path = req.path
-    res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
-})
-// Edit Comment
-router.post("/edit/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'edit'), commentValidation(), editComment, setSessionMessages, (req, res) => {
-    res.redirect('/admin/comment')
-})
-// Delete Comment
-router.post("/delete/comment", ensureLoggedIn('/login'), ensureAuthorized('comment', 'delete'), deleteValidation(), deleteComment, setSessionMessages, (req, res) => {
-    res.redirect('/admin/comment')
+//  Delete list
+router.post("/delete/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteList, setSessionMessages, (req, res) => {
+    res.redirect('/admin/list')
 })
 // bulk delete
-router.post("/comment/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'delete'), bulkValidation(), bulkDelete('comment'), setSessionMessages, (req, res) => {
-    res.redirect('/admin/comment')
+router.post("/list/bulk/delete", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('list', 'delete'), bulkValidation(), bulkDelete('list'), setSessionMessages, (req, res) => {
+    res.redirect('/admin/list')
 })
 //bulk publish
-router.post("/comment/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), bulkValidation(), bulkPublish('comment', true), setSessionMessages, (req, res) => {
-    res.redirect('/admin/comment')
+router.post("/list/bulk/publish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('list', 'edit'), bulkValidation(), bulkPublish('list', true), setSessionMessages, (req, res) => {
+    res.redirect('/admin/list')
 })
 //bulk unpublish
-router.post("/comment/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('comment', 'edit'), bulkValidation(), bulkPublish('comment', false), setSessionMessages, (req, res) => {
-    res.redirect('/admin/comment')
+router.post("/list/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('bulk_operations', 'exe'), ensureAuthorized('list', 'edit'), bulkValidation(), bulkPublish('list', false), setSessionMessages, (req, res) => {
+    res.redirect('/admin/list')
 })
 
 // list Roles

@@ -119,3 +119,13 @@ fieldset.comment-voting{
 .muted{
     color: rgba(var(--bs-body-color-rgb),.65);
 }
+
+
+.typesoflists > li{
+    display: inline-block;
+    padding: 20px;
+}
+
+.typesoflists > li strong{
+    font-size: large;
+}

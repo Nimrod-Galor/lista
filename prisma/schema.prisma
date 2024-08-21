@@ -25,12 +25,15 @@ model User {
   userName                 String?
   role                     Role              @relation(fields: [roleId], references: [id])
   roleId                   String            @db.ObjectId
-  posts                    Post[]
-  comments                 Comment[]
   token                    RememberMeToken[]
   emailVerified            Boolean           @default(false)
   verificationToken        String?
   verificationTokenExpires DateTime?
+  createdLists             List[]            @relation("createdLists")
+  viewableLists            List[]            @relation("viewableLists", fields: [viewableListsIDs], references: [id])
+  viewableListsIDs         String[]          @db.ObjectId
+  editableLists            List[]            @relation("editableLists", fields: [editableListsIDs], references: [id])
+  editableListsIDs         String[]          @db.ObjectId
 }
 
 model RememberMeToken {
@@ -51,36 +54,20 @@ model Page {
   publish         Boolean @default(false)
 }
 
-model Post {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  metatitle       String
-  metadescription String
-  slug            String    @unique
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  title           String
-  body            String
-  publish         Boolean   @default(false)
-  viewCount       Int       @default(0)
-  author          User      @relation(fields: [authorId], references: [id])
-  authorId        String    @db.ObjectId
-  comments        Comment[]
-}
-
-model Comment {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime  @default(now())
-  comment   String
-  publish   Boolean   @default(false)
-  post      Post      @relation(fields: [postId], references: [id])
-  postId    String    @db.ObjectId
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  String    @db.ObjectId
-  parentId  String?   @db.ObjectId // This field will hold the ID of the parent comment, if any
-  parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  replies   Comment[] @relation("CommentToComment")
-  likes     Int       @default(0)
-  dislikes  Int       @default(0)
+model List {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  title      String
+  body       Json
+  publish    Boolean  @default(false)
+  viewCount  Int      @default(0)
+  author     User     @relation("createdLists", fields: [authorId], references: [id])
+  authorId   String   @db.ObjectId
+  viewers    User[]   @relation("viewableLists", fields: [viewersIDs], references: [id])
+  viewersIDs String[] @db.ObjectId
+  editors    User[]   @relation("editableLists", fields: [editorsIDs], references: [id])
+  editorsIDs String[] @db.ObjectId
 }
 
 model Role {

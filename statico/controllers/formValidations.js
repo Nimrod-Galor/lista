@@ -83,8 +83,6 @@ const userValidation = () => [
         })    
 ]
 
-
-
 /*  Post    */
 const postValidation = () => [
     body('id')
@@ -110,22 +108,26 @@ const postValidation = () => [
         .optional({ checkFalsy: true })
 ]
 
-/*  Comments    */
-const commentValidation = () => [
+
+/*  List    */
+const listValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
-        .isMongoId().withMessage('Comment ID must be a valid MongoDB ObjectId'),
-    body('post')
-        .optional({ checkFalsy: true })
-        .isMongoId().withMessage('Post ID must be a valid MongoDB ObjectId'),
-    body('parent')
-        .optional({ checkFalsy: true })
-        .isMongoId().withMessage('Parent ID must be a valid MongoDB ObjectId'),
-    body('comment')
-        .notEmpty()
+        .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
+    body('title')
+        .trim()
+        .isLength({ min: 3, max: 128 }).withMessage('Title must be at least 3 characters and max 128.')
+        .escape(),
+    body('body')
+        .trim()
+        .notEmpty().withMessage('Body can not be empty.')
         .escape(),
     body('publish')
-        .optional()
+        .optional(),
+    body('viewPermission')
+        .optional({ checkFalsy: true }),
+    body('editPermission')
+        .optional({ checkFalsy: true })
 ]
 
 const commentsListValidation = () => [
@@ -164,4 +166,4 @@ const searchValidation = () => [
         .isNumeric().withMessage('Invalid Page number.')
         
 ]
-export {deleteValidation, userValidation, bulkValidation, postValidation, commentValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation}
+export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation, postValidation}
