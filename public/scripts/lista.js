@@ -16,10 +16,11 @@ function createDomList(parentDom, currentList){
     listDom.id = currentList.id
     // loop list items
     for(let i=0; i < currentList.items.length; i++){
-        const itemWrapperDom = currentList.type === 'div' ? document.createElement('div') : document.createElement('li')
+        
         const currentItemObj = currentList.items[i]
         const objectId = currentItemObj.id
         if("edit" in currentItemObj){
+            const itemWrapperDom = currentList.type === 'div' ? document.createElement('div') : document.createElement('li')
             //  Edit version
             const templateDom = document.getElementById(`${currentItemObj.type}-edit-template`)
             const editItemDom = templateDom.content.cloneNode(true)
@@ -57,6 +58,17 @@ function createDomList(parentDom, currentList){
             continue
         }
 
+        var itemTemplate = document.getElementById('item-template')
+        var itemWrapperDom
+        if(currentList.type === 'div'){
+            itemWrapperDom = itemTemplate.content.cloneNode(true)
+        }else{
+            itemWrapperDom = document.createElement('li')
+            itemWrapperDom.appendChild(itemTemplate.content.cloneNode(true))
+        }
+        const itemInner = itemWrapperDom.querySelector('.list-item')
+
+        
         var itemDom
         var labelDom
         switch(currentItemObj.type){
@@ -64,14 +76,14 @@ function createDomList(parentDom, currentList){
                 itemDom = document.createElement('div')
                 itemDom.id = objectId
                 itemDom.innerText = currentItemObj.value
-                itemWrapperDom.appendChild(itemDom)
+                itemInner.appendChild(itemDom)
             break
             case 'bigtext':
                 itemDom = document.createElement('div')
                 itemDom.id = objectId
                 itemDom.style.whiteSpace = 'pre-wrap'
                 itemDom.textContent = currentItemObj.value
-                itemWrapperDom.appendChild(itemDom)
+                itemInner.appendChild(itemDom)
             break
             case 'checkbox':
                 let tmpCheckbox = document.getElementById('checkbox-item-template')
@@ -80,26 +92,27 @@ function createDomList(parentDom, currentList){
                 const labelDom = itemDom.querySelector('.form-check-label')
                 labelDom.htmlFor = objectId
                 labelDom.textContent = currentItemObj.label
-                itemWrapperDom.appendChild(itemDom)
+                itemInner.appendChild(itemDom)
             break
             case 'link':
                 itemDom = document.createElement('a')
                 itemDom.id = objectId
                 itemDom.href = currentItemObj.href
                 itemDom.innerText = currentItemObj.anchor
-                itemWrapperDom.appendChild(itemDom)
+                itemInner.appendChild(itemDom)
             break
             case 'div':
-                createDomList(itemWrapperDom, currentItemObj)
+                createDomList(itemInner, currentItemObj)
             break
             case 'ul':
-                createDomList(itemWrapperDom, currentItemObj)
+                createDomList(itemInner, currentItemObj)
             break
             case 'ol':
-                createDomList(itemWrapperDom, currentItemObj)
+                createDomList(itemInner, currentItemObj)
             break
         }
-        
+        // itemWrapperDom.setAttribute("tabIndex", "1")
+        itemWrapperDom.tabIndex = 1
         listDom.appendChild(itemWrapperDom)
         parentDom.appendChild(listDom)
     }

@@ -123,7 +123,7 @@
                                 <%})%>
                                 
                                 <td class="text-end">
-                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <div class="btn-group" role="group" aria-label="Edit item menu">
                                         <%if(permissions.list.delete.allow === true && (!permissions.list.delete.where.authorId || permissions.list.delete.where.authorId === data.authorId)){%>
                                         <form action="/delete/list" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
                                             <input type="hidden" name="id" value="<%=data.id%>"/>

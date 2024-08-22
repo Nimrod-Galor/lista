@@ -159,3 +159,24 @@ body.edit .save-btn{
     padding: 15px;
 }
 
+.list-item-menu{
+    display: none;
+}
+
+
+body.create li:focus, body.edit li:focus{
+    border:1px dotted orange;
+    padding: 5px;
+}
+
+body.create li:focus .list-item-menu{
+    display: inline-flex;
+}
+
+body.edit li:focus .list-item-menu{
+    display: inline-flex;
+}
+
+body.edit li:focus ul .list-item-menu, body.edit li:focus ol .list-item-menu{
+    display: none;
+}
