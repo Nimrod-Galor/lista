@@ -87,7 +87,7 @@ app.use(async (req, res, next) => {
 // Session-persisted message middleware
 app.use(function(req, res, next) {
     var msgs = req.session.messages || [];
-    var mtype = req.session.messageType || 'info'
+    var mtype = req.session.messageType || ''
     var title = req.session.messageTitle || ''
     res.locals.messages = msgs;
     res.locals.messageTitle = title

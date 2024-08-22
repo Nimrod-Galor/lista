@@ -55,7 +55,7 @@
     <div class="container">
         <div id="top-alert" class="top-alert <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
             <div>
-                <div class="alert alert-<%-locals.messageType%>">
+                <div id="top-alert-alert" class="alert alert-<%-locals.messageType%>">
                     <div id="top-alert-closebtn" class="top-alert-closebtn cursorPoint">
                         <div class="close-btn" onclick="toggleClass('top-alert', 'open')"></div>
                     </div>
@@ -82,7 +82,6 @@
                     <caption class="text-center fs-4 bg-warning-subtle">My Lists</caption>
                     <thead class="table-primary">
                         <tr>
-                            
                             <% modelHeaders.forEach((field) => {%>
                                 <th scope="col" class="<%if(field.key == 'createDate'){%>d-none d-md-table-cell<%}else if(field.key == 'updated'){%>d-none d-xl-table-cell<%}else if(field.key == 'publish'){%>d-none d-lg-table-cell<%}else if(field.key == 'viewCount'){%>d-none d-xl-table-cell<%}%>">
                                     <%if(path.endsWith('/desc/' + field.key)){%>
@@ -101,21 +100,16 @@
                                     <%}else{%>
                                         <a href="<%=baseUrl%>/desc/<%=field.key%>">
                                     <%}%>
-                                        <%-field.header%>
-                                        
-                                        
-                                    </a>
+                                            <%=field.header%>
+                                        </a>
                                 </th>
                             <%})%>
-                            
                             <th>&nbsp;</th>
-                            
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
                         <% modelsData.forEach((data) => {%>
                             <tr>
-                                
                                 <% modelHeaders.forEach((field) => {%>
                                     <td class="<%if(field.key == 'createDate'){%>d-none d-md-table-cell<%}else if(field.key == 'updated'){%>d-none d-xl-table-cell<%}else if(field.key == 'publish'){%>d-none d-lg-table-cell<%}else if(field.key == 'viewCount'){%>d-none d-xl-table-cell<%}%>">
                                         <% if(field.linkRelation){ %>
@@ -132,26 +126,25 @@
                                     </td>
                                 <%})%>
                                 
-                                    <td class="text-end">
-                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                            <%if(permissions.list.delete.allow === true && (!permissions.list.delete.where.authorId || permissions.list.delete.where.authorId === data.authorId)){%>
-                                            <form action="/admin/delete/list" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
-                                                <input type="hidden" name="id" value="<%=data.id%>"/>
-                                                <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
-                                                <button type="submit" class="btn btn-warning btn-sm">Delete</button>
-                                            </form>
-                                            <%}%>
-                                            
-                                            <%if(!("authorId" in permissions.list.edit.where) || permissions.list.edit.where.authorId === data.authorId){%>
-                                                <a href="/list/<%=data.id%>?edit" class="btn btn-primary btn-sm" role="button">Edit</a>
-                                            <%}%>
-                                        </div>
-                                    </td>
+                                <td class="text-end">
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <%if(permissions.list.delete.allow === true && (!permissions.list.delete.where.authorId || permissions.list.delete.where.authorId === data.authorId)){%>
+                                        <form action="/admin/delete/list" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
+                                            <input type="hidden" name="id" value="<%=data.id%>"/>
+                                            <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
+                                            <button type="submit" class="btn btn-warning btn-sm">Delete</button>
+                                        </form>
+                                        <%}%>
+                                        
+                                        <%if(!("authorId" in permissions.list.edit.where) || permissions.list.edit.where.authorId === data.authorId){%>
+                                            <a href="/list/<%=data.id%>?mode=edit" class="btn btn-primary btn-sm" role="button">Edit</a>
+                                        <%}%>
+                                    </div>
+                                </td>
                                 
                             </tr>
                         <%})%>
                     </tbody>
-                    
                 </table>
 
                 <nav aria-label="Page navigation example">

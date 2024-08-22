@@ -1,7 +1,7 @@
 function renderList(){
     const listaMain = document.getElementById('lista-main')
     listaMain.innerHTML = ''
-    createDomList(listaMain, listData)
+    createDomList(listaMain, listData.body)
 }
 
 function createDomList(parentDom, currentList){
@@ -105,7 +105,7 @@ function createDomList(parentDom, currentList){
 }
 
 function updateItem(event, objId){
-    const currentObj = getObjectById(objId, listData)
+    const currentObj = getObjectById(objId, listData.body)
     switch(currentObj.type){
         case 'text':
             currentObj.value = document.getElementById(currentObj.id).value
@@ -129,7 +129,7 @@ function updateItem(event, objId){
     renderList()
 }
 
-function cancelUpdate(objId, currentList = listData){
+function cancelUpdate(objId, currentList = listData.body){
     for(let i = 0 ; i < currentList.items.length; i++){
         if(currentList.items[i].id === objId){
             // remove this object from array
@@ -145,7 +145,7 @@ function cancelUpdate(objId, currentList = listData){
     renderList()
 }
 
-function removeEditItems(currentList = listData){
+function removeEditItems(currentList = listData.body){
     for(let i = 0 ; i < currentList.items.length; i++){
         if("edit" in currentList.items[i]){
             if(confirm('You have unsaved changes that will be lost')){
@@ -163,7 +163,7 @@ function removeEditItems(currentList = listData){
     return
 }
 
-function removeEmptySubLists(currentList = listData){
+function removeEmptySubLists(currentList = listData.body){
     for(let i = 0 ; i < currentList.items.length; i++){
         if("items" in currentList.items[i]){
             if(currentList.items[i].items.length === 0){
@@ -184,7 +184,7 @@ function listadd(event, type){
     }
     // add item to list object
     const listId = event.currentTarget.closest('ul').dataset.id
-    const activeList = getObjectById(listId, listData)
+    const activeList = getObjectById(listId, listData.body)
     activeList.items.push(newItemObject(type))
     // render new list to DOM
     renderList()
@@ -263,17 +263,25 @@ function saveList(){
     removeEmptySubLists()
 
     // check list is not empty
-    if(listData.items.length === 0){
+    if(listData.body.items.length === 0){
         alert("List cannot be empty!\nAdd items to list.")
         return
     }
 
-    const form = document.getElementById('form-meta')
-    const formData = new FormData(form);
-    const dataToSend = Object.fromEntries(formData);
-    dataToSend.body = JSON.stringify(listData)
+    // const form = document.getElementById('form-meta')
+    // const formData = new FormData(form);
+    // const dataToSend = Object.fromEntries(formData);
+    // if(listData.id != 0){
+    //     dataToSend.id = listData.id
+    // }
+    // dataToSend.body = JSON.stringify(listData.body)
+
+    listData.title = listTitle.value.trim()
+    listData.description = document.getElementById('listDescription').value
+    const dataToSend = listData
+    // delete dataToSend.id
     // POST list
-    fetchData('/api/create/list', 'POST', dataToSend)
+    fetchData(`/api/create/list`, 'POST', dataToSend)
     .then(data => {
         console.log(data)
         // {
@@ -284,9 +292,12 @@ function saveList(){
         if(data){
             if(data.messageType === 'success'){
                 topAlert('alert-success', data.messageTitle, data.messageBody)
-                
+                document.getElementById('meta-title').textContent = listData.title
+                document.getElementById('meta-description').textContent = listData.description
+                document.body.classList.remove('create', 'edit')
+                document.body.classList.add('show')
             }else{
-                topAlert('alert-warning', data.messageTitle, data.messageBody)
+                topAlert('alert-danger', data.messageTitle, data.messageBody)
             }
         }
     })

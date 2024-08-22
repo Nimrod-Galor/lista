@@ -53,9 +53,10 @@
     </nav>
 
     <div class="container">
-        <div id="top-alert" class="mt-4 top-alert <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
+        
+        <div id="top-alert" class="top-alert mt-3 <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
             <div>
-                <div class="alert alert-<%-locals.messageType%>">
+                <div id="top-alert-alert" class="alert alert-<%-locals.messageType%>">
                     <div id="top-alert-closebtn" class="top-alert-closebtn cursorPoint">
                         <div class="close-btn" onclick="toggleClass('top-alert', 'open')"></div>
                     </div>
@@ -74,21 +75,30 @@
         </div>
 
         <main>
-            <form id="form-meta">
-                <div class="form-floating my-3">
-                    <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title">
-                    <label for="listTitle">List Title</label>
-                    <div id="validationTitleFeedback" class="invalid-feedback">
-                        List title cannot be empty.
-                    </div>            
+            <div class="meta-edit">
+                <form id="form-meta">
+                    <div class="form-floating my-3">
+                        <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title">
+                        <label for="listTitle">List Title</label>
+                        <div id="validationTitleFeedback" class="invalid-feedback">
+                            List title cannot be empty.
+                        </div>            
+                    </div>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="List Description" id="listDescription" name="description" style="height: 100px"></textarea>
+                        <label for="listDescription">List Description</label>
+                    </div>
+                </form>
+                <div class="col-md my-3 save-btn float-end">
+                    <button type="button" class="btn btn-warning" style="position: relative;z-index:99;" onclick="saveList()">Save</button>
                 </div>
-                <div class="form-floating">
-                    <textarea class="form-control" placeholder="List Description" id="listDescription" name="description" style="height: 100px"></textarea>
-                    <label for="listDescription">List Description</label>
+            </div>
+
+            <div class="meta">
+                <h3 id="meta-title"><%=listData.title%></h3>
+                <div id="meta-description">
+                    <%=listData.description%>
                 </div>
-            </form>
-            <div class="col-md my-3 save-btn float-end">
-                <button type="button" class="btn btn-warning" style="position: relative;z-index:99;" onclick="saveList()">Save</button>
             </div>
 
             <div id="lista-main">
@@ -99,7 +109,7 @@
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                         </svg>
                     </span>
-                    <ul class="dropdown-menu" data-id="<%=listData.id%>">
+                    <ul class="dropdown-menu" data-id="<%=listData.body.id%>">
                         <li><button class="btn btn-link dropdown-item" onclick="listadd(event, 'text')">Text</button></li>
                         <li><button class="btn btn-link dropdown-item" onclick="listadd(event, 'bigtext')">Big Text</button></li>
                         <li><button class="btn btn-link dropdown-item" onclick="listadd(event, 'checkbox')">Checkbox</button></li>
@@ -109,7 +119,7 @@
                         <li><button class="btn btn-link dropdown-item" onclick="listadd(event, 'ol')">Ordered List</button></li>
                     </ul>
                 </div>
-                <ul id="<%=listData.id%>"></ul>
+                <ul id="<%=listData.body.id%>"></ul>
             </div>
             
         </main>

@@ -121,6 +121,15 @@ export async function getPage(req, res, next){
 }
 
 export async function getList(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        return next(createError(result.errors.map(err => err.msg).join()))
+    }
+
+    //  Get user data
+    const { mode = 'show' } = matchedData(req, { includeOptionals: true });
+
+
     const id = req.params.id
     try{
         //  Get list data
@@ -133,9 +142,9 @@ export async function getList(req, res, next){
         res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
         //unescape body
-        listData.body = he.decode(listData.body)
+        // listData.body = he.decode(listData.body)
 
-        res.render('list', { user: req.user,  listData, mode: 'show' })
+        res.render('list', { user: req.user,  listData, mode })
     }catch(err){
         console.log(err)
         // page not found

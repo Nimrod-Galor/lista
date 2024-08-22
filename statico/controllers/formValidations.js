@@ -170,4 +170,18 @@ const searchValidation = () => [
         .isNumeric().withMessage('Invalid Page number.')
         
 ]
-export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation, postValidation}
+
+const modeValidation = () => [
+    query('mode')
+        .optional()
+        .trim()
+        .notEmpty().withMessage('mode not be empty string.')
+        .custom(async value => {
+            const modeEnum = ['create', 'show', 'edit']
+            if(!modeEnum.includes(value)){
+                throw new Error('Mode not exists')
+            }
+        }) 
+]
+
+export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation }
