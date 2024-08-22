@@ -78,14 +78,16 @@
             <div class="meta-edit">
                 <form id="form-meta">
                     <div class="form-floating my-3">
-                        <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title">
+                        <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title" value="<%=listData.title%>">
                         <label for="listTitle">List Title</label>
                         <div id="validationTitleFeedback" class="invalid-feedback">
                             List title cannot be empty.
                         </div>            
                     </div>
                     <div class="form-floating">
-                        <textarea class="form-control" placeholder="List Description" id="listDescription" name="description" style="height: 100px"></textarea>
+                        <textarea class="form-control" placeholder="List Description" id="listDescription" name="description" style="height: 100px">
+                            <%=listData.description%>
+                        </textarea>
                         <label for="listDescription">List Description</label>
                     </div>
                 </form>
@@ -152,15 +154,15 @@
     </template>
 
     <template id="text-edit-template">
-        <span class="fs-5">Add Text Item:</span>
+        <span class="fs-5 d-inline-block mb-3">Add Text Item:</span>
         <div class="row g-2">
-            <div class="col-md">
+            <div class="col-12">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" placeholder="Text Item" value="">
                     <label>Text Item:</label>
                 </div>
             </div>
-            <div class="col-md d-flex justify-content-around">
+            <div class="col-12 d-flex justify-content-around">
                 <button class="btn btn-success">Update</button>
                 <button class="btn btn-link">Cancel</button>
             </div>
@@ -168,15 +170,15 @@
     </template>
 
     <template id="bigtext-edit-template">
-        <span class="fs-5">Add Big Text Item:</div>
+        <span class="fs-5 d-inline-block mb-3">Add Big Text Item:</div>
         <div class="row g-2">
-            <div class="col-md">
+            <div class="col-12">
                 <div class="form-floating mb-3">
                     <textarea class="form-control" id="" style="height: 100px"></textarea>
                     <label class="form-label">Big Text:</label>
                 </div>
             </div>
-            <div class="col-md d-flex justify-content-around">
+            <div class="col-12 d-flex justify-content-around">
                 <button class="btn btn-success">Update</button>
                 <button class="btn btn-link">Cancel</button>
             </div>
@@ -184,15 +186,15 @@
     </template>
 
     <template id="checkbox-edit-template">
-        <span class="fs-5">Add Checkbox Item:</div>
+        <span class="fs-5 d-inline-block mb-3">Add Checkbox Item:</div>
         <div class="row g-2">
-            <div class="col-md">
+            <div class="col-12">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="" placeholder="Checkbox Label" value="">
                     <label>Checkbox Label:</label>
                 </div>
             </div>
-            <div class="col-md d-flex justify-content-around">
+            <div class="col-12 d-flex justify-content-around">
                 <button class="btn btn-success">Update</button>
                 <button class="btn btn-link">Cancel</button>
             </div>
@@ -200,21 +202,21 @@
     </template>
 
     <template id="link-edit-template">
-        <span class="fs-5">Add Link Item:</div>
+        <span class="fs-5 d-inline-block mb-3">Add Link Item:</div>
         <div class="row g-2">
-            <div class="col-md">
+            <div class="col-12">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="" placeholder="href" value="">
                     <label>href:</label>
                 </div>
             </div>
-            <div class="col-md">
+            <div class="col-12">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="" placeholder="Anchor" value="">
                     <label>Anchor:</label>
                 </div>
             </div>
-            <div class="col-md d-flex justify-content-around">
+            <div class="col-12 d-flex justify-content-around">
                 <button class="btn btn-success">Update</button>
                 <button class="btn btn-link">Cancel</button>
             </div>

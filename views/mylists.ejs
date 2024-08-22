@@ -53,7 +53,7 @@
     </nav>
 
     <div class="container">
-        <div id="top-alert" class="top-alert <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
+        <div id="top-alert" class="top-alert mt-3 <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
             <div>
                 <div id="top-alert-alert" class="alert alert-<%-locals.messageType%>">
                     <div id="top-alert-closebtn" class="top-alert-closebtn cursorPoint">
@@ -112,16 +112,8 @@
                             <tr>
                                 <% modelHeaders.forEach((field) => {%>
                                     <td class="<%if(field.key == 'createDate'){%>d-none d-md-table-cell<%}else if(field.key == 'updated'){%>d-none d-xl-table-cell<%}else if(field.key == 'publish'){%>d-none d-lg-table-cell<%}else if(field.key == 'viewCount'){%>d-none d-xl-table-cell<%}%>">
-                                        <% if(field.linkRelation && "filter" in field){ %>
-                                            <a href="/<%-field.linkRelation + '/' + field.filter + '/' + data[field.filterKey]%>">
-                                                <%-data[field.key]%>
-                                            </a>
-                                        <%}else if(field.linkRelation){ %>
-                                            <a href="/<%-field.linkRelation + '/' + data[field.filterKey]%>">
-                                                <%-data[field.key]%>
-                                            </a>
-                                        <%}else if(field.key === 'slug'){%>
-                                            <a href="/<%= data[field.key]%>">
+                                        <%if(field.key === 'title'){%>
+                                            <a href="/list/<%=data.id%>">
                                                 <%-data[field.key]%>
                                             </a>
                                         <%}else{%>

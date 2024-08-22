@@ -50,6 +50,7 @@ function createDomList(parentDom, currentList){
 
             // Append to DOM
             itemWrapperDom.appendChild(editItemDom)
+            itemWrapperDom.classList.add('item-edit-mod')
             listDom.appendChild(itemWrapperDom)
             parentDom.appendChild(listDom)
             

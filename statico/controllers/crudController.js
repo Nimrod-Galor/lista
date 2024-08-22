@@ -522,9 +522,6 @@ export async function deleteList(req, res, next){
      let {id, header} = matchedData(req, { includeOptionals: true });
 
      try{
-         // Delete all List Comments
-         await deleteRows('comment', {listId: id})
- 
          //  Delete List
          await deleteRow('list', {id})
  
@@ -716,4 +713,12 @@ export async function bulkDeleteUser(req, res, next){
     finally{
         next()
     }
+}
+
+export function setSessionMessages(req, res, next){
+    //  Set alert message session
+    req.session.messages = Array.isArray(req.crud_response.messageBody) ? req.crud_response.messageBody : [req.crud_response.messageBody]
+    req.session.messageType = req.crud_response.messageType
+    req.session.messageTitle = req.crud_response.messageTitle
+    next()
 }

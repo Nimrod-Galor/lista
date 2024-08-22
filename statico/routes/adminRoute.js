@@ -6,7 +6,8 @@ import  { listContent,
     createPage, editPage, deletePage,
     createList, editList, deleteList,
     editeRole,
-    bulkDelete, bulkPublish, bulkDeleteUser
+    bulkDelete, bulkPublish, bulkDeleteUser,
+    setSessionMessages
 } from '../controllers/crudController.js'
 import { initialize } from '../setup/initialize.js'
 import { admin_dashboard } from '../controllers/adminController.js'
@@ -16,13 +17,7 @@ import { sendVerificationMailMiddleware } from '../controllers/mailController.js
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()
 
-function setSessionMessages(req, res, next){
-    //  Set alert message session
-    req.session.messages = Array.isArray(req.crud_response.messageBody) ? req.crud_response.messageBody : [req.crud_response.messageBody]
-    req.session.messageType = req.crud_response.messageType
-    req.session.messageTitle = req.crud_response.messageTitle
-    next()
-}
+
 
     
 

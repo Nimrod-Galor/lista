@@ -144,3 +144,9 @@ body.show .edit-list-dropdown{
 body.creae .meta, body.edit .meta{
     display: none;
 }
+
+.item-edit-mod{
+    max-width: 600px;
+    border: 1px dashed orange;
+    padding: 15px;
+}

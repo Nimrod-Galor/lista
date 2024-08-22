@@ -1,8 +1,8 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import { searchValidation, modeValidation } from '../statico/controllers/formValidations.js'
-import { listContent } from '../statico/controllers/crudController.js'
-import { filterByPermissions, setRoleLocalsPermissions } from '../statico/permissions/permissions.js'
+import { searchValidation, modeValidation, deleteValidation } from '../statico/controllers/formValidations.js'
+import { listContent, deleteList, setSessionMessages } from '../statico/controllers/crudController.js'
+import { filterByPermissions, setRoleLocalsPermissions, ensureAuthorized } from '../statico/permissions/permissions.js'
 import { search_controller, getPage, getList, mylists, profile } from '../controllers/pageController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -37,5 +37,9 @@ router.get('/profile', ensureLoggedIn('/login'), profile)
 router.get(['/', '/home'],  getPage)
 
 router.get('/list/:id', modeValidation(), getList)
+
+router.post('/delete/list', ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(),  deleteList, setSessionMessages, (req, res) => {
+    res.redirect('/mylists')
+})
 
 export default router
