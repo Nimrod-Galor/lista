@@ -51,8 +51,6 @@ app.use(session({
 
 app.use(passport.authenticate('session'))
 
-
-
 // Remember me
 app.use(async (req, res, next) => {
     if (req.isAuthenticated()) {
@@ -81,8 +79,6 @@ app.use(async (req, res, next) => {
         next(err)
     }
 })
-
-
 
 // Session-persisted message middleware
 app.use(function(req, res, next) {

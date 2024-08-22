@@ -1,6 +1,6 @@
 import passport from 'passport'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import {findUnique} from '../../db.js'
+import { findUnique } from '../../db.js'
 
 // jws
 const jwsOpts = {

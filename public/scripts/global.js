@@ -1,23 +1,79 @@
 async function fetchData(action, method, dataToSend){
-    return fetch(action, {
-        method,
-        body: JSON.stringify(dataToSend),
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${getCookie('jwt')}`
+    let accessToken = localStorage.getItem('accessToken')  // Get current access token
+
+    if(!accessToken){
+        accessToken = await refreshAccessToken()
+    }
+
+    const response = await fetch(action, { 
+            method,
+            body: JSON.stringify(dataToSend),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`
+            }
+        })
+
+    if (response.status === 401) {  // Token expired or invalid
+        // Attempt to refresh token
+        const refreshResponse = await fetch('/api/refresh-token', {
+            method: 'POST',
+            credentials: 'include'  // Send cookies for refresh token
+        });
+
+        if (refreshResponse.ok) {
+            const data = await refreshResponse.json()
+            localStorage.setItem('accessToken', data.accessToken)  // Store new access token
+            return fetchData(action, method, dataToSend)  // Retry the request with new token
+        } else {
+            console.error('Failed to refresh token');
         }
-    })
-    .then(res => {
-        if(res.ok){
-            return res.json()
-        }else{
-            topAlert('warning', res.status, res.statusText)
-        }
-    })
-    .catch(err => {
-        console.log('error', err)
-    })
+    }else if(!response.ok){
+        topAlert('warning', response.status, response.statusText)
+    }else{
+        const data = await response.json();
+        return data;
+    }
+
+
+
+
+    // return fetch(action, {
+    //     method,
+    //     body: JSON.stringify(dataToSend),
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         "Authorization": `Bearer ${getCookie('jwt')}`
+    //     }
+    // })
+    // .then(res => {
+    //     if(res.ok){
+    //         return res.json()
+    //     }else{
+    //         topAlert('warning', res.status, res.statusText)
+    //     }
+    // })
+    // .catch(err => {
+    //     console.log('error', err)
+    // })
 }
+
+async function refreshAccessToken(){
+    // Attempt to refresh token
+    const refreshResponse = await fetch('/api/refresh-token', {
+        method: 'POST',
+        credentials: 'include'  // Send cookies for refresh token
+    });
+
+    if (refreshResponse.ok) {
+        const data = await refreshResponse.json();
+        localStorage.setItem('accessToken', data.accessToken);  // Store new access token
+        return data.accessToken
+    } else {
+        console.error('Failed to refresh token');
+    }
+}
+
 
 function validateForm(event){
     const form = event.currentTarget

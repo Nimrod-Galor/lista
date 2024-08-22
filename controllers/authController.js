@@ -46,15 +46,33 @@ export function auth_post_login(req, res, next){
       }
 
       // set jwt token
-      const jwtToken = jwt.sign({ id: user.id, username: user.userName, roleId: user.roleId }, process.env.JWT_SECRET, { expiresIn: '1h' })
-      res.cookie('jwt', jwtToken, { path: '/', maxAge: 60 * 60 * 1000 }); // 1h
+      // const jwtToken = jwt.sign({ id: user.id, username: user.userName, roleId: user.roleId }, process.env.JWT_SECRET, { expiresIn: '15m' })
+      // // res.cookie('jwt', jwtToken, { path: '/', maxAge: 59 * 60 * 1000 }); // 59 minute
+
+      // // Send the JWT as an HttpOnly cookie
+      // res.cookie('jwt', token, {
+      //   httpOnly: true,     // Prevents access via JavaScript
+      //   secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production
+      //   maxAge: 15 * 60 * 1000,  // 15 minutes in milliseconds
+      //   sameSite: 'strict'  // CSRF protection
+      // });
+
+      // refresh token
+      const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,      // Prevents access by JavaScript
+        secure: process.env.NODE_ENV === 'production',  // Use Secure in production
+        sameSite: 'Strict',  // Prevents CSRF attacks
+        maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
+      })
 
       if (req.body.remember) {  
         try{
+          // remember me
           const token = crypto.randomBytes(32).toString('hex')
           await createRow('RememberMeToken', { token, userId: req.user.id })
           res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 14 * 24 * 60 * 60 * 1000 }); // 14 days
-          
         }catch(err){
           return next(err)
         }
