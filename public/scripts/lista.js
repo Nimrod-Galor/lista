@@ -6,10 +6,10 @@ function renderList(){
 
 function createDomList(parentDom, currentList){
     // clone list dropdown menu
-    let tmpDropdown = document.getElementById('list-dropdown-template')
-    let clonDropdown = tmpDropdown.content.cloneNode(true);
-    clonDropdown.querySelector('.dropdown-menu').dataset.id = currentList.id
-    parentDom.appendChild(clonDropdown)
+    let dropdownTemplate = document.getElementById('list-dropdown-template')
+    let listMenuDropdown = dropdownTemplate.content.cloneNode(true);
+    listMenuDropdown.querySelector('.dropdown-menu').dataset.id = currentList.id
+    parentDom.appendChild(listMenuDropdown)
 
     // create list DOM
     const listDom = document.createElement(currentList.type)
@@ -20,7 +20,14 @@ function createDomList(parentDom, currentList){
         const currentItemObj = currentList.items[i]
         const objectId = currentItemObj.id
         if("edit" in currentItemObj){
-            const itemWrapperDom = currentList.type === 'div' ? document.createElement('div') : document.createElement('li')
+            var itemWrapperDom
+            if(currentList.type === 'div'){
+                itemWrapperDom = document.createElement('div')
+                itemWrapperDom.classList.add('simpleList')
+            }else{
+                itemWrapperDom = document.createElement('li')
+            }
+
             //  Edit version
             const templateDom = document.getElementById(`${currentItemObj.type}-edit-template`)
             const editItemDom = templateDom.content.cloneNode(true)
@@ -62,6 +69,8 @@ function createDomList(parentDom, currentList){
         var itemWrapperDom
         if(currentList.type === 'div'){
             itemWrapperDom = itemTemplate.content.cloneNode(true)
+            itemWrapperDom.querySelector('.d-flex').classList.add('simpleList')
+            itemWrapperDom.querySelector('.d-flex').tabIndex = 1
         }else{
             itemWrapperDom = document.createElement('li')
             itemWrapperDom.appendChild(itemTemplate.content.cloneNode(true))
@@ -102,12 +111,18 @@ function createDomList(parentDom, currentList){
                 itemInner.appendChild(itemDom)
             break
             case 'div':
+                itemWrapperDom.querySelector('.justify-content-between').classList.remove('align-items-center')
+                itemWrapperDom.querySelector('.justify-content-between').classList.add('align-items-start')
                 createDomList(itemInner, currentItemObj)
             break
             case 'ul':
+                itemWrapperDom.querySelector('.justify-content-between').classList.remove('align-items-center')
+                itemWrapperDom.querySelector('.justify-content-between').classList.add('align-items-start')
                 createDomList(itemInner, currentItemObj)
             break
             case 'ol':
+                itemWrapperDom.querySelector('.justify-content-between').classList.remove('align-items-center')
+                itemWrapperDom.querySelector('.justify-content-between').classList.add('align-items-start')
                 createDomList(itemInner, currentItemObj)
             break
         }

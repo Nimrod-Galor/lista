@@ -164,7 +164,7 @@ body.edit .save-btn{
 }
 
 
-body.create li:focus, body.edit li:focus{
+body.create li:focus, body.edit li:focus, body.create div:focus, body.edit div:focus{
     border:1px dotted orange;
     padding: 5px;
 }
@@ -177,6 +177,10 @@ body.edit li:focus .list-item-menu{
     display: inline-flex;
 }
 
-body.edit li:focus ul .list-item-menu, body.edit li:focus ol .list-item-menu{
+body.edit div:focus .list-item-menu{
+    display: inline-flex;
+}
+
+body.edit li:focus ul .list-item-menu, body.edit li:focus ol .list-item-menu, body.edit li:focus div.simpleList .list-item-menu{
     display: none;
 }
