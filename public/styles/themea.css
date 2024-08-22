@@ -1,3 +1,5 @@
+title{text-transform: capitalize;}
+
 .pointer{cursor: pointer;}
 
 .close-btn{
@@ -131,10 +133,14 @@ fieldset.comment-voting{
 }
 
 /*List Page */
-.save-btn{
+body.show .meta-edit{
     display: none;
 }
 
-.Create .save-btn{
-    display: block;
+body.show .edit-list-dropdown{
+    display: none;
+}
+
+body.creae .meta, body.edit .meta{
+    display: none;
 }

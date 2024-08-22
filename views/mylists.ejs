@@ -33,7 +33,7 @@
                             <li class="nav-item"><a href="/admin" class="nav-link link-body-emphasis px-2">Admin</a></li>
                         <%}%>
                         <li class="nav-item"><a href="/mylists" class="nav-link link-body-emphasis px-2">My Lists</a></li>
-                        <li class="nav-item"><a href="/create" class="nav-link link-body-emphasis px-2">Create Lists</a></li>
+                        <li class="nav-item"><a href="/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
                         <li class="nav-item"><a href="/profile" class="nav-link link-body-emphasis px-2">My Profile</a></li>
                         <li class="nav-item"><a href="/logout" class="nav-link link-body-emphasis px-2">Logout</a></li>
                     <%}else{%>
@@ -112,8 +112,12 @@
                             <tr>
                                 <% modelHeaders.forEach((field) => {%>
                                     <td class="<%if(field.key == 'createDate'){%>d-none d-md-table-cell<%}else if(field.key == 'updated'){%>d-none d-xl-table-cell<%}else if(field.key == 'publish'){%>d-none d-lg-table-cell<%}else if(field.key == 'viewCount'){%>d-none d-xl-table-cell<%}%>">
-                                        <% if(field.linkRelation){ %>
-                                            <a href="/admin/<%-field.linkRelation + '/' + field.filter + '/' + data[field.filterKey]%>">
+                                        <% if(field.linkRelation && "filter" in field){ %>
+                                            <a href="/<%-field.linkRelation + '/' + field.filter + '/' + data[field.filterKey]%>">
+                                                <%-data[field.key]%>
+                                            </a>
+                                        <%}else if(field.linkRelation){ %>
+                                            <a href="/<%-field.linkRelation + '/' + data[field.filterKey]%>">
                                                 <%-data[field.key]%>
                                             </a>
                                         <%}else if(field.key === 'slug'){%>
@@ -129,7 +133,7 @@
                                 <td class="text-end">
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                         <%if(permissions.list.delete.allow === true && (!permissions.list.delete.where.authorId || permissions.list.delete.where.authorId === data.authorId)){%>
-                                        <form action="/admin/delete/list" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
+                                        <form action="/delete/list" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
                                             <input type="hidden" name="id" value="<%=data.id%>"/>
                                             <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
                                             <button type="submit" class="btn btn-warning btn-sm">Delete</button>

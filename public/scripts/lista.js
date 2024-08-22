@@ -291,13 +291,13 @@ function saveList(){
         // }
         if(data){
             if(data.messageType === 'success'){
-                topAlert('alert-success', data.messageTitle, data.messageBody)
+                topAlert('success', data.messageTitle, data.messageBody)
                 document.getElementById('meta-title').textContent = listData.title
                 document.getElementById('meta-description').textContent = listData.description
                 document.body.classList.remove('create', 'edit')
                 document.body.classList.add('show')
             }else{
-                topAlert('alert-danger', data.messageTitle, data.messageBody)
+                topAlert(data.messageType, data.messageTitle, data.messageBody)
             }
         }
     })

@@ -11,7 +11,7 @@ async function fetchData(action, method, dataToSend){
         if(res.ok){
             return res.json()
         }else{
-            topAlert('alert-danger', res.status, res.statusText)
+            topAlert('warning', res.status, res.statusText)
         }
     })
     .catch(err => {

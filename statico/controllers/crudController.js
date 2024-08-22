@@ -1,6 +1,7 @@
 import createError from 'http-errors'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
+import { PrismaClient, Prisma } from '@prisma/client'
 import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
 import { isAuthorized } from '../permissions/permissions.js'

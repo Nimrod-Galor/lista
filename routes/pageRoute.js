@@ -29,7 +29,7 @@ router.get("/create", ensureLoggedIn('/login'), setRoleLocalsPermissions, (req, 
         }
     }
 
-    res.render('list', {user: req.user, listData, mode: 'Create'})
+    res.render('list', {user: req.user, listData, mode: 'create'})
 })
 
 router.get('/profile', ensureLoggedIn('/login'), profile)

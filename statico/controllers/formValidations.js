@@ -119,9 +119,10 @@ const listValidation = () => [
         .isLength({ min: 3, max: 128 }).withMessage('Title must be at least 3 characters and max 128.')
         .escape(),
     body('body')
-        .trim()
-        .notEmpty().withMessage('Body can not be empty.')
-        .escape(),
+        // .isJSON({ allow_primitives: true }).withMessage('Body is not JSON.'),
+        // .trim()
+        .notEmpty().withMessage('Body can not be empty.'),
+        // .escape(),
     body('description')
         .optional()
         .trim()

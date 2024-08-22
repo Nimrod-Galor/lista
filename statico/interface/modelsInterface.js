@@ -69,7 +69,7 @@ const modelsInterface = {
     list: {
         displayName: "Lists",
         displayFields: [
-            {key: "title", header: "Title", type: "String"},
+            {key: "title", header: "Title", type: "String", linkRelation: "list" , filterKey: 'id'},
             {key: "createDate", header: "Create Date", type: "DateTime"},
             {key: "updated", header: "Update Date", type: "DateTime"},
             {key: "publish", header: "Public", type: "Boolean"},
