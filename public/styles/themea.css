@@ -141,7 +141,15 @@ body.show .edit-list-dropdown{
     display: none;
 }
 
-body.creae .meta, body.edit .meta{
+body.create .meta, body.edit .meta{
+    display: none;
+}
+
+body.create .update-btn{
+    display: none;
+}
+
+body.edit .save-btn{
     display: none;
 }
 
@@ -150,3 +158,4 @@ body.creae .meta, body.edit .meta{
     border: 1px dashed orange;
     padding: 15px;
 }
+

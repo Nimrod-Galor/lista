@@ -269,27 +269,13 @@ function saveList(){
         return
     }
 
-    // const form = document.getElementById('form-meta')
-    // const formData = new FormData(form);
-    // const dataToSend = Object.fromEntries(formData);
-    // if(listData.id != 0){
-    //     dataToSend.id = listData.id
-    // }
-    // dataToSend.body = JSON.stringify(listData.body)
-
     listData.title = listTitle.value.trim()
     listData.description = document.getElementById('listDescription').value
     const dataToSend = listData
-    // delete dataToSend.id
+    
     // POST list
-    fetchData(`/api/create/list`, 'POST', dataToSend)
+    fetchData(`/api/${mode}/list`, 'POST', dataToSend)
     .then(data => {
-        console.log(data)
-        // {
-        //     "messageBody": "List \"list 1\" was created successfuly",
-        //     "messageTitle": "List Created",
-        //     "messageType": "success"
-        // }
         if(data){
             if(data.messageType === 'success'){
                 topAlert('success', data.messageTitle, data.messageBody)
