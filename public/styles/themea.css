@@ -190,3 +190,11 @@ body.edit div:focus .list-item-menu{
 body.edit li:focus ul .list-item-menu, body.edit li:focus ol .list-item-menu, body.edit li:focus div.simpleList .list-item-menu{
     display: none;
 }
+
+body.create .show-list-btn, body.show .show-list-btn{
+    display: none;
+}
+
+body.create .edit-list-btn, body.edit .edit-list-btn{
+    display: none;
+}

@@ -242,12 +242,15 @@ function removeEditKey(currentList){
     for(let i = 0 ; i < currentList.items.length; i++){
         if("edit" in currentList.items[i]){
             delete currentList.items[i].edit
+            return true
         }
         if("items" in currentList.items[i]){
-            removeEditItems(currentList.items[i])
+            if(removeEditKey(currentList.items[i]) === true){
+                return true
+            }
         }
     }
-
+    return false
 }
 
 function removeEmptySubLists(currentList = listData.body){
@@ -479,6 +482,16 @@ function debounce(func, delay) {
 }
 
 const debouncedSaveList = debounce(saveList, 10000);
+
+function userShowList(){
+    document.body.classList.remove('edit')
+    document.body.classList.add('show')
+}
+
+function userEditList(){
+    document.body.classList.remove('show')
+    document.body.classList.add('edit')
+}
 
 Array.prototype.move = function (from, to) {
     this.splice(to, 0, this.splice(from, 1)[0]);
