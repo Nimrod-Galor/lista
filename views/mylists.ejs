@@ -16,39 +16,53 @@
 </head>
 <body class="d-flex flex-column h-100">
     <nav class="navbar navbar-expand-lg py-2 bg-body-tertiary border-bottom">
-        <div class="container d-flex flex-wrap align-items-end">
-            <a href="/" class="navbar-brand">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-lines-fill align-bottom" viewBox="0 0 16 16">
-                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
-                </svg>
-                <span class="fs-4"> Lista</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNavbarTop" aria-controls="headerNavbarTop" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div id="headerNavbarTop" class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <%if(user){%>
-                        <%if(permissions.admin_page.view){%>
-                            <li class="nav-item"><a href="/admin" class="nav-link link-body-emphasis px-2">Admin</a></li>
-                        <%}%>
-                        <li class="nav-item"><a href="/mylists" class="nav-link link-body-emphasis px-2">My Lists</a></li>
-                        <li class="nav-item"><a href="/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
-                        <li class="nav-item"><a href="/profile" class="nav-link link-body-emphasis px-2">My Profile</a></li>
-                        <li class="nav-item"><a href="/logout" class="nav-link link-body-emphasis px-2">Logout</a></li>
-                    <%}else{%>
-                        <li class="nav-item"><a href="/login" class="nav-link link-body-emphasis px-2">Login</a></li>
-                        <li class="nav-item"><a href="/signup" class="nav-link link-body-emphasis px-2">Sign up</a></li>
-                    <%}%>
-                </ul>
+        <div class="container d-flex">
+            <div class="col-md-3 mb-2 mb-md-0">
+                <a href="/" class="navbar-brand">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-person-lines-fill align-bottom" viewBox="0 0 16 16">
+                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                    </svg>
+                    <span class="fs-4"> Lista</span>
+                </a>
             </div>
+    
+            <ul class="nav col-auto mb-2 justify-content-center mb-md-0">
+                <%if(user){%>
+                    <li class="nav-item"><a href="/mylists" class="nav-link link-body-emphasis px-2">My Lists</a></li>
+                    <li class="nav-item"><a href="/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
+                <%}%>
+            </ul>
 
-            <form action="/search" method="GET" class="col-12 col-lg-auto my-2" role="search">
-                <div class="input-group">
-                    <input type="search" name="search" class="form-control" placeholder="Search..." aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
+            <!-- <div class="col-10 col-md-3">
+                <form action="/search" method="GET" class="col-12 col-lg-auto my-2" role="search">
+                    <div class="input-group">
+                        <input type="search" name="search" class="form-control" placeholder="Search..." aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </div>
+                </form>
+            </div> -->
+    
+            <%if(user){%>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNavbarTop" aria-controls="headerNavbarTop" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="col-12 col-md-auto">
+                    <div id="headerNavbarTop" class="collapse navbar-collapse">
+                        <ul class="navbar-nav me-auto">
+                            <%if(permissions.admin_page.view){%>
+                                <li class="nav-item"><a href="/admin" class="nav-link link-body-emphasis px-2">Admin</a></li>
+                            <%}%>
+                            <li class="nav-item"><a href="/profile" class="nav-link link-body-emphasis px-2">My Profile</a></li>
+                            <li class="nav-item"><a href="/logout" class="nav-link link-body-emphasis px-2">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </form>
+            <%}else{%>
+                <div class="col-auto">
+                    <a href="/login" class="btn btn-outline-primary me-2">Login</a>
+                    <a href="/signup" class="btn btn-primary">Sign up</a>
+                </div>
+            <%}%>
         </div>
     </nav>
 
