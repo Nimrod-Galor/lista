@@ -171,14 +171,20 @@ body.create li:focus, body.edit li:focus, body.create div:focus, body.edit div:f
 
 body.create li:focus .list-item-menu{
     display: inline-flex;
+    border:1px dotted orange;
+    padding: 2px;
 }
 
 body.edit li:focus .list-item-menu{
     display: inline-flex;
+    border:1px dotted orange;
+    padding: 2px;
 }
 
 body.edit div:focus .list-item-menu{
     display: inline-flex;
+    border:1px dotted orange;
+    padding: 2px;
 }
 
 body.edit li:focus ul .list-item-menu, body.edit li:focus ol .list-item-menu, body.edit li:focus div.simpleList .list-item-menu{

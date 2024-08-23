@@ -53,8 +53,8 @@ function createDomList(parentDom, currentList){
             }
 
             // add event listeners
-            editItemDom.querySelector('.btn-success').addEventListener('click', () => updateItem(event, objectId))
-            editItemDom.querySelector('.btn-link').addEventListener('click', () => cancelUpdate(objectId))
+            editItemDom.querySelector('.btn-success').addEventListener('click', () => updateItem(objectId))
+            editItemDom.querySelector('.btn-link').addEventListener('click', () => deleteItem(objectId))
 
             // Append to DOM
             itemWrapperDom.appendChild(editItemDom)
@@ -65,15 +65,21 @@ function createDomList(parentDom, currentList){
             continue
         }
 
-        var itemTemplate = document.getElementById('item-template')
+        const itemTemplate = document.getElementById('item-template')
+        const itemTemplateClone = itemTemplate.content.cloneNode(true)
+        let test = itemTemplateClone.querySelector('.btn-danger')
+        itemTemplateClone.querySelector('.btn-danger').addEventListener('mousedown', () => userDeleteItem(objectId))
+        itemTemplateClone.querySelector('.btn-success').addEventListener('mousedown', () => userEditItem(objectId))
+        //itemTemplateClone.querySelector('.btn-primary').addEventListener('mousedown', () => itemEdite(objectId)) ? drag
+
         var itemWrapperDom
         if(currentList.type === 'div'){
-            itemWrapperDom = itemTemplate.content.cloneNode(true)
+            itemWrapperDom = itemTemplateClone//itemTemplate.content.cloneNode(true)
             itemWrapperDom.querySelector('.d-flex').classList.add('simpleList')
             itemWrapperDom.querySelector('.d-flex').tabIndex = 1
         }else{
             itemWrapperDom = document.createElement('li')
-            itemWrapperDom.appendChild(itemTemplate.content.cloneNode(true))
+            itemWrapperDom.appendChild(itemTemplateClone)
         }
         const itemInner = itemWrapperDom.querySelector('.list-item')
 
@@ -133,7 +139,7 @@ function createDomList(parentDom, currentList){
     }
 }
 
-function updateItem(event, objId){
+function updateItem(objId){
     const currentObj = getObjectById(objId, listData.body)
     switch(currentObj.type){
         case 'text':
@@ -156,9 +162,12 @@ function updateItem(event, objId){
 
     // re render DOM
     renderList()
+
+    // publish update
+    saveList()
 }
 
-function cancelUpdate(objId, currentList = listData.body){
+function deleteItem(objId, currentList = listData.body){
     for(let i = 0 ; i < currentList.items.length; i++){
         if(currentList.items[i].id === objId){
             // remove this object from array
@@ -166,7 +175,7 @@ function cancelUpdate(objId, currentList = listData.body){
             break
         }
         if("items" in currentList.items[i]){
-            cancelUpdate(objId, currentList.items[i])
+            deleteItem(objId, currentList.items[i])
         }
     }
 
@@ -229,9 +238,9 @@ function getObjectById(objId, currentItemObj){
             return item
         }
         if("items" in item){
-            const fountItem = getObjectById(objId, item)
-            if(fountItem){
-                return fountItem
+            const foundItem = getObjectById(objId, item)
+            if(foundItem){
+                return foundItem
             }
         }
     }
@@ -316,4 +325,31 @@ function saveList(){
             }
         }
     })
+}
+
+function userDeleteItem(objectId){
+    const itemDelete = getObjectById(objectId, listData.body)
+    let itemType
+    switch(itemDelete.type){
+        case 'div':
+            itemType = 'Simple list'
+        break
+        case 'ul':
+            itemType = 'Unordered List'
+        break
+        case 'ol':
+            itemType = 'Ordered List'
+        break
+        default:
+            itemType = itemDelete.type
+    }
+    if(confirm(`Delete ${itemType} item?`)){
+        deleteItem(itemDelete.id)
+        // publish update
+        saveList()
+    }
+}
+
+function userEditItem(objectId){
+    console.log(objectId)
 }
