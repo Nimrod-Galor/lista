@@ -448,7 +448,9 @@ export async function createList(req, res, next){
         }
 
         // Create List
-        await createRow('list', tmpList)
+        const newList = await createRow('list', tmpList)
+
+        req.newListId = newList.id
 
         // Send Success json
         req.crud_response = {messageBody: `List "${title}" was created successfuly`, messageTitle: 'List Created', messageType: 'success'}

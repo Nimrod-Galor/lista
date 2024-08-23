@@ -92,22 +92,22 @@
             <div class="meta-edit">
                 <form id="form-meta">
                     <div class="form-floating my-3">
-                        <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title" value="<%=listData.title%>">
+                        <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title" value="<%=listData.title%>" onchange="titleChanged(event)">
                         <label for="listTitle">List Title</label>
                         <div id="validationTitleFeedback" class="invalid-feedback">
                             List title cannot be empty.
                         </div>            
                     </div>
                     <div class="form-floating">
-                        <textarea class="form-control" placeholder="List Description" id="listDescription" name="description" style="height: 100px"><%=listData.description%></textarea>
+                        <textarea class="form-control" placeholder="List Description" id="listDescription" name="description" style="height: 100px" onchange="descriptionChanged(event)"><%=listData.description%></textarea>
                         <label for="listDescription">List Description</label>
                     </div>
                 </form>
-                <!-- <div class="col-md my-3 save-btn float-end">
+                <div class="col-md my-3 save-btn float-end">
                     <button type="button" class="btn btn-warning" style="position: relative;z-index:99;" onclick="saveList()">Save</button>
                 </div>
 
-                <div class="col-md my-3 update-btn float-end">
+                <!-- <div class="col-md my-3 update-btn float-end">
                     <button type="button" class="btn btn-warning" style="position: relative;z-index:99;" onclick="saveList()">Update</button>
                 </div> -->
             </div>

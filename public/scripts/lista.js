@@ -163,8 +163,10 @@ function updateItem(objId){
     // re render DOM
     renderList()
 
-    // publish update
-    saveList()
+    if("id" in listData){
+        // publish update
+        saveList()
+    }
 }
 
 function deleteItem(objId, currentList = listData.body){
@@ -315,16 +317,26 @@ function saveList(){
     .then(data => {
         if(data){
             if(data.messageType === 'success'){
-                topAlert('success', data.messageTitle, data.messageBody)
-                document.getElementById('meta-title').textContent = listData.title
-                document.getElementById('meta-description').textContent = listData.description
-                document.body.classList.remove('create', 'edit')
-                document.body.classList.add('show')
+                // topAlert('success', data.messageTitle, data.messageBody)
+                // document.getElementById('meta-title').textContent = listData.title
+                // document.getElementById('meta-description').textContent = listData.description
+                // document.body.classList.remove('create', 'edit')
+                // document.body.classList.add('show')
+            }else if(data.messageType === 'redirect'){
+                window.location.replace(data.messageBody)
             }else{
                 topAlert(data.messageType, data.messageTitle, data.messageBody)
             }
         }
     })
+}
+
+function titleChanged(event){
+    console.log(event.currentTarget.value)
+}
+
+function descriptionChanged(event){
+    console.log(event.currentTarget.value)
 }
 
 function userDeleteItem(objectId){
@@ -345,8 +357,10 @@ function userDeleteItem(objectId){
     }
     if(confirm(`Delete ${itemType} item?`)){
         deleteItem(itemDelete.id)
-        // publish update
-        saveList()
+        if("id" in listData){
+            // publish update
+            saveList()
+        }
     }
 }
 
