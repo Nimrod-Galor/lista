@@ -250,7 +250,7 @@ function getObjectById(objId, currentItemObj){
 }
 
 function newItemObject(type){
-    const id = (Math.random()*100000000000000000).toString(16)
+    const id = (Math.random()*10000000).toString(16).split('.')[0]
     const edit = true
     switch(type){
         case 'text':

@@ -23,7 +23,7 @@ router.get("/create", ensureLoggedIn('/login'), setRoleLocalsPermissions, (req, 
         "title": "",
         "description": "",
         "body": {
-            "id": (Math.random()*100000000000000000).toString(16),
+            "id": (Math.random()*10000000).toString(16).split('.')[0],
             "type": "ul",
             "items": []
         }
