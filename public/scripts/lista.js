@@ -284,9 +284,11 @@ function saveList(){
         listTitle.classList.remove('is-valid')
         listTitle.classList.add('is-invalid')
         return
-    }else{
+    }else if(listTitle.classList.contains('is-invalid')){
         listTitle.classList.remove('is-invalid')
         listTitle.classList.add('is-valid')
+    }else{
+        listTitle.classList.remove('is-valid')
     }
 
     // remove all open edit items
@@ -322,6 +324,8 @@ function saveList(){
                 // document.getElementById('meta-description').textContent = listData.description
                 // document.body.classList.remove('create', 'edit')
                 // document.body.classList.add('show')
+                document.querySelector('.toast .toast-body').textContent = data.messageBody
+                toast.show()
             }else if(data.messageType === 'redirect'){
                 window.location.replace(data.messageBody)
             }else{
@@ -332,11 +336,19 @@ function saveList(){
 }
 
 function titleChanged(event){
-    console.log(event.currentTarget.value)
+    // console.log(event.currentTarget.value)
+    if("id" in listData){
+        // publish update
+        saveList()
+    }
 }
 
 function descriptionChanged(event){
-    console.log(event.currentTarget.value)
+    // console.log(event.currentTarget.value)
+    if("id" in listData){
+        // publish update
+        saveList()
+    }
 }
 
 function userDeleteItem(objectId){
