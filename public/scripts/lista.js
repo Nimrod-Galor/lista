@@ -54,9 +54,14 @@ function createDomList(parentDom, currentList){
                     editItemDom.querySelector('textarea').textContent = currentItemObj.value
                     editItemDom.querySelector('label').htmlFor = objectId
                 break
+                case 'checkbox':
+                    editItemDom.querySelector('input').id = objectId
+                    editItemDom.querySelector('input').value = currentItemObj.label || ''
+                    editItemDom.querySelector('label').htmlFor = objectId
+                break
                 default:
                     editItemDom.querySelector('input').id = objectId
-                    editItemDom.querySelector('input').value = currentItemObj.value
+                    editItemDom.querySelector('input').value = currentItemObj.value || ''
                     editItemDom.querySelector('label').htmlFor = objectId
                 break
             }
@@ -85,7 +90,16 @@ function createDomList(parentDom, currentList){
         let test = itemTemplateClone.querySelector('.btn-danger')
         itemTemplateClone.querySelector('.btn-danger').addEventListener('mousedown', () => userDeleteItem(objectId))
         itemTemplateClone.querySelector('.btn-success').addEventListener('mousedown', () => userEditItem(objectId))
-        //itemTemplateClone.querySelector('.btn-primary').addEventListener('mousedown', () => itemEdite(objectId)) ? drag
+        if(i == 0){
+            itemTemplateClone.querySelector('.btn-primary.up').disabled = true
+        }else{
+            itemTemplateClone.querySelector('.btn-primary.up').addEventListener('mousedown', () => userMoveItemUp(objectId))
+        }
+        if(i == currentList.items.length -1){
+            itemTemplateClone.querySelector('.btn-primary.down').disabled = true
+        }else{
+            itemTemplateClone.querySelector('.btn-primary.down').addEventListener('mousedown', () => userMoveItemDown(objectId))
+        }
 
         var itemWrapperDom
         if(currentList.type === 'div'){
@@ -413,4 +427,59 @@ function userEditItem(objectId){
     const itemToUpdate = getObjectById(objectId, listData.body)
     itemToUpdate.edit = true
     renderList()
+}
+
+function userMoveItemUp(objectId){
+    reorderItem(objectId, listData.body, 'up')
+    renderList()
+    debouncedSaveList()
+}
+
+function userMoveItemDown(objectId){
+    reorderItem(objectId, listData.body, 'down')
+    renderList()
+    debouncedSaveList()
+}
+
+function reorderItem(objectId, currentList, dir){
+    for(let i=0; i < currentList.items.length; i++){
+        if(currentList.items[i].id === objectId){
+            let to = dir === 'up' ? i-1 : i+1
+            if(to >= currentList.items.length){
+                to = currentList.items.length-1
+            }else if(to < 0){
+                to = 0
+            }
+            currentList.items.move(i, to)
+            return true
+        }
+        if("items" in currentList.items[i]){
+            if(reorderItem(objectId, currentList.items[i], dir) === true){
+                break
+            }
+        }
+    }
+    return false
+}
+
+function debounce(func, delay) {
+    let timeoutId
+
+    return function(...args) {
+        // Clear the existing timeout if the function is called again before delay
+        if (timeoutId) {
+            clearTimeout(timeoutId)
+        }
+
+        // Set a new timeout
+        timeoutId = setTimeout(() => {
+            func.apply(this, args); // Call the original function with the correct `this` context and arguments
+        }, delay)
+    }
+}
+
+const debouncedSaveList = debounce(saveList, 10000);
+
+Array.prototype.move = function (from, to) {
+    this.splice(to, 0, this.splice(from, 1)[0]);
 }
