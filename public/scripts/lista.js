@@ -31,30 +31,45 @@ function createDomList(parentDom, currentList){
             //  Edit version
             const templateDom = document.getElementById(`${currentItemObj.type}-edit-template`)
             const editItemDom = templateDom.content.cloneNode(true)
+            if(currentItemObj.edit === true){
+                // update edite item title
+                const editItemTitle = editItemDom.querySelector('.edit-item-title')
+                editItemTitle.textContent = editItemTitle.textContent.replace('Add', 'Edit')
+            }
             switch(currentItemObj.type){
                 case 'link':
                     const inputs = editItemDom.querySelectorAll('input')
                     const labels = editItemDom.querySelectorAll('label')
 
                     inputs[0].id = `href-${objectId}`
+                    inputs[0].value = currentItemObj.href
                     labels[0].htmlFor = `href-${objectId}`
 
                     inputs[1].id = `anchor-${objectId}`
+                    inputs[1].value = currentItemObj.anchor
                     labels[1].htmlFor = `anchor-${objectId}`
                 break
                 case 'bigtext':
                     editItemDom.querySelector('textarea').id = objectId
+                    editItemDom.querySelector('textarea').textContent = currentItemObj.value
                     editItemDom.querySelector('label').htmlFor = objectId
                 break
                 default:
                     editItemDom.querySelector('input').id = objectId
+                    editItemDom.querySelector('input').value = currentItemObj.value
                     editItemDom.querySelector('label').htmlFor = objectId
                 break
             }
 
             // add event listeners
             editItemDom.querySelector('.btn-success').addEventListener('click', () => updateItem(objectId))
-            editItemDom.querySelector('.btn-link').addEventListener('click', () => deleteItem(objectId))
+            if(currentItemObj.edit === true){
+                // update mode
+                editItemDom.querySelector('.btn-link').addEventListener('click', () => userCancelItemEdit())
+            }else{
+                // create new item mode
+                editItemDom.querySelector('.btn-link').addEventListener('click', () => deleteItem(objectId))
+            }
 
             // Append to DOM
             itemWrapperDom.appendChild(editItemDom)
@@ -203,6 +218,24 @@ function removeEditItems(currentList = listData.body){
     return
 }
 
+function userCancelItemEdit(){
+    removeEditKey(listData.body)
+    renderList()
+}
+
+
+function removeEditKey(currentList){
+    for(let i = 0 ; i < currentList.items.length; i++){
+        if("edit" in currentList.items[i]){
+            delete currentList.items[i].edit
+        }
+        if("items" in currentList.items[i]){
+            removeEditItems(currentList.items[i])
+        }
+    }
+
+}
+
 function removeEmptySubLists(currentList = listData.body){
     for(let i = 0 ; i < currentList.items.length; i++){
         if("items" in currentList.items[i]){
@@ -251,7 +284,7 @@ function getObjectById(objId, currentItemObj){
 
 function newItemObject(type){
     const id = (Math.random()*10000000).toString(16).split('.')[0]
-    const edit = true
+    const edit = false // false for creating true for updating
     switch(type){
         case 'text':
             return { type, id, value: '', edit }
@@ -377,5 +410,7 @@ function userDeleteItem(objectId){
 }
 
 function userEditItem(objectId){
-    console.log(objectId)
+    const itemToUpdate = getObjectById(objectId, listData.body)
+    itemToUpdate.edit = true
+    renderList()
 }
