@@ -198,3 +198,7 @@ body.create .show-list-btn, body.show .show-list-btn{
 body.create .edit-list-btn, body.edit .edit-list-btn{
     display: none;
 }
+
+body.show .list-setting-btn{
+    display: none;
+}

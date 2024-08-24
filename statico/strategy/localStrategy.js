@@ -26,7 +26,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser))
 
 passport.serializeUser(function(user, cb) {
     process.nextTick(function() {
-        cb(null, { id: user.id, username: user.userName, roleId: user.roleId })
+        cb(null, { id: user.id, username: user.userName, email: user.email, roleId: user.roleId })
     })
 })
 

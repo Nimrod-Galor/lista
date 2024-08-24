@@ -34,28 +34,6 @@ async function fetchData(action, method, dataToSend){
         const data = await response.json();
         return data;
     }
-
-
-
-
-    // return fetch(action, {
-    //     method,
-    //     body: JSON.stringify(dataToSend),
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //         "Authorization": `Bearer ${getCookie('jwt')}`
-    //     }
-    // })
-    // .then(res => {
-    //     if(res.ok){
-    //         return res.json()
-    //     }else{
-    //         topAlert('warning', res.status, res.statusText)
-    //     }
-    // })
-    // .catch(err => {
-    //     console.log('error', err)
-    // })
 }
 
 async function refreshAccessToken(){
@@ -92,15 +70,6 @@ function validateForm(event){
     
     return true
 }
-
-// Function to encode HTML entities
-// function encodeHTML(str) {
-//     return str.replace(/&/g, '&amp;')
-//               .replace(/</g, '&lt;')
-//               .replace(/>/g, '&gt;')
-//               .replace(/"/g, '&quot;')
-//               .replace(/'/g, '&#39;');
-// }
 
 const shadowTextArea = document.createElement('textarea');
 

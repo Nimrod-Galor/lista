@@ -493,6 +493,34 @@ function userEditList(){
     document.body.classList.add('edit')
 }
 
+function inviteuser(){
+    const form = document.getElementById('inviteForm')
+    form.classList.add('was-validated')
+
+    if (!form.checkValidity()) {// validation Failed
+        return false
+    }
+
+    const email = document.getElementById('inviteEmail').value
+
+    const dataToSend = {
+        listId: listData.id,
+        email
+    }
+
+    fetchData('/api/invite', "POST", dataToSend)
+    .then(data => {
+        if(data.messageType === 'success'){
+            // add invite to invite list
+            const inviteTemplate = document.getElementById('invite-item')
+            const inviteDom = inviteTemplate.content.cloneNode(true)
+            inviteDom.querySelector('#email').textContent = email
+            document.getElementById('pendingInvites').appendChild(inviteDom)
+        }
+        topAlert(data.messageType, data.messageTitle, data.messageBody)
+    })
+}
+
 Array.prototype.move = function (from, to) {
     this.splice(to, 0, this.splice(from, 1)[0]);
 }

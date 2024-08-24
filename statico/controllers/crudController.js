@@ -1,7 +1,6 @@
 import createError from 'http-errors'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
-import { PrismaClient, Prisma } from '@prisma/client'
 import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
 import { isAuthorized } from '../permissions/permissions.js'
@@ -15,7 +14,7 @@ export function listContent(contentType){
             contentType = contentType || req.params.contentType || Object.keys(modelsInterface)[0]
             
             // get selected model
-            const selectedModel = Object.entries(modelsInterface).find(([modelName,model]) => modelName === contentType)[1]
+            const selectedModel = Object.entries(modelsInterface).find(([modelName, model]) => modelName === contentType)[1]
         
             // check we didnt get here by mistake
             if(selectedModel === undefined){
@@ -538,6 +537,140 @@ export async function deleteList(req, res, next){
     }
 }
 
+
+/****************************************/
+/** Invite                                */
+/****************************************/
+
+// list pending recived invites
+export async function pendingInvitesRecived(req, res, next){
+    try{
+        const where = { recipientEmail: req.user.email }
+        const select = {
+            id: true,
+            author: {
+                select:{
+                    email: true,
+                    userName: true
+                }
+            },
+            list: {
+                select: {
+                    title: true
+                }
+            }
+        }
+
+        const pendingInvitesRecived = await readRows('invite', {where, select})
+
+        req.pendingInvitesRecived = pendingInvitesRecived
+    }catch(errorMsg){
+        //  Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+// Accept Invite
+export async function acceptInvite(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    //  Get user data
+    let { inviteid } = matchedData(req, { includeOptionals: true });
+
+    try{
+        const invite = await findUnique('invite', { id: inviteid } )
+        if(!invite){
+            return next(createError('Invite could not be found.'))
+        }
+
+        // add  user to list viewer
+        await updateRow('list', { id: invite.listId }, {
+            viewers: {
+                connect: { id: req.user.id }
+            }
+        })
+
+        //delete invite
+        await deleteRow('invite', {id: inviteid } )
+    }catch(errorMsg){
+        //  Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+// Decline Invite
+export async function declineInvite(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    //  Get user data
+    let { inviteid } = matchedData(req, { includeOptionals: true });
+
+    try{
+        //delete invite
+        await deleteRow('invite', {id: inviteid } )
+    }catch(errorMsg){
+        //  Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+// Send Invite to user
+export async function inviteUser(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
+    //  Get user data
+    let { listId, email } = matchedData(req, { includeOptionals: true });
+
+    try{
+        // Set new Invite object
+        const tmpInvite = {
+            list: {
+                connect: {id: listId}
+            },
+            recipient: {
+                connect: { email }
+            },
+            author: {
+                connect: { id: req.user.id }
+            }
+        }
+
+        // Create Invite
+        const newInvite = await createRow('invite', tmpInvite)
+
+        // Send Success json
+        req.crud_response = {messageBody: `Invitation to "${email}" was sent`, messageTitle: 'Invitation Created', messageType: 'success'}
+        
+    }catch(errorMsg){
+         // Send Error json
+         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+     }
+     finally{
+        next()
+    }
+}
 
 
 /****************************************/

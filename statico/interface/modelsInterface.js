@@ -90,24 +90,74 @@ const modelsInterface = {
                 }
             },
             authorId: true,
+            viewers: {
+                select : {
+                    id: true,
+                    userName: true,
+                    email: true
+                }
+            },
+            editors: true,
             _count:{
                 select: {
                     viewers: true,
                     editors: true
+                }
+            },
+            pendingInvites: {
+                select: {
+                    id: true,
+                    recipient: {
+                        select: {
+                            email: true
+                        }
+                    }
                 }
             }
         },
         destructur: (item) => ({
             ...item,
             author: item.author.userName,
-            viewUsers: item._count.viewers,
-            editUsers: item._count.editors,
+            viewersCount: item._count.viewers,
+            editorsCount: item._count.editors,
             _count: undefined
         }),
         filters: [
             {name: "id", key: "id", type: "ObjectID"}, // filter posts by Id
             {name: "author", key: "authorId", type: "ObjectID"} // filter posts by author
         ]
+    },
+
+    invite: {
+        displayName: "Invites",
+        displayFields: [
+            {key: "createDate", header: "Create Date", type: "DateTime"},
+            {key: "author", header: "Author", type: "String", linkRelation: "user", filter: "id", filterKey: 'id', sortRelation: "userName", sortKey: 'userName'},
+            {key: "recipient", header: "Recipient", type: "String", linkRelation: "user", filter: "id", filterKey: 'id', sortRelation: "userName", sortKey: 'userName'},
+            {key: "listId", header: "List Id", type: "String", linkRelation: "list", filter: "id", filterKey: "listId"}
+        ],
+        selectFields: {
+            id: true,
+            createdAt: true,
+            author: {
+                select: {
+                    userName: true
+                }
+            },
+            authorId: true,
+            recipient: {
+                select: {
+                    userName: true
+                }
+            },
+            recipientId: true,
+            listId: true
+        },
+        destructur: (item) => ({
+            ...item,
+            author: item.author.userName,
+            recipient: item.recipient.userName,
+        })
     },
     
     role: {

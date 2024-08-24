@@ -26,12 +26,20 @@
             "publish":  { "allow": false }
         },
 
-        "lista": {
+        "list": {
             "list":     { "allow": true, "where": { "authorId": "user.id" } },
             "create":   { "allow": true },
             "edit":     { "allow": true, "where": { "authorId": "user.id" } },
             "delete":   { "allow": true, "where": { "authorId": "user.id" } },
             "publish":  { "allow": true, "where": { "authorId": "user.id" } }
+        },
+
+        "invite": {
+            "list":     { "allow": true, "where": {} },
+            "create":   { "allow": true },
+            "edit":     { "allow": false },
+            "delete":   { "allow": false },
+            "publish":  { "allow": false }
         },
 
         "role": {
@@ -70,6 +78,14 @@
         },
 
         "list": {
+            "list":     { "allow": true, "where": {} },
+            "create":   { "allow": true },
+            "edit":     { "allow": true, "where": {} },
+            "delete":   { "allow": true, "where": {} },
+            "publish":  { "allow": true, "where": {} }
+        },
+
+        "invite": {
             "list":     { "allow": true, "where": {} },
             "create":   { "allow": true },
             "edit":     { "allow": true, "where": {} },

@@ -23,8 +23,15 @@ const prisma = new PrismaClient().$extends({
           return new Date(list.updatedAt).toLocaleString()
         }
       }
+    },
+    invite: {
+      createDate: {
+        needs: { createdAt: true },
+        compute(user) {
+          return new Date(user.createdAt).toLocaleString()
+        }
+      }
     }
-    
   }
 })
 

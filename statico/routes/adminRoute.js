@@ -115,6 +115,13 @@ router.post("/list/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
     res.redirect('/admin/list')
 })
 
+// list invites
+router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized('invite', 'list', '/'), filterByPermissions('invite'), listContent('invite'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+    const baseUrl = `${req.baseUrl}/invite`
+    const path = req.path
+    res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
+})
+
 // list Roles
 router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list', '/'), filterByPermissions('role'), listContent('role'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/role`
@@ -126,6 +133,7 @@ router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'ed
     res.redirect('/admin/role')
 })
 
+
 // Permission Page
 router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), setRoleLocalsPermissions, admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
     res.render('permissions', {user: req.user, caption: '' })
@@ -135,5 +143,7 @@ router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissi
 router.post("/setup", initialize, setSessionMessages, (req, res) => {
     res.redirect('/login')
 })
+
+
 
 export default router

@@ -3,6 +3,7 @@ import he from 'he'
 import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRows, countRows } from '../db.js'
 import { isAuthorized, getPermissionFilter } from '../statico/permissions/permissions.js'
+import modelsInterface from '../statico/interface/modelsInterface.js'
 
 export async function mylists(req, res, next){
     // check for errors
@@ -20,7 +21,7 @@ export async function mylists(req, res, next){
     // res.locals.contentType = req.contentType || contentType || ''
     res.locals.numberOfPages = numberOfDocuments ? Math.ceil(numberOfDocuments / 10) : 0
     res.locals.currentPage = parseInt(req.query.page) || 1
-
+    res.locals.pendingInvitesRecived = req.pendingInvitesRecived
     next()
 }
 
@@ -129,15 +130,20 @@ export async function getList(req, res, next){
     //  Get user data
     const { mode = 'show' } = matchedData(req, { includeOptionals: true });
 
-
     const id = req.params.id
     try{
+
         //  Get list data
-        const listData = await findUnique('list', { id })
+        let listData = await findUnique('list', { id }, modelsInterface.list.selectFields)
+
         if(!listData){
             // list not found.
             return next(createError(404))
         }
+
+        // destruct
+        listData = modelsInterface.list.destructur(listData)
+
 
         res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 

@@ -89,25 +89,135 @@
             </div>
         </div>
 
-        <div class="list-top-menu d-flex justify-content-end my-1">
-            <button type="button" class="btn btn-outline-primary btn-sm p-1 py-0 show-list-btn" onclick="userShowList()">
+        <div class="list-top-menu d-flex justify-content-evenly my-1 pb-1 border-bottom">
+            <div class="list-setting-btn" data-bs-toggle="collapse" data-bs-target="#listSettings">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                </svg>
+            </div>
+            <div class="list-audience-btn" data-bs-toggle="collapse" data-bs-target="#listAudience">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                </svg>
+            </div>
+            <div class="list-share-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-share-fill" viewBox="0 0 16 16">
+                    <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
+                </svg>
+            </div>
+            <div class="show-list-btn" onclick="userShowList()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
                     <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
                     <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
                 </svg>
-            </button>
+            </div>
     
-            <button type="button" class="btn btn-outline-primary btn-sm p-1 py-0 edit-list-btn" onclick="userEditList()">
+            <div class="edit-list-btn" onclick="userEditList()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                 </svg>
-            </button>
+            </div>
         </div>
 
         <main>
+
+            <div id="listAudience" class="collapse">
+                
+                
+                    <ul id="list-viewers" class="list-group list-group-flush">
+                        <%if(listData.viewers.length === 0){%>
+                            <li class="list-group-item">
+                                No other users can edit this list.
+                            </li>
+                        <%}else{%>
+                            <li class="list-group-item active fw-bold">
+                                    Users that can see and edit this list:
+                            </li>
+                            <%for(user of listData.viewers){%>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div id="mail">
+                                        <%=user.email%>
+                                    </div>
+                                    <button class="btn btn-danger">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                                            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                                        </svg>
+                                    </button>
+                                </li>
+                            <%}%>
+                        <%}%>
+                    </ul>
+                
+                    <ul id="pendingInvites" class="list-group list-group-flush">
+                        <%if(listData.pendingInvites.length === 0){%>
+                            <li class="list-group-item">
+                                No pending Invites.
+                            </li>
+                        <%}else{%>
+                            <li class="list-group-item ACTIVE fw-bold">
+                                Pending Invites:
+                            </li>
+                            <%for(invite of listData.pendingInvites){%>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div id="mail">
+                                        <%=invite.recipient.email%>
+                                    </div>
+                                    <button type="button" class="btn btn-danger" onclick="cancelInvitation('<%invite.id%>')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                                            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                                        </svg>
+                                    </button>
+                                </li>
+                            <%}%>
+                        <%}%>
+                    </ul>
+                
+
+                <form id="inviteForm">
+                    <div class="row g-2 align-items-center my-3">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="inviteEmail" placeholder="name@example.com" pattern="[a-z0-9\._%+\-]+@[a-z0-9\.\-]+\.[a-z]{2,4}" required>
+                                <label for="inviteEmail">Email address</label>
+                                <div class="valid-feedback">
+                                    Looks good!
+                                </div>
+                                <div class="invalid-feedback">
+                                    Invalid email address
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary" onclick="inviteuser()">Add User</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+
             <div class="meta-edit">
                 <form id="form-meta">
+                    <div id="listSettings" class="collapse my-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="langDir" id="langDir2" value="ltr" checked>
+                            <label class="form-check-label" for="langDir2">
+                                Ltr
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="langDir" id="langDir1" value="rtl">
+                            <label class="form-check-label" for="langDir1">
+                                Rtl
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="listTitle" name="title" placeholder="List Title" value="<%=listData.title%>" onchange="titleChanged(event)">
                         <label for="listTitle">List Title</label>
@@ -120,6 +230,7 @@
                         <label for="listDescription">List Description</label>
                     </div>
                 </form>
+
                 <div class="col-md my-3 save-btn float-end">
                     <button type="button" class="btn btn-warning" style="position: relative;z-index:99;" onclick="saveList()">Save</button>
                 </div>
@@ -283,6 +394,18 @@
                 </button>
             </div>
         </div>
+    </template>
+
+    <template id="invite-item">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div id="email"></div>
+            <button class="btn btn-danger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                    <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                </svg>
+            </button>
+        </li>
     </template>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

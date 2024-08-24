@@ -1,7 +1,7 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import { searchValidation, modeValidation, deleteValidation } from '../statico/controllers/formValidations.js'
-import { listContent, deleteList, setSessionMessages } from '../statico/controllers/crudController.js'
+import { searchValidation, modeValidation, deleteValidation, inviteidValidation } from '../statico/controllers/formValidations.js'
+import { listContent, deleteList, setSessionMessages, pendingInvitesRecived, acceptInvite, declineInvite } from '../statico/controllers/crudController.js'
 import { filterByPermissions, setRoleLocalsPermissions, ensureAuthorized } from '../statico/permissions/permissions.js'
 import { search_controller, getPage, getList, mylists, profile } from '../controllers/pageController.js'
 
@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get('/search', searchValidation(), search_controller)
 
-router.get('/mylists', ensureLoggedIn('/login'), filterByPermissions('page'), listContent('list'), setRoleLocalsPermissions, mylists, (req, res) => {
+router.get('/mylists', ensureLoggedIn('/login'), filterByPermissions('page'), listContent('list'), pendingInvitesRecived, setRoleLocalsPermissions, mylists, (req, res) => {
     const baseUrl = `${req.baseUrl}/page`
     const path = req.path
     res.render('mylists', {user: req.user, baseUrl, path })
@@ -42,4 +42,11 @@ router.post('/delete/list', ensureLoggedIn('/login'), ensureAuthorized('list', '
     res.redirect('/mylists')
 })
 
+router.post('/acceptinvite', ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), inviteidValidation(), acceptInvite, (req, res) => {
+    res.redirect('/mylists')
+})
+
+router.post('/declineinvite', ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), inviteidValidation(), declineInvite, (req, res) => {
+    res.redirect('/mylists')
+})
 export default router

@@ -144,6 +144,25 @@ const commentsListValidation = () => [
         .isString().withMessage('Order must be String')
 ]
 
+const inviteSendValidation = () => [
+    body('email')
+        .isEmail().withMessage('Enter a valid email address')
+        .custom(async ( value, { req }) => {
+            // Check if user exists
+            const existingUser = await findUnique('user', { email: value })
+            if(!existingUser){
+                throw new Error('An account with that email could not be found')
+            }
+        })
+        .normalizeEmail(),
+    body('listId')
+    .isMongoId().withMessage('ID must be a valid MongoDB ObjectId')
+]
+
+const inviteidValidation = () => [
+    body('inviteid')
+        .isMongoId().withMessage('ID must be a valid MongoDB ObjectId')
+]
 
 /*  Role    */
 const roleValidation = () => [
@@ -185,4 +204,6 @@ const modeValidation = () => [
         }) 
 ]
 
-export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation, commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation }
+export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation,
+        commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation,
+        inviteSendValidation, inviteidValidation }
