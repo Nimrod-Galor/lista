@@ -35,12 +35,18 @@ export function ensureAuthorized(contentType, key, redirect = '/'){
 }
 
 export function getPermissionFilter(contentType, user){
+    let where = permissions[user.roleId][contentType].list.where
     try{
         if("authorId" in permissions[user.roleId][contentType].list.where){
-            return  {"authorId": user.id}
-        }else{
-            return permissions[user.roleId][contentType].list.where
+            where.authorId = user.id
         }
+        
+        if("viewersIDs" in permissions[user.roleId][contentType].list.where){
+            // where.viewersIDs = { has: user.id }
+            where = { OR: [ { authorId: user.id }, { viewersIDs: { has: user.id } } ] }
+        }
+
+        return where
     }catch(err){
         return {id: "00a00000a00aa0aaaaa0000a"}
     }

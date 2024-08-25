@@ -151,7 +151,7 @@ const inviteSendValidation = () => [
             // Check if user exists
             const existingUser = await findUnique('user', { email: value })
             if(!existingUser){
-                throw new Error('An account with that email could not be found')
+                throw new Error(`An account with email "${value}" could not be found.`)
             }
         })
         .normalizeEmail(),
@@ -159,9 +159,16 @@ const inviteSendValidation = () => [
     .isMongoId().withMessage('ID must be a valid MongoDB ObjectId')
 ]
 
-const inviteidValidation = () => [
+const acceptInviteidValidation = () => [
     body('inviteid')
-        .isMongoId().withMessage('ID must be a valid MongoDB ObjectId')
+        .isMongoId().withMessage('inviteID must be a valid MongoDB ObjectId'),
+    body('listid')
+        .isMongoId().withMessage('listID must be a valid MongoDB ObjectId')
+]
+
+const cancelInviteidValidation = () => [
+    body('inviteid')
+        .isMongoId().withMessage('inviteID must be a valid MongoDB ObjectId')
 ]
 
 /*  Role    */
@@ -206,4 +213,4 @@ const modeValidation = () => [
 
 export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation,
         commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation,
-        inviteSendValidation, inviteidValidation }
+        inviteSendValidation, acceptInviteidValidation, cancelInviteidValidation }

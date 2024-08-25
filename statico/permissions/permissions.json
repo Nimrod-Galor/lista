@@ -27,9 +27,9 @@
         },
 
         "list": {
-            "list":     { "allow": true, "where": { "authorId": "user.id" } },
+            "list":     { "allow": true, "where": { "authorId": "user.id", "viewersIDs": "user.id" } },
             "create":   { "allow": true },
-            "edit":     { "allow": true, "where": { "authorId": "user.id" } },
+            "edit":     { "allow": true, "where": { "authorId": "user.id", "viewersIDs": "user.id" } },
             "delete":   { "allow": true, "where": { "authorId": "user.id" } },
             "publish":  { "allow": true, "where": { "authorId": "user.id" } }
         },

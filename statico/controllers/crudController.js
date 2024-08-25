@@ -556,6 +556,7 @@ export async function pendingInvitesRecived(req, res, next){
             },
             list: {
                 select: {
+                    id: true,
                     title: true
                 }
             }
@@ -582,16 +583,11 @@ export async function acceptInvite(req, res, next){
         return next()
     }
     //  Get user data
-    let { inviteid } = matchedData(req, { includeOptionals: true });
+    let { inviteid, listid } = matchedData(req, { includeOptionals: true });
 
     try{
-        const invite = await findUnique('invite', { id: inviteid } )
-        if(!invite){
-            return next(createError('Invite could not be found.'))
-        }
-
         // add  user to list viewer
-        await updateRow('list', { id: invite.listId }, {
+        await updateRow('list', { id: listid }, {
             viewers: {
                 connect: { id: req.user.id }
             }
@@ -599,6 +595,9 @@ export async function acceptInvite(req, res, next){
 
         //delete invite
         await deleteRow('invite', {id: inviteid } )
+
+        // Send Success json
+        req.crud_response = {messageBody: `invitation was accepted. list is part of "my lists".`, messageTitle: 'Invitation Accepted', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
@@ -622,6 +621,35 @@ export async function declineInvite(req, res, next){
     try{
         //delete invite
         await deleteRow('invite', {id: inviteid } )
+
+        // Send Success json
+        req.crud_response = {messageBody: `invitation was declined`, messageTitle: 'Invitation Declined', messageType: 'success'}
+    }catch(errorMsg){
+        //  Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
+    }
+}
+
+// Cancel Invite
+export async function cancelInvite(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    //  Get user data
+    let { inviteid } = matchedData(req, { includeOptionals: true });
+
+    try{
+        //delete invite
+        await deleteRow('invite', {id: inviteid } )
+
+        // Send Success json
+        req.crud_response = {messageBody: `invitation was canceled`, messageTitle: 'Invitation Canceled', messageType: 'success'}
     }catch(errorMsg){
         //  Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
@@ -643,6 +671,24 @@ export async function inviteUser(req, res, next){
     //  Get user data
     let { listId, email } = matchedData(req, { includeOptionals: true });
 
+    // check intivitaion is not already open.
+    try{
+        const openInvite = await readRow('invite', {
+            select: {id: true},
+            where: { listId, recipientEmail: email }
+        })
+        if(openInvite){
+            req.crud_response = {messageBody: `Invitation already exists`, messageTitle: 'Invitation Exists', messageType: 'warning'}
+            return next()
+        }
+
+    }catch(err){
+        if (!err.name === "NotFoundError") {
+            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+            return next()
+        }
+    }
+
     try{
         // Set new Invite object
         const tmpInvite = {
@@ -661,7 +707,7 @@ export async function inviteUser(req, res, next){
         const newInvite = await createRow('invite', tmpInvite)
 
         // Send Success json
-        req.crud_response = {messageBody: `Invitation to "${email}" was sent`, messageTitle: 'Invitation Created', messageType: 'success'}
+        req.crud_response = {messageBody: `Invitation Sent to "${email}"`, messageTitle: 'Invitation Created', messageType: 'success'}
         
     }catch(errorMsg){
          // Send Error json

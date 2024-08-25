@@ -1,8 +1,8 @@
 import express from 'express'
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
-import { deleteValidation, listValidation, inviteSendValidation, roleValidation } from '../controllers/formValidations.js'
-import  { listContent, createList, editList, deleteList, setSessionMessages, inviteUser,
+import { deleteValidation, listValidation, roleValidation } from '../controllers/formValidations.js'
+import  { listContent, createList, editList, deleteList, setSessionMessages,
             listRoles, editeRole
  } from '../controllers/crudController.js'
 import {ensureAuthorized, filterByPermissions} from '../permissions/permissions.js'
@@ -38,11 +38,6 @@ router.post("/edit/list", passport.authenticate('jwt', { session: false }), ensu
 })
 //  Delete list
 router.delete("/delete/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'delete'), deleteValidation(), deleteList, (req, res) => {
-    res.json(req.crud_response)
-})
-
-// Invite viewer
-router.post('/invite', passport.authenticate('jwt', { session: false }), inviteSendValidation(), inviteUser, (req, res) => {
     res.json(req.crud_response)
 })
 

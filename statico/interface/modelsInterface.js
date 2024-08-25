@@ -107,6 +107,7 @@ const modelsInterface = {
             pendingInvites: {
                 select: {
                     id: true,
+                    listId: true,
                     recipient: {
                         select: {
                             email: true

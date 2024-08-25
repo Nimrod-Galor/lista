@@ -7,7 +7,7 @@ function toggleClass(objId, className){
 
 function topAlert(type, title, body){
     document.getElementById('top-alert').classList.add('open')
-    document.getElementById('top-alert-alert').classList.add(`alert-${type}`)
+    document.getElementById('top-alert').querySelector('.alert').className = `alert alert-${type}`
     document.getElementById('top-alert-title').innerHTML = title
     document.getElementById('top-alert-body').innerHTML = body
 }
