@@ -718,6 +718,37 @@ export async function inviteUser(req, res, next){
     }
 }
 
+// Rmove viewer from list
+export async function removeViewer(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
+    //  Get user data
+    let { listid, userid } = matchedData(req, { includeOptionals: true });
+
+    
+    try{
+        // Update the list to disconnect the user from the viewLists relation
+
+        await updateRow('list', { id: listid }, { viewers: {
+                disconnect: { id: userid }
+            }
+        } )
+
+        // Send Success json
+        req.crud_response = {messageBody: `User "${email}" was removed from list`, messageTitle: 'Viewer removed', messageType: 'success'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+       next()
+   }
+}
 
 /****************************************/
 /** Role                                */

@@ -1,10 +1,36 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import { searchValidation, modeValidation, deleteValidation, inviteSendValidation, acceptInviteidValidation, cancelInviteidValidation } from '../statico/controllers/formValidations.js'
-import { listContent, deleteList, setSessionMessages, pendingInvitesRecived, acceptInvite,
-         declineInvite, cancelInvite, inviteUser } from '../statico/controllers/crudController.js'
-import { filterByPermissions, setRoleLocalsPermissions, ensureAuthorized } from '../statico/permissions/permissions.js'
-import { search_controller, getPage, getList, mylists, profile } from '../controllers/pageController.js'
+import {    searchValidation,
+            modeValidation,
+            deleteValidation,
+            inviteSendValidation,
+            acceptInviteidValidation,
+            cancelInviteidValidation,
+            removeViewerValidation
+        } from '../statico/controllers/formValidations.js'
+
+import {    listContent,
+            deleteList,
+            setSessionMessages,
+            pendingInvitesRecived,
+            acceptInvite,
+            declineInvite,
+            cancelInvite,
+            inviteUser,
+            removeViewer
+        } from '../statico/controllers/crudController.js'
+
+import {    filterByPermissions,
+            setRoleLocalsPermissions,
+            ensureAuthorized
+        } from '../statico/permissions/permissions.js'
+
+import {    search_controller,
+            getPage,
+            getList,
+            mylists,
+            profile
+        } from '../controllers/pageController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 
@@ -44,21 +70,24 @@ router.post('/delete/list', ensureLoggedIn('/login'), ensureAuthorized('list', '
 })
 
 // Invite viewer
-router.post('/invite', ensureLoggedIn('/login'), inviteSendValidation(), inviteUser, setSessionMessages, (req, res) => {
+router.post('/invite', ensureLoggedIn('/login'), ensureAuthorized('invite', 'create'), inviteSendValidation(), inviteUser, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Accept Invite
-router.post('/acceptinvite', ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), acceptInviteidValidation(), acceptInvite, setSessionMessages, (req, res) => {
+router.post('/acceptinvite', ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), acceptInviteidValidation(), acceptInvite, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Decline Invite
-router.post('/declineinvite', ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), cancelInviteidValidation(), declineInvite, setSessionMessages, (req, res) => {
+router.post('/declineinvite', ensureLoggedIn('/login'), cancelInviteidValidation(), declineInvite, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Cancel Invite
-router.post('/cancelinvite', ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), cancelInviteidValidation(), cancelInvite, setSessionMessages, (req, res) => {
+router.post('/cancelinvite', ensureLoggedIn('/login'), cancelInviteidValidation(), cancelInvite, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
-
+// remove Viewer form list
+router.post('/removeViewer', ensureLoggedIn('/login'), ensureAuthorized('invite', 'edit'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
+    res.redirect('back')
+})
 
 export default router

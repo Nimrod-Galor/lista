@@ -153,6 +153,10 @@ const inviteSendValidation = () => [
             if(!existingUser){
                 throw new Error(`An account with email "${value}" could not be found.`)
             }
+            // Check user not already a viewer
+            if(existingUser.viewableListsIDs.includes(req.body.listId)){
+                throw new Error(`Account with email "${value}" is already a viewer to this list.`)
+            }
         })
         .normalizeEmail(),
     body('listId')
@@ -169,6 +173,13 @@ const acceptInviteidValidation = () => [
 const cancelInviteidValidation = () => [
     body('inviteid')
         .isMongoId().withMessage('inviteID must be a valid MongoDB ObjectId')
+]
+
+const removeViewerValidation = () => [
+    body('listid')
+        .isMongoId().withMessage('listID must be a valid MongoDB ObjectId'),
+    body('userid')
+        .isMongoId().withMessage('userID must be a valid MongoDB ObjectId')
 ]
 
 /*  Role    */
@@ -213,4 +224,4 @@ const modeValidation = () => [
 
 export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation,
         commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation,
-        inviteSendValidation, acceptInviteidValidation, cancelInviteidValidation }
+        inviteSendValidation, acceptInviteidValidation, cancelInviteidValidation, removeViewerValidation }

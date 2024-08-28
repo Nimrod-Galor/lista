@@ -36,8 +36,8 @@
 
         "invite": {
             "list":     { "allow": true, "where": {} },
-            "create":   { "allow": true },
-            "edit":     { "allow": false },
+            "create":   { "allow": true, "where": { "authorId": "user.id" } },
+            "edit":     { "allow": true, "where": { "authorId": "user.id" } },
             "delete":   { "allow": false },
             "publish":  { "allow": false }
         },
