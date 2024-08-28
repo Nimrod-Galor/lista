@@ -72,6 +72,7 @@ model List {
   editors        User[]   @relation("editableLists", fields: [editorsIDs], references: [id])
   editorsIDs     String[] @db.ObjectId
   pendingInvites Invite[]
+  dir            String   @default("ltr")
 }
 
 model Invite {

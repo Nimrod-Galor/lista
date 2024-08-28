@@ -78,6 +78,7 @@ const modelsInterface = {
         ],
         selectFields: {
             id: true,
+            dir: true,
             createDate: true,
             updated: true,
             title: true,

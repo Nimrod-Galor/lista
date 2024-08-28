@@ -528,15 +528,18 @@ function inviteuser(event){
 
 function userLangDirChange(dir){
     console.log(dir)
-    if(mode==='create'){
-        if(dir==='ltr'){
-            document.documentElement.lang = 'en'
-            document.documentElement.dir = 'ltr'
-        }else{
-            document.documentElement.lang = 'he'
-            document.documentElement.dir = 'rtl'
-        }
-        ['float-end', 'float-start'].map(item => document.querySelector('.save-btn').classList.toggle(item))
+    listData.dir = dir
+    if(dir==='ltr'){
+        document.documentElement.lang = 'en'
+        document.documentElement.dir = 'ltr'
+    }else{
+        document.documentElement.lang = 'he'
+        document.documentElement.dir = 'rtl'
+    }
+    ['float-end', 'float-start'].map(item => document.querySelector('.save-btn').classList.toggle(item))
+    
+    if(mode !='create'){
+        debouncedSaveList()
     }
 }
 

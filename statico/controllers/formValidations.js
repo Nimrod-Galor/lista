@@ -114,6 +114,13 @@ const listValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
+    body('dir')
+        .custom(async value => {
+            const dirEnum = ['ltr', 'rtl']
+            if(!dirEnum.includes(value)){
+                throw new Error('Bad Lang Direction')
+            }
+        }),
     body('title')
         .trim()
         .isLength({ min: 3, max: 128 }).withMessage('Title must be at least 3 characters and max 128.')
