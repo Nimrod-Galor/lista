@@ -55,7 +55,8 @@ router.get("/create", ensureLoggedIn('/login'), setRoleLocalsPermissions, (req, 
             "items": []
         },
         "viewers": [],
-        "pendingInvites": []
+        "pendingInvites": [],
+        "dir": "ltr"
     }
 
     res.render('list', {user: req.user, listData, mode: 'create'})

@@ -486,11 +486,13 @@ const debouncedSaveList = debounce(saveList, 10000);
 function userShowList(){
     document.body.classList.remove('edit')
     document.body.classList.add('show')
+    mode = 'show'
 }
 
 function userEditList(){
     document.body.classList.remove('show')
     document.body.classList.add('edit')
+    mode = 'edit'
 }
 
 function inviteuser(event){
@@ -523,6 +525,21 @@ function inviteuser(event){
     //     topAlert(data.messageType, data.messageTitle, data.messageBody)
     // })
 }
+
+function userLangDirChange(dir){
+    console.log(dir)
+    if(mode==='create'){
+        if(dir==='ltr'){
+            document.documentElement.lang = 'en'
+            document.documentElement.dir = 'ltr'
+        }else{
+            document.documentElement.lang = 'he'
+            document.documentElement.dir = 'rtl'
+        }
+        ['float-end', 'float-start'].map(item => document.querySelector('.save-btn').classList.toggle(item))
+    }
+}
+
 
 Array.prototype.move = function (from, to) {
     this.splice(to, 0, this.splice(from, 1)[0]);
