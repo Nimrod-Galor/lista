@@ -185,6 +185,13 @@
                                             <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
                                             <button type="submit" class="btn btn-warning btn-sm">Delete</button>
                                         </form>
+                                        <%}else if(permissions.list.delete.allow === true && (permissions.list.delete.where.viewers === user.id)){%>
+                                        <form action="/removeList" method="POST" onsubmit="return removeItemClick('<%=data[modelHeaders[0].key]%>')">
+                                            <input type="hidden" name="listid" value="<%=data.id%>"/>
+                                            <input type="hidden" name="userid" value="<%=user.id%>"/>
+                                            <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
+                                            <button type="submit" class="btn btn-warning btn-sm">Remove</button>
+                                        </form>
                                         <%}%>
                                         
                                         <%if(!("authorId" in permissions.list.edit.where) || permissions.list.edit.where.authorId === data.authorId){%>
@@ -238,6 +245,9 @@
     <script type="text/javascript">
         function deleteItemClick(header){
             return confirm(`Delete Item (${header})?`)
+        }
+        function removeItemClick(header){
+            return confirm(`Remove Item (${header}) from "my lists"?`)
         }
     </script>
 

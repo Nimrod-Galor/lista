@@ -728,7 +728,7 @@ export async function removeViewer(req, res, next){
     }
 
     //  Get user data
-    let { listid, userid } = matchedData(req, { includeOptionals: true });
+    let { listid, userid, header } = matchedData(req, { includeOptionals: true });
 
     
     try{
@@ -740,7 +740,11 @@ export async function removeViewer(req, res, next){
         } )
 
         // Send Success json
-        req.crud_response = {messageBody: `User "${email}" was removed from list`, messageTitle: 'Viewer removed', messageType: 'success'}
+        if(header){
+            req.crud_response = {messageBody: `List "${header} was removed from "My Lists".`, messageTitle: 'List removed', messageType: 'success'}
+        }else{
+            req.crud_response = {messageBody: `User removed from list`, messageTitle: 'Viewer removed', messageType: 'success'}
+        }
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}

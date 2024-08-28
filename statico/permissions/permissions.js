@@ -41,8 +41,7 @@ export function getPermissionFilter(contentType, user){
             where.authorId = user.id
         }
         
-        if("viewersIDs" in permissions[user.roleId][contentType].list.where){
-            // where.viewersIDs = { has: user.id }
+        if("viewers" in permissions[user.roleId][contentType].list.where){
             where = { OR: [ { authorId: user.id }, { viewersIDs: { has: user.id } } ] }
         }
 
@@ -73,6 +72,9 @@ export function setRoleLocalsPermissions(req, res, next){
         for (const [key, operation] of Object.entries(typePermissions)) {
             if("where" in operation && "authorId" in operation.where){
                 operation.where.authorId = req.user.id
+            }
+            if("where" in operation && "viewers" in operation.where){
+                operation.where.viewers = req.user.id
             }
         }
     }

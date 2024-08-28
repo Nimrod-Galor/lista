@@ -27,10 +27,10 @@
         },
 
         "list": {
-            "list":     { "allow": true, "where": { "authorId": "user.id", "viewersIDs": "user.id" } },
+            "list":     { "allow": true, "where": { "authorId": "user.id", "viewers": "user.id" } },
             "create":   { "allow": true },
-            "edit":     { "allow": true, "where": { "authorId": "user.id", "viewersIDs": "user.id" } },
-            "delete":   { "allow": true, "where": { "authorId": "user.id" } },
+            "edit":     { "allow": true, "where": { "authorId": "user.id", "viewers": "user.id" } },
+            "delete":   { "allow": true, "where": { "authorId": "user.id", "viewers": "user.id" } },
             "publish":  { "allow": true, "where": { "authorId": "user.id" } }
         },
 

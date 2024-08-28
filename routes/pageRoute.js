@@ -89,5 +89,9 @@ router.post('/cancelinvite', ensureLoggedIn('/login'), cancelInviteidValidation(
 router.post('/removeViewer', ensureLoggedIn('/login'), ensureAuthorized('invite', 'edit'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
+// remove list from my lists
+router.post('/removeList',  ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
+    res.redirect('back')
+})
 
 export default router

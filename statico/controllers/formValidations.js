@@ -179,7 +179,11 @@ const removeViewerValidation = () => [
     body('listid')
         .isMongoId().withMessage('listID must be a valid MongoDB ObjectId'),
     body('userid')
-        .isMongoId().withMessage('userID must be a valid MongoDB ObjectId')
+        .isMongoId().withMessage('userID must be a valid MongoDB ObjectId'),
+    body('header')
+        .optional()
+        .trim()
+        .notEmpty().withMessage('Header can not be empty.')
 ]
 
 /*  Role    */
