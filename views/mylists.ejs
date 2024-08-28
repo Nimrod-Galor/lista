@@ -194,7 +194,7 @@
                                         </form>
                                         <%}%>
                                         
-                                        <%if(!("authorId" in permissions.list.edit.where) || permissions.list.edit.where.authorId === data.authorId){%>
+                                        <%if(!("authorId" in permissions.list.edit.where) || permissions.list.edit.where.authorId === data.authorId || permissions.list.edit.where.viewers === user.id){%>
                                             <a href="/list/<%=data.id%>?mode=edit" class="btn btn-primary btn-sm" role="button">Edit</a>
                                         <%}%>
                                     </div>

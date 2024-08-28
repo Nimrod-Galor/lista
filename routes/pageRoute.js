@@ -53,7 +53,9 @@ router.get("/create", ensureLoggedIn('/login'), setRoleLocalsPermissions, (req, 
             "id": (Math.random()*10000000).toString(16).split('.')[0],
             "type": "ul",
             "items": []
-        }
+        },
+        "viewers": [],
+        "pendingInvites": []
     }
 
     res.render('list', {user: req.user, listData, mode: 'create'})
