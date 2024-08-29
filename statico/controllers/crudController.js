@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
-import { isAllowed } from '../permissions/permissions.js'
+import { isAllowed, isAuthorized } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
 
 /*  admin list content  */
@@ -485,10 +485,11 @@ export async function editList(req, res, next){
         }
 
         // check user Authorized to edit this list
-        if(req.session.userPermissions.list.edit.allow === false 
-            || ("authorId" in req.session.userPermissions.list.edit.where && req.session.userPermissions.list.edit.where.authorId != selectedList.authorId)
-            || ("viewers" in req.session.userPermissions.list.edit.where && !selectedList.viewers.includes(req.user.id) )
-        ){
+        // if(req.session.userPermissions.list.edit.allow === false 
+        //     || ("authorId" in req.session.userPermissions.list.edit.where && req.session.userPermissions.list.edit.where.authorId != selectedList.authorId)
+        //     || ("viewers" in req.session.userPermissions.list.edit.where && !selectedList.viewers.includes(req.user.id) )
+        // ){
+        if(!isAuthorized(req, selectedList)){
             next(createError(403))
         }
 

@@ -16,6 +16,15 @@ export function updatePermissions(newPermissionsObj){
     permissions = newPermissionsObj
 }
 
+export function isAuthorized(req, data){
+    if(req.session.userPermissions.list.edit.allow === true 
+        || ("authorId" in req.session.userPermissions.list.edit.where && req.session.userPermissions.list.edit.where.authorId === data.authorId)
+        || ("viewers" in req.session.userPermissions.list.edit.where && data.viewers.includes(req.user.id) )
+    ){
+        return true
+    }
+    return false
+}
 // export function isAuthorized(contentType, key, roleId){
 //     export function isAuthorized(permission, author, viewers){
 //     try{
