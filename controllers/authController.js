@@ -75,18 +75,6 @@ export function auth_post_login(req, res, next){
         return next(err)
       }
 
-      // set jwt token
-      // const jwtToken = jwt.sign({ id: user.id, username: user.userName, roleId: user.roleId }, process.env.JWT_SECRET, { expiresIn: '15m' })
-      // // res.cookie('jwt', jwtToken, { path: '/', maxAge: 59 * 60 * 1000 }); // 59 minute
-
-      // // Send the JWT as an HttpOnly cookie
-      // res.cookie('jwt', token, {
-      //   httpOnly: true,     // Prevents access via JavaScript
-      //   secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production
-      //   maxAge: 15 * 60 * 1000,  // 15 minutes in milliseconds
-      //   sameSite: 'strict'  // CSRF protection
-      // });
-
       // refresh token
       const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
 
@@ -116,8 +104,6 @@ export function auth_post_login(req, res, next){
 
 /*  Logout  */
 export async function auth_logout(req, res, next) {
-  // clear remember me coockie
-  res.clearCookie('remember_me')
   try{
     // delete remember me token
     await deleteRow('RememberMeToken', {userId: req.user.id})
@@ -125,12 +111,88 @@ export async function auth_logout(req, res, next) {
     // no token do nothing
   }
   finally{
-    req.logout(function(err) {
+
+
+
+    req.logout((err) => {
       if (err) {
-        return next(err)
+          return next(err)
       }
-      res.redirect('/')
-    })
+      req.session.destroy((err) => {
+          if (err) {
+              return next(err)
+          }
+          // clear remember me coockie
+          res.clearCookie('remember_me')
+          res.clearCookie('refreshToken')
+          res.clearCookie('connect.sid') // Clear session cookie
+          res.redirect('/')
+      })
+  })
+
+
+
+
+
+    // req.session.destroy(function(err) {
+      // cannot access session here
+    //   if (err) {
+    //     next(err)
+    //   } else {
+    //     // clear remember me coockie
+    //     res.clearCookie('remember_me')
+    //     res.clearCookie('refreshToken')
+    //     // Clear the cookie manually
+    //     res.clearCookie('connect.sid', { path: '/' });
+    //     res.redirect('/')
+    //   }
+    // })
+
+    // req.logout(function(err) {
+    //   if (err) {
+    //     return next(err)
+    //   }
+    // })
+     
+
+  
+    
+    // clear the user from the session object and save.
+    // this will ensure that re-using the old session id
+    // does not have a logged in user
+    // req.session.user = null
+    // req.session.save(function (err) {
+    //   if (err){
+    //     next(err)
+    //   }
+
+    //     // regenerate the session, which is good practice to help
+    //     // guard against forms of session fixation
+    //   req.session.regenerate(function (err) {
+    //     if (err){
+    //       next(err)
+    //     }
+    //   // res.redirect('/')
+    //     req.logout(function(err) {
+    //       if (err) {
+    //         return next(err)
+    //       }
+    
+    //       res.redirect('/')
+    //     })
+
+    //   })
+    // })
+
+
+
+    // req.logout(function(err) {
+    //   if (err) {
+    //     return next(err)
+    //   }
+
+    //   res.redirect('/')
+    // })
   }
 }
 

@@ -2,7 +2,7 @@ import createError from 'http-errors'
 import he from 'he'
 import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRows, countRows } from '../db.js'
-import { isAuthorized, getPermissionFilter } from '../statico/permissions/permissions.js'
+import { isAllowed, getPermissionFilter } from '../statico/permissions/permissions.js'
 import modelsInterface from '../statico/interface/modelsInterface.js'
 
 export async function mylists(req, res, next){
@@ -21,6 +21,7 @@ export async function mylists(req, res, next){
     // res.locals.contentType = req.contentType || contentType || ''
     res.locals.numberOfPages = numberOfDocuments ? Math.ceil(numberOfDocuments / 10) : 0
     res.locals.currentPage = parseInt(req.query.page) || 1
+    res.locals.permissions = req.session.userPermissions
     res.locals.pendingInvitesRecived = req.pendingInvitesRecived
     next()
 }
@@ -89,7 +90,7 @@ export async function search_controller(req, res, next){
             }
         }
 
-        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+        res.locals.permissions = {"admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
 
         res.render('search', { user: req.user, results, documentsCount, numberOfPages, currentPage, search })
     }catch(err){
@@ -108,7 +109,7 @@ export async function getPage(req, res, next){
             return next()
         }
 
-        res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+        res.locals.permissions = { "admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
 
         //unescape body
         pageData.body = he.decode(pageData.body)
@@ -145,10 +146,9 @@ export async function getList(req, res, next){
         listData = modelsInterface.list.destructur(listData)
 
 
-        res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+        res.locals.permissions = { "admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
 
-        //unescape body
-        // listData.body = he.decode(listData.body)
+        res.locals.editable = listData.viewers.includes(req.user.id) || listData.authorId === req.user.id
 
         res.render('list', { user: req.user,  listData, mode })
     }catch(err){
@@ -169,7 +169,7 @@ export function errorPage(err, req, res, next){
         // return json response
         res.json(err)
     }else{
-        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+        res.locals.permissions = {"admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
         // render Error page
         res.render('error', { user: req.user });
     }
@@ -200,6 +200,6 @@ export async function profile(req, res, next){
         return next(createError(404))
     }
 
-    res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+    res.locals.permissions = { "admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
     res.render('profile', { user: req.user, userData })
 }

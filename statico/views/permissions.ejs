@@ -140,18 +140,18 @@
                                     <td>
                                         <%=operationKey%>
                                     </td>
-                                    <%roles.forEach((role) => {%>
+                                    <%for (const [permissionKey, permissionObj] of Object.entries(permissions)){%>
                                         <td colspan="2">
                                             <div class="d-flex">
                                                 <div class="w-25">
-                                                    <%=permissions[role.id][contentTypeKey][operationKey].allow%>
+                                                    <%=permissionObj[contentTypeKey][operationKey].allow%>
                                                 </div>
                                                 <div>
-                                                    <%=JSON.stringify(permissions[role.id][contentTypeKey][operationKey].where)%>
+                                                    <%=JSON.stringify(permissionObj[contentTypeKey][operationKey].where)%>
                                                 </div>
                                             </div>
                                         </td>
-                                    <%})%>
+                                    <%}%>
                                 </tr>
                             <%}%>
                         <%}%>

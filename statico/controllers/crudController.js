@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
-import { isAuthorized } from '../permissions/permissions.js'
+import { isAllowed } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
 
 /*  admin list content  */
@@ -472,7 +472,7 @@ export async function editList(req, res, next){
         return next()
     }
     //  Get user data
-    let {id, dir, title, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
+    let {id, dir, title, description, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
 
     // Convert publish checkbox to boolean
     publish = publish ? true : false
@@ -484,10 +484,19 @@ export async function editList(req, res, next){
             throw new Error('Invalid List')
         }
 
+        // check user Authorized to edit this list
+        if(req.session.userPermissions.list.edit.allow === false 
+            || ("authorId" in req.session.userPermissions.list.edit.where && req.session.userPermissions.list.edit.where.authorId != selectedList.authorId)
+            || ("viewers" in req.session.userPermissions.list.edit.where && !selectedList.viewers.includes(req.user.id) )
+        ){
+            next(createError(403))
+        }
+
         // Set new List object
         const tmpList = {
             dir,
             title,
+            description,
             body,
             publish,
             viewPermission,
@@ -495,7 +504,7 @@ export async function editList(req, res, next){
         }
 
         // check if user have publisg permission
-        if(isAuthorized('publish_list', req.user.roleId)){
+        if(isAllowed('publish_list', req.user.roleId)){
             tmpList.publish = publish
         }
 

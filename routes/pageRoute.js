@@ -21,8 +21,7 @@ import {    listContent,
         } from '../statico/controllers/crudController.js'
 
 import {    filterByPermissions,
-            setRoleLocalsPermissions,
-            ensureAuthorized
+            ensureallowed
         } from '../statico/permissions/permissions.js'
 
 import {    search_controller,
@@ -38,13 +37,13 @@ const router = express.Router();
 
 router.get('/search', searchValidation(), search_controller)
 
-router.get('/mylists', ensureLoggedIn('/login'), filterByPermissions('list'), listContent('list'), pendingInvitesRecived, setRoleLocalsPermissions, mylists, (req, res) => {
+router.get('/mylists', ensureLoggedIn('/login'), filterByPermissions('list'), listContent('list'), pendingInvitesRecived, mylists, (req, res) => {
     const baseUrl = `${req.baseUrl}/mylists`
     const path = req.path
     res.render('mylists', {user: req.user, baseUrl, path })
 })
 
-router.get("/create", ensureLoggedIn('/login'), setRoleLocalsPermissions, (req, res) => {
+router.get("/create", ensureLoggedIn('/login'), (req, res) => {
     
     const listData = {
         "title": "",
@@ -59,6 +58,8 @@ router.get("/create", ensureLoggedIn('/login'), setRoleLocalsPermissions, (req, 
         "dir": "ltr"
     }
 
+    res.locals.permissions = req.session.userPermissions
+
     res.render('list', {user: req.user, listData, mode: 'create'})
 })
 
@@ -68,16 +69,16 @@ router.get(['/', '/home'],  getPage)
 
 router.get('/list/:id', modeValidation(), getList)
 
-router.post('/delete/list', ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(),  deleteList, setSessionMessages, (req, res) => {
+router.post('/delete/list', ensureLoggedIn('/login'), ensureallowed('list', 'delete'), deleteValidation(),  deleteList, setSessionMessages, (req, res) => {
     res.redirect('/mylists')
 })
 
 // Invite viewer
-router.post('/invite', ensureLoggedIn('/login'), ensureAuthorized('invite', 'create'), inviteSendValidation(), inviteUser, setSessionMessages, (req, res) => {
+router.post('/invite', ensureLoggedIn('/login'), ensureallowed('invite', 'create'), inviteSendValidation(), inviteUser, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Accept Invite
-router.post('/acceptinvite', ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), acceptInviteidValidation(), acceptInvite, setSessionMessages, (req, res) => {
+router.post('/acceptinvite', ensureLoggedIn('/login'), ensureallowed('list', 'edit'), acceptInviteidValidation(), acceptInvite, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Decline Invite
@@ -89,11 +90,11 @@ router.post('/cancelinvite', ensureLoggedIn('/login'), cancelInviteidValidation(
     res.redirect('back')
 })
 // remove Viewer form list
-router.post('/removeViewer', ensureLoggedIn('/login'), ensureAuthorized('invite', 'edit'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
+router.post('/removeViewer', ensureLoggedIn('/login'), ensureallowed('invite', 'edit'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // remove list from my lists
-router.post('/removeList',  ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
+router.post('/removeList',  ensureLoggedIn('/login'), ensureallowed('list', 'delete'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 

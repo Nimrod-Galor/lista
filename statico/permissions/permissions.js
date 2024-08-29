@@ -16,7 +16,29 @@ export function updatePermissions(newPermissionsObj){
     permissions = newPermissionsObj
 }
 
-export function isAuthorized(contentType, key, roleId){
+// export function isAuthorized(contentType, key, roleId){
+//     export function isAuthorized(permission, author, viewers){
+//     try{
+//         if(permission.allow === false){
+//             return false
+//         }
+
+//         if("where" in permission){
+//             if("authorId" in permission.where && permission.where != user.id){
+//                 return false
+//             }
+//             if("viewers" in permission.where && permission.viewers != user.id){
+//                 return false
+//             }
+//         }
+
+//         return true
+//     }catch(err){
+//         return false
+//     }
+// }
+
+export function isAllowed(contentType, key, roleId){
     try{
         return permissions[roleId][contentType][key].allow
     }catch(err){
@@ -24,9 +46,9 @@ export function isAuthorized(contentType, key, roleId){
     }
 }
 
-export function ensureAuthorized(contentType, key, redirect = '/'){
+export function ensureallowed(contentType, key, redirect = '/'){
     return function(req, res, next){
-        if(isAuthorized(contentType, key, req.user.roleId)){
+        if(isAllowed(contentType, key, req.user.roleId)){
             next()
         }else{
             next(createError(403, `You are not authorized to view this page! ("${req.originalUrl}")`, {messages: `You are not authorized to view this page! ("${req.originalUrl}")`, messageType: 'warning', messageTitle: 'Forbidden'}))
@@ -64,7 +86,8 @@ export function filterByPermissions(contentType){
     }
 }
 
-export function setRoleLocalsPermissions(req, res, next){
+
+export function setRolePermissions(req, res, next){
     // Get permissions
     const tmpPermissions = structuredClone(permissions[req.user.roleId])
     // update authorId -> user.id with current user id
@@ -79,8 +102,7 @@ export function setRoleLocalsPermissions(req, res, next){
         }
     }
 
-    res.locals.permissions = tmpPermissions
-    next()
+    return tmpPermissions
 }
 
 export async function allRolesPermissions(req, res, next){
@@ -97,22 +119,22 @@ export async function allRolesPermissions(req, res, next){
     res.locals.permissions = permissions
     
     // set admin role id
-    res.locals.adminRoleId = getAdminRoleId()
+    res.locals.adminRoleId = roles.filter((role) => role.name === 'admin')[0].id
     next()
 }
 
-function getAdminRoleId(){
-    let maxKeys = 0
-    let objIndex = 0
-    for(let i =0; i < permissions.length; i++){
-        const objLength = Object.keys(permissions[i]).length
-        if(objLength > maxKeys){
-            maxKeys = objLength
-            objIndex = 1
-        }
-    }
+// function getAdminRoleId(){
+//     let maxKeys = 0
+//     let objIndex = 0
+//     for(let i =0; i < permissions.length; i++){
+//         const objLength = Object.keys(permissions[i]).length
+//         if(objLength > maxKeys){
+//             maxKeys = objLength
+//             objIndex = 1
+//         }
+//     }
 
-    return Object.keys(permissions)[objIndex]
-}
+//     return Object.keys(permissions)[objIndex]
+// }
 
 export { permissions }

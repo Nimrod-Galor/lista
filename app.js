@@ -13,6 +13,7 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
 import { errorPage } from './controllers/pageController.js'
+import { setRolePermissions } from './statico/permissions/permissions.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
@@ -78,6 +79,14 @@ app.use(async (req, res, next) => {
     }catch(err){
         next(err)
     }
+})
+
+// Set user permissions
+app.use((req, res, next) => {
+    if (!req.session.userPermissions && req.user) {
+        req.session.userPermissions = setRolePermissions(req, res, next)
+    }
+    next()
 })
 
 // Session-persisted message middleware
