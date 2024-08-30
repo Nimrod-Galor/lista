@@ -13,6 +13,7 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
 import { errorPage } from './controllers/pageController.js'
+import { getRolePermissions } from './statico/permissions/permissions.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
@@ -93,6 +94,14 @@ app.use(function(req, res, next) {
     req.session.messageTitle = ''
     next();
 });
+
+// set role permissions
+// app.use((req, res, next) => {
+//     if(!req.session.userPermissions){
+//         req.session.userPermissions = getRolePermissions(req, res, next)
+//     }
+//     next();
+// })
 
 // Routes
 app.use('/api', apiRouter)

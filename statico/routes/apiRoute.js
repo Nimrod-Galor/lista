@@ -1,8 +1,13 @@
 import express from 'express'
 import passport from 'passport'
-import jwt from 'jsonwebtoken'
-import { deleteValidation, listValidation, roleValidation } from '../controllers/formValidations.js'
-import  { listContent, createList, editList, deleteList, setSessionMessages,
+import { 
+    checkValidation,
+    deleteValidation,
+    listValidation,
+    roleValidation
+} from '../controllers/formValidations.js'
+
+import  { listContent, createDataType, editList, deleteDataType, setSessionMessages,
             listRoles, editeRole
  } from '../controllers/crudController.js'
 import {ensureAuthorized, filterByPermissions} from '../permissions/permissions.js'
@@ -25,7 +30,7 @@ router.get(["/lists", "lists?/*"], passport.authenticate('jwt', { session: false
     res.json(req.crud_response)
 })
 //  Create list
-router.post("/create/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'create'), listValidation(), createList, setSessionMessages, (req, res) => {
+router.post("/create/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'create'), listValidation(),  checkValidation, createDataType('list'), setSessionMessages, (req, res) => {
     if(req.crud_response. messageType === 'success'){
         res.json({messageBody: `/list/${req.newListId}`, messageTitle: 'List Created', messageType: 'redirect'})
     }else{
@@ -37,7 +42,7 @@ router.post("/edit/list", passport.authenticate('jwt', { session: false }), ensu
     res.json(req.crud_response)
 })
 //  Delete list
-router.delete("/delete/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'delete'), deleteValidation(), deleteList, (req, res) => {
+router.delete("/list/delete", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'delete'), deleteValidation(),  checkValidation, deleteDataType('list'), (req, res) => {
     res.json(req.crud_response)
 })
 

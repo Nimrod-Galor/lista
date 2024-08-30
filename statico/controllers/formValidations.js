@@ -1,9 +1,9 @@
-import { body, query } from 'express-validator'
+import { body, query, validationResult, matchedData } from 'express-validator'
 import { findUnique } from '../../db.js'
 
 /*  Global  */
 
-const deleteValidation = () => [
+export const deleteValidation = () => [
     body('id')
         .trim()
         .notEmpty().withMessage('ID can not be empty.')
@@ -14,7 +14,7 @@ const deleteValidation = () => [
         .isLength({ min: 3, max: 128 }).withMessage('Header must be at 3 to 128 characters.')
 ]
 
-const bulkValidation = () => [
+export const bulkValidation = () => [
     // Custom sanitizer to ensure 'ids' is always an array
     body('id').customSanitizer(value => {
             // Coerce to an array if it's a single value
@@ -37,7 +37,7 @@ const bulkValidation = () => [
     //     .isAlphanumeric().withMessage('Header must be Alphanumeric')
 ]
 
-const postIdValidation = () => [
+export const postIdValidation = () => [
     body('id')
         .trim()
         .notEmpty().withMessage('ID can not be empty.')
@@ -45,7 +45,7 @@ const postIdValidation = () => [
 ]
 
 /*  User    */
-const userValidation = () => [
+export const userValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
@@ -84,7 +84,7 @@ const userValidation = () => [
 ]
 
 /*  Post    */
-const postValidation = () => [
+export const postValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
@@ -110,7 +110,7 @@ const postValidation = () => [
 
 
 /*  List    */
-const listValidation = () => [
+export const listValidation = () => [
     body('id')
         .optional({ checkFalsy: true })
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
@@ -142,7 +142,7 @@ const listValidation = () => [
         .optional({ checkFalsy: true })
 ]
 
-const commentsListValidation = () => [
+export const commentsListValidation = () => [
     body('post')
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
     body('page')
@@ -151,7 +151,7 @@ const commentsListValidation = () => [
         .isString().withMessage('Order must be String')
 ]
 
-const inviteSendValidation = () => [
+export const inviteSendValidation = () => [
     body('email')
         .isEmail().withMessage('Enter a valid email address')
         .custom(async ( value, { req }) => {
@@ -170,19 +170,19 @@ const inviteSendValidation = () => [
     .isMongoId().withMessage('ID must be a valid MongoDB ObjectId')
 ]
 
-const acceptInviteidValidation = () => [
+export const acceptInviteidValidation = () => [
     body('inviteid')
         .isMongoId().withMessage('inviteID must be a valid MongoDB ObjectId'),
     body('listid')
         .isMongoId().withMessage('listID must be a valid MongoDB ObjectId')
 ]
 
-const cancelInviteidValidation = () => [
+export const cancelInviteidValidation = () => [
     body('inviteid')
         .isMongoId().withMessage('inviteID must be a valid MongoDB ObjectId')
 ]
 
-const removeViewerValidation = () => [
+export const removeViewerValidation = () => [
     body('listid')
         .isMongoId().withMessage('listID must be a valid MongoDB ObjectId'),
     body('userid')
@@ -194,7 +194,7 @@ const removeViewerValidation = () => [
 ]
 
 /*  Role    */
-const roleValidation = () => [
+export const roleValidation = () => [
     body('id')
         .isMongoId().withMessage('ID must be a valid MongoDB ObjectId'),
     body('name')
@@ -208,7 +208,7 @@ const roleValidation = () => [
 ]
 
 /*  Search  */
-const searchValidation = () => [
+export const searchValidation = () => [
     query('search')
         .trim()
         .notEmpty().withMessage('Search can not be empty string.')
@@ -220,11 +220,11 @@ const searchValidation = () => [
         
 ]
 
-const modeValidation = () => [
+export const modeValidation = () => [
     query('mode')
         .optional()
         .trim()
-        .notEmpty().withMessage('mode not be empty string.')
+        .notEmpty().withMessage('mode cannot be empty string.')
         .custom(async value => {
             const modeEnum = ['create', 'show', 'edit']
             if(!modeEnum.includes(value)){
@@ -233,6 +233,21 @@ const modeValidation = () => [
         }) 
 ]
 
-export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation,
-        commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation,
-        inviteSendValidation, acceptInviteidValidation, cancelInviteidValidation, removeViewerValidation }
+export function checkValidation(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    //  Get user data
+    req.objectData = matchedData(req, { includeOptionals: true });
+
+    next()
+    // Convert publish checkbox to boolean
+    // publish = publish ? true : false
+}
+
+// export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation,
+//         commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation,
+//         inviteSendValidation, acceptInviteidValidation, cancelInviteidValidation, removeViewerValidation }

@@ -122,17 +122,18 @@ export async function getPage(req, res, next){
 }
 
 export async function getList(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        return next(createError(result.errors.map(err => err.msg).join()))
-    }
+    // const result = validationResult(req);
+    // if (!result.isEmpty()) {
+    //     return next(createError(result.errors.map(err => err.msg).join()))
+    // }
 
+    // //  Get user data
+    // const { mode = 'show' } = matchedData(req, { includeOptionals: true });
     //  Get user data
-    const { mode = 'show' } = matchedData(req, { includeOptionals: true });
-
+    const { mode = 'show' } = req.objectData
+    
     const id = req.params.id
     try{
-
         //  Get list data
         let listData = await findUnique('list', { id }, modelsInterface.list.selectFields)
 
@@ -144,16 +145,10 @@ export async function getList(req, res, next){
         // destruct
         listData = modelsInterface.list.destructur(listData)
 
-
         res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
-
-        //unescape body
-        // listData.body = he.decode(listData.body)
 
         res.render('list', { user: req.user,  listData, mode })
     }catch(err){
-        console.log(err)
-        // page not found
         return next(err);
     }
 }

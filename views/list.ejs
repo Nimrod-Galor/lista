@@ -43,7 +43,7 @@
             <ul class="nav col-auto">
                 <%if(user){%>
                     <li class="nav-item"><a href="/mylists" class="nav-link link-body-emphasis px-2">My Lists</a></li>
-                    <li class="nav-item"><a href="/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
+                    <li class="nav-item"><a href="/list/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
                 <%}%>
             </ul>
 
@@ -149,7 +149,7 @@
                                     <div id="mail">
                                         <%=user.email%>
                                     </div>
-                                    <form action="/removeViewer" method="POST" onsubmit="return confirm('Remove user from list?')">
+                                    <form action="/list/remove/viewer" method="POST" onsubmit="return confirm('Remove user from list?')">
                                         <input type="hidden" name="listid" value="<%=listData.id%>" />
                                         <input type="hidden" name="userid" value="<%=user.id%>" />
                                         <button type="submit" class="btn btn-danger">
@@ -174,7 +174,7 @@
                                     <div id="mail">
                                         <%=invite.recipient.email%>
                                     </div>
-                                    <form action="/cancelinvite" method="POST" onsubmit="return confirm(`are you sure you wish to cancel this invitation`)">
+                                    <form action="/invite/cancel" method="POST" onsubmit="return confirm(`are you sure you wish to cancel this invitation`)">
                                         <input type="hidden" name="inviteid" value="<%=invite.id%>" />
                                         <button type="submit" class="btn btn-danger">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
@@ -189,7 +189,7 @@
                     </ul>
                 
 
-                <form action="/invite" method="POST" onsubmit="return inviteuser(event)">
+                <form action="/invite/create" method="POST" onsubmit="return inviteuser(event)">
                     <input type="hidden" name="listId" value="<%=listData.id%>">
                     <div class="row g-2 align-items-center my-3">
                         <div class="col">

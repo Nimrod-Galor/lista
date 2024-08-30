@@ -29,7 +29,7 @@
             <ul class="nav col-auto">
                 <%if(user){%>
                     <li class="nav-item"><a href="/mylists" class="nav-link link-body-emphasis px-2">My Lists</a></li>
-                    <li class="nav-item"><a href="/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
+                    <li class="nav-item"><a href="/list/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
                 <%}%>
             </ul>
 
@@ -104,7 +104,7 @@
                                 <%=invite.author.email%>
                             </div>
                             <div class="btn-group">
-                                <form action="/declineinvite" method="POST">
+                                <form action="/invite/decline" method="POST">
                                     <input type="hidden" name="inviteid" value="<%=invite.id%>" />
                                     <input type="hidden" name="listid" value="<%=invite.list.id%>">
                                     <button type="submit" class="btn btn-danger btn-sm">
@@ -114,7 +114,7 @@
                                         </svg>
                                     </button>
                                 </form>
-                                <form action="/acceptinvite" method="POST">
+                                <form action="/invite/accept" method="POST">
                                     <input type="hidden" name="inviteid" value="<%=invite.id%>" />
                                     <input type="hidden" name="listid" value="<%=invite.list.id%>">
                                     <button type="submit" class="btn btn-success btn-sm">
@@ -180,13 +180,13 @@
                                 <td class="text-end">
                                     <div class="btn-group" role="group" aria-label="Edit item menu">
                                         <%if(permissions.list.delete.allow === true && (!permissions.list.delete.where.authorId || permissions.list.delete.where.authorId === data.authorId)){%>
-                                        <form action="/delete/list" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
+                                        <form action="/list/delete" method="POST" onsubmit="return deleteItemClick('<%=data[modelHeaders[0].key]%>')">
                                             <input type="hidden" name="id" value="<%=data.id%>"/>
                                             <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />
                                             <button type="submit" class="btn btn-warning btn-sm">Delete</button>
                                         </form>
                                         <%}else if(permissions.list.delete.allow === true && (permissions.list.delete.where.viewers === user.id)){%>
-                                        <form action="/removeList" method="POST" onsubmit="return removeItemClick('<%=data[modelHeaders[0].key]%>')">
+                                        <form action="/list/remove" method="POST" onsubmit="return removeItemClick('<%=data[modelHeaders[0].key]%>')">
                                             <input type="hidden" name="listid" value="<%=data.id%>"/>
                                             <input type="hidden" name="userid" value="<%=user.id%>"/>
                                             <input type="hidden" name="header" value="<%=data[modelHeaders[0].key]%>" />

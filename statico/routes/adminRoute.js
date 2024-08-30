@@ -1,17 +1,27 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import { userValidation, deleteValidation, bulkValidation, listValidation, postValidation, roleValidation } from '../controllers/formValidations.js'
-import  { listContent,
+import { 
+    checkValidation,
+    userValidation, 
+    deleteValidation, 
+    bulkValidation, 
+    listValidation, 
+    postValidation, 
+    roleValidation
+} from '../controllers/formValidations.js'
+
+import  { 
+    listContent,
     createUser, editUser, deleteUser,
     createPage, editPage, deletePage,
-    createList, editList, deleteList,
+    createDataType, editList, deleteDataType,
     editeRole,
     bulkDelete, bulkPublish, bulkDeleteUser,
     setSessionMessages
 } from '../controllers/crudController.js'
 import { initialize } from '../setup/initialize.js'
 import { admin_dashboard } from '../controllers/adminController.js'
-import { ensureAuthorized, filterByPermissions, allRolesPermissions, setRoleLocalsPermissions } from '../permissions/permissions.js'
+import { ensureAuthorized, filterByPermissions, allRolesPermissions } from '../permissions/permissions.js'
 import { sendVerificationMailMiddleware } from '../controllers/mailController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -22,7 +32,7 @@ const router = express.Router()
     
 
 // list Users
-router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list', '/'), filterByPermissions('user'), listContent('user'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list'), filterByPermissions('user'), listContent('user'), admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/user`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -54,7 +64,7 @@ router.post("/user/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 
 
 // list Pages
-router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list', '/'), filterByPermissions('page'), listContent('page'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list'), filterByPermissions('page'), listContent('page'), admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/page`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -85,21 +95,19 @@ router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 })
 
 // list Lists
-router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('list', 'list', '/'), filterByPermissions('list'), listContent('list'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/list`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create list
-router.post("/create/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'create'), listValidation(), createList, setSessionMessages, (req, res) => {
-    res.redirect('/admin/list')
-})
+
 //  Edit list
 router.post("/edit/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), listValidation(), editList, setSessionMessages, (req, res) => {
     res.redirect('/admin/list')
 })
 //  Delete list
-router.post("/delete/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteList, setSessionMessages, (req, res) => {
+router.post("/delete/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(),  checkValidation, deleteDataType('list'), setSessionMessages, (req, res) => {
     res.redirect('/admin/list')
 })
 // bulk delete
@@ -116,14 +124,14 @@ router.post("/list/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 })
 
 // list invites
-router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized('invite', 'list', '/'), filterByPermissions('invite'), listContent('invite'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized('invite', 'list'), filterByPermissions('invite'), listContent('invite'), admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/invite`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 
 // list Roles
-router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list', '/'), filterByPermissions('role'), listContent('role'), setRoleLocalsPermissions, admin_dashboard(), (req, res) => {
+router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list'), filterByPermissions('role'), listContent('role'), admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/role`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -135,7 +143,7 @@ router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'ed
 
 
 // Permission Page
-router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), setRoleLocalsPermissions, admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
+router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
     res.render('permissions', {user: req.user, caption: '' })
 })
 

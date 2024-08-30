@@ -24,7 +24,7 @@ export function isAuthorized(contentType, key, roleId){
     }
 }
 
-export function ensureAuthorized(contentType, key, redirect = '/'){
+export function ensureAuthorized(contentType, key){
     return function(req, res, next){
         if(isAuthorized(contentType, key, req.user.roleId)){
             next()
@@ -35,13 +35,19 @@ export function ensureAuthorized(contentType, key, redirect = '/'){
 }
 
 export function getPermissionFilter(contentType, user){
-    let where = permissions[user.roleId][contentType].list.where
+    // let where = permissions[user.roleId][contentType].list.where
     try{
-        if("authorId" in permissions[user.roleId][contentType].list.where){
-            where.authorId = user.id
-        }
+    //     if("authorId" in permissions[user.roleId][contentType].list.where){
+    //         where.authorId = user.id
+    //     }
         
-        if("viewers" in permissions[user.roleId][contentType].list.where){
+    //     if("viewers" in permissions[user.roleId][contentType].list.where){
+    //         where = { OR: [ { authorId: user.id }, { viewersIDs: { has: user.id } } ] }
+    //     }
+        let where = {}
+        if(permissions[user.roleId][contentType].list.where.length === 1){
+            where.authorId = user.id
+        }else if(permissions[user.roleId][contentType].list.where.length >= 2){
             where = { OR: [ { authorId: user.id }, { viewersIDs: { has: user.id } } ] }
         }
 
@@ -64,21 +70,31 @@ export function filterByPermissions(contentType){
     }
 }
 
-export function setRoleLocalsPermissions(req, res, next){
+export function getRolePermissions(req, res, next){
     // Get permissions
     const tmpPermissions = structuredClone(permissions[req.user.roleId])
     // update authorId -> user.id with current user id
     for (const [contentType, typePermissions] of Object.entries(tmpPermissions)) {
         for (const [key, operation] of Object.entries(typePermissions)) {
-            if("where" in operation && "authorId" in operation.where){
-                operation.where.authorId = req.user.id
-            }
-            if("where" in operation && "viewers" in operation.where){
-                operation.where.viewers = req.user.id
+            // if("where" in operation && "authorId" in operation.where){
+            //     operation.where.authorId = req.user.id
+            // }
+            // if("where" in operation && "viewers" in operation.where){
+            //     operation.where.viewers = req.user.id
+            // }
+            if("where" in operation){
+                for(let i=0; i< operation.where.length; i++){
+                    if(operation.where[i] === "authorId"){
+                        operation.where.authorId = req.user.id
+                    }else if(operation.where[i] === "viewers"){
+                        operation.where.viewers = req.user.id
+                    }
+                }
             }
         }
     }
 
+    // return tmpPermissions
     res.locals.permissions = tmpPermissions
     next()
 }
