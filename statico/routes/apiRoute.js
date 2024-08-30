@@ -7,9 +7,13 @@ import {
     roleValidation
 } from '../controllers/formValidations.js'
 
-import  { listContent, createDataType, editList, deleteDataType, setSessionMessages,
-            listRoles, editeRole
+import  { 
+    listContent, 
+    createDataType, updateDataType, deleteDataType,
+    setSessionMessages,
+    listRoles
  } from '../controllers/crudController.js'
+ 
 import {ensureAuthorized, filterByPermissions} from '../permissions/permissions.js'
 import { api_login, refreshToken } from '../../controllers/authController.js'
 
@@ -24,7 +28,9 @@ router.post('/login', api_login)
 router.post('/refresh-token', refreshToken)
 
 
-/*  list    */
+/************/
+/*  LIST    */
+/************/
 // List lists
 router.get(["/lists", "lists?/*"], passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), (req, res) => {
     res.json(req.crud_response)
@@ -38,7 +44,7 @@ router.post("/create/list", passport.authenticate('jwt', { session: false }), en
     }
 })
 //  Edit list
-router.post("/edit/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'edit'), listValidation(), editList, (req, res) => {
+router.post("/edit/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'edit'), listValidation(), checkValidation, updateDataType('list'), (req, res) => {
     res.json(req.crud_response)
 })
 //  Delete list
@@ -46,14 +52,16 @@ router.delete("/list/delete", passport.authenticate('jwt', { session: false }), 
     res.json(req.crud_response)
 })
 
-/*  Role    */
+/************/
+/*  ROLE    */
+/************/
 // List Roles
 router.get("/roles", passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
     res.json(req.crud_response)
 })
 
 // update role
-router.post("/edit/role", passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'edit'), roleValidation(), editeRole, (req, res, next) => {
+router.post("/edit/role", passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'edit'), roleValidation(), checkValidation, updateDataType('role'), (req, res, next) => {
     res.json(req.crud_response)
 })
 

@@ -75,18 +75,6 @@ export function auth_post_login(req, res, next){
         return next(err)
       }
 
-      // set jwt token
-      // const jwtToken = jwt.sign({ id: user.id, username: user.userName, roleId: user.roleId }, process.env.JWT_SECRET, { expiresIn: '15m' })
-      // // res.cookie('jwt', jwtToken, { path: '/', maxAge: 59 * 60 * 1000 }); // 59 minute
-
-      // // Send the JWT as an HttpOnly cookie
-      // res.cookie('jwt', token, {
-      //   httpOnly: true,     // Prevents access via JavaScript
-      //   secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production
-      //   maxAge: 15 * 60 * 1000,  // 15 minutes in milliseconds
-      //   sameSite: 'strict'  // CSRF protection
-      // });
-
       // refresh token
       const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
 

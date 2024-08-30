@@ -12,16 +12,14 @@ import {
 
 import  { 
     listContent,
-    createUser, editUser, deleteUser,
-    createPage, editPage, deletePage,
-    createDataType, editList, deleteDataType,
-    editeRole,
+    updateDataType, createDataType, deleteDataType,
+    createUser, deleteUser,
     bulkDelete, bulkPublish, bulkDeleteUser,
     setSessionMessages
 } from '../controllers/crudController.js'
 import { initialize } from '../setup/initialize.js'
 import { admin_dashboard } from '../controllers/adminController.js'
-import { ensureAuthorized, filterByPermissions, allRolesPermissions } from '../permissions/permissions.js'
+import { ensureAuthorized, filterByPermissions, allRolesPermissions, getRolePermissions } from '../permissions/permissions.js'
 import { sendVerificationMailMiddleware } from '../controllers/mailController.js'
 
 const ensureLoggedIn = ensureLogIn.ensureLoggedIn
@@ -29,20 +27,21 @@ const router = express.Router()
 
 
 
-    
-
+/************/
+/*  USER    */
+/************/
 // list Users
-router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list'), filterByPermissions('user'), listContent('user'), admin_dashboard(), (req, res) => {
+router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list'), filterByPermissions('user'), listContent('user'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/user`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create User
-router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), userValidation(), createUser, setSessionMessages, sendVerificationMailMiddleware, (req, res) => {
+router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), userValidation(), checkValidation, createUser, setSessionMessages, sendVerificationMailMiddleware, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Edit User
-router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'edit'), userValidation(), editUser, setSessionMessages, (req, res) => {
+router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'edit'), userValidation(), checkValidation, updateDataType('user'), setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Delete User
@@ -63,22 +62,25 @@ router.post("/user/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 })
 
 
+/************/
+/*  PAGE    */
+/************/
 // list Pages
-router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list'), filterByPermissions('page'), listContent('page'), admin_dashboard(), (req, res) => {
+router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list'), filterByPermissions('page'), listContent('page'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/page`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create Page
-router.post("/create/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'create'), postValidation(), createPage, setSessionMessages, (req, res) => {
+router.post("/create/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'create'), postValidation(), checkValidation, createDataType('page'), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //  Edit Page
-router.post("/edit/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'edit'), postValidation(), editPage, setSessionMessages, (req, res) => {
+router.post("/edit/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'edit'), postValidation(), checkValidation, updateDataType('page'), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //  Delete Page
-router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'delete'), deleteValidation(), deletePage, setSessionMessages, (req, res) => {
+router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'delete'), deleteValidation(), checkValidation, deleteDataType('page'), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 // bulk delete
@@ -94,16 +96,17 @@ router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
     res.redirect('/admin/page')
 })
 
+/************/
+/*  LIST    */
+/************/
 // list Lists
-router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), admin_dashboard(), (req, res) => {
+router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/list`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
-//  Create list
-
 //  Edit list
-router.post("/edit/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), listValidation(), editList, setSessionMessages, (req, res) => {
+router.post("/edit/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), listValidation(), checkValidation, updateDataType('list'), setSessionMessages, (req, res) => {
     res.redirect('/admin/list')
 })
 //  Delete list
@@ -123,27 +126,35 @@ router.post("/list/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
     res.redirect('/admin/list')
 })
 
+/************/
+/*  INVITE  */
+/************/
 // list invites
-router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized('invite', 'list'), filterByPermissions('invite'), listContent('invite'), admin_dashboard(), (req, res) => {
+router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized('invite', 'list'), filterByPermissions('invite'), listContent('invite'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/invite`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 
+/************/
+/*  ROLE    */
+/************/
 // list Roles
-router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list'), filterByPermissions('role'), listContent('role'), admin_dashboard(), (req, res) => {
+router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list'), filterByPermissions('role'), listContent('role'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/role`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 // Edit Role
-router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), roleValidation(), editeRole, setSessionMessages, (req, res) => {
+router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), roleValidation(), checkValidation, updateDataType('role'), setSessionMessages, (req, res) => {
     res.redirect('/admin/role')
 })
 
-
+/************/
+/*  OTHER   */
+/************/
 // Permission Page
-router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
+router.get("/permissions",  ensureLoggedIn('/login'), ensureAuthorized('permissions_page', 'view'), getRolePermissions, admin_dashboard('permissions'), allRolesPermissions, (req, res) => {
     res.render('permissions', {user: req.user, caption: '' })
 })
 

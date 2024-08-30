@@ -22,17 +22,19 @@ import {
             removeViewer
         } from '../statico/controllers/crudController.js'
 
-import {    filterByPermissions,
-            ensureAuthorized,
-            isAuthorized
-        } from '../statico/permissions/permissions.js'
+import {    
+    getRolePermissions,
+    filterByPermissions,
+    ensureAuthorized,
+    isAuthorized
+} from '../statico/permissions/permissions.js'
 
-import {    search_controller,
-            getPage,
-            getList,
-            mylists,
-            profile
-        } from '../controllers/pageController.js'
+import {
+    getPage,
+    getList,
+    mylists,
+    profile
+} from '../controllers/pageController.js'
 
 
 const router = express.Router();
@@ -42,7 +44,13 @@ const router = express.Router();
 /************/
 /*  LIST    */
 /************/
-router.get('/mylists', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), pendingInvitesRecived, mylists, (req, res) => {
+function filterMyLists(req, res, next){
+    // this function will filter only my lists (even for admin)
+    req.where = { OR: [ { authorId: req.user.id }, { viewersIDs: { has: req.user.id } } ] }
+    next()
+}
+
+router.get('/mylists', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterMyLists, getRolePermissions, listContent('list'), pendingInvitesRecived, mylists, (req, res) => {
     const baseUrl = `${req.baseUrl}/mylists`
     const path = req.path
     res.render('mylists', {user: req.user, baseUrl, path })

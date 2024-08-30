@@ -244,10 +244,4 @@ export function checkValidation(req, res, next){
     req.objectData = matchedData(req, { includeOptionals: true });
 
     next()
-    // Convert publish checkbox to boolean
-    // publish = publish ? true : false
 }
-
-// export {deleteValidation, userValidation, bulkValidation, listValidation, roleValidation,
-//         commentsListValidation, postIdValidation, searchValidation, postValidation, modeValidation,
-//         inviteSendValidation, acceptInviteidValidation, cancelInviteidValidation, removeViewerValidation }

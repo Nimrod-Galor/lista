@@ -1,7 +1,6 @@
 import createError from 'http-errors'
 import he from 'he'
-import { validationResult, matchedData } from 'express-validator'
-import { findUnique, readRows, countRows } from '../db.js'
+import { findUnique, countRows } from '../db.js'
 import { isAuthorized, getPermissionFilter } from '../statico/permissions/permissions.js'
 import modelsInterface from '../statico/interface/modelsInterface.js'
 
@@ -14,7 +13,7 @@ export async function mylists(req, res, next){
         res.locals.hasMessages = true
     }
 
-    const numberOfDocuments = await countRows('list', getPermissionFilter('list', req.user))
+    const numberOfDocuments = await countRows('list', req.where)
 
     res.locals.modelHeaders = req.selectedModel?.displayFields || []
     res.locals.modelsData = req.modelsData || []
@@ -22,80 +21,9 @@ export async function mylists(req, res, next){
     res.locals.numberOfPages = numberOfDocuments ? Math.ceil(numberOfDocuments / 10) : 0
     res.locals.currentPage = parseInt(req.query.page) || 1
     res.locals.pendingInvitesRecived = req.pendingInvitesRecived
+    // res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+
     next()
-}
-
-export async function search_controller(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        return next(createError(result.errors.map(err => err.msg).join()))
-    }
-
-    //  Get user data
-    let { search, page } = matchedData(req, { includeOptionals: true });
-
-    try{
-        const where = {
-            OR: [
-                { title: { contains: search } },
-                { body: { contains: search } },
-                { author: { 
-                        userName: { contains: search } 
-                    }
-                }
-            ]
-        }
-
-        const documentsCount = await countRows('post', where)
-        const numberOfPages = Math.ceil(documentsCount / 10)
-        if(page >= numberOfPages){
-            page = numberOfPages
-        }else if(page < 1){
-            page = 1
-        }
-        const currentPage = parseInt(page) || 1
-
-        const select = {
-            id: true,
-            createDate: true,
-            slug: true,
-            title: true,
-            body: true,
-            author: {
-                select: {
-                    userName: true
-                }
-            }
-        }
-    
-        const query = {
-            "skip": page ? (page - 1) * 10 : 0,
-            "take": 10,
-            where,
-            select
-        }
-
-        let results = []
-        if(documentsCount > 0){
-            results = await readRows('post', query)
-            for(let i=0; i < results.length; i++){
-                if(results[i].title.includes(search) || results[i].title.includes(search)){
-                    // result in title or author
-                    results[i].body = he.decode(results[i].body).split('</p>')[0].substring(3)
-                }else{
-                    // result in body
-                    results[i].body = he.decode(results[i].body).split('</p>').find(p => p.includes(search)).substring(3)
-                }
-            }
-        }
-
-        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
-
-        res.render('search', { user: req.user, results, documentsCount, numberOfPages, currentPage, search })
-    }catch(err){
-        console.log(err.message)
-        next(err)
-    }
 }
 
 export async function getPage(req, res, next){
@@ -122,14 +50,6 @@ export async function getPage(req, res, next){
 }
 
 export async function getList(req, res, next){
-    // const result = validationResult(req);
-    // if (!result.isEmpty()) {
-    //     return next(createError(result.errors.map(err => err.msg).join()))
-    // }
-
-    // //  Get user data
-    // const { mode = 'show' } = matchedData(req, { includeOptionals: true });
-    //  Get user data
     const { mode = 'show' } = req.objectData
     
     const id = req.params.id
