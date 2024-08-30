@@ -1,5 +1,6 @@
 import express from 'express'
 import passport from 'passport'
+import ensureLogIn from 'connect-ensure-login'
 import { 
     checkValidation,
     deleteValidation,
@@ -13,7 +14,7 @@ import  {
     setSessionMessages,
     listRoles
  } from '../controllers/crudController.js'
- 
+
 import {ensureAuthorized, filterByPermissions} from '../permissions/permissions.js'
 import { api_login, refreshToken } from '../../controllers/authController.js'
 
@@ -36,7 +37,7 @@ router.get(["/lists", "lists?/*"], passport.authenticate('jwt', { session: false
     res.json(req.crud_response)
 })
 //  Create list
-router.post("/create/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'create'), listValidation(),  checkValidation, createDataType('list'), setSessionMessages, (req, res) => {
+router.post("/list/create",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'create'), listValidation(),  checkValidation, createDataType('list'), setSessionMessages, (req, res) => {
     if(req.crud_response. messageType === 'success'){
         res.json({messageBody: `/list/${req.newListId}`, messageTitle: 'List Created', messageType: 'redirect'})
     }else{
@@ -44,11 +45,11 @@ router.post("/create/list", passport.authenticate('jwt', { session: false }), en
     }
 })
 //  Edit list
-router.post("/edit/list", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'edit'), listValidation(), checkValidation, updateDataType('list'), (req, res) => {
+router.post("/list/edit",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'edit'), listValidation(), checkValidation, updateDataType('list'), (req, res) => {
     res.json(req.crud_response)
 })
 //  Delete list
-router.delete("/list/delete", passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'delete'), deleteValidation(),  checkValidation, deleteDataType('list'), (req, res) => {
+router.delete("/list/delete",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'delete'), deleteValidation(),  checkValidation, deleteDataType('list'), (req, res) => {
     res.json(req.crud_response)
 })
 
@@ -61,8 +62,12 @@ router.get("/roles", passport.authenticate('jwt', { session: false }), ensureAut
 })
 
 // update role
-router.post("/edit/role", passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'edit'), roleValidation(), checkValidation, updateDataType('role'), (req, res, next) => {
+router.post("/edit/role",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'edit'), roleValidation(), checkValidation, updateDataType('role'), (req, res, next) => {
     res.json(req.crud_response)
 })
 
+
+router.get('/notloggedin', (req, res, next) => {
+    res.json({messageBody: 'you are trying to access a login-protected page when not logged in', messageTitle: '401 Unauthorized', messageType: 'danger'})
+})
 export default router

@@ -75,8 +75,10 @@ export function updateDataType(dataType){
         }
     
         try{
+            const id = req.objectData.id
+            delete req.objectData.id
             //  Update data type
-            await updateRow(dataType, { id: req.objectData.id }, req.objectData)
+            await updateRow(dataType, { id }, req.objectData)
     
             // Send Success json
             req.crud_response = {messageBody: `${dataType} was successfuly updated`, messageTitle: `${dataType} Updated`, messageType: 'success'}

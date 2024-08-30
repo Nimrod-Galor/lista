@@ -65,7 +65,8 @@ export async function getList(req, res, next){
         // destruct
         listData = modelsInterface.list.destructur(listData)
 
-        res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+        res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) }, 
+                                     "list": { "edit": isAuthorized("list", "edit", req.user?.roleId) && (listData.authorId == req.user.id || listData.viewersIDs.includes(req.user.id)) } }
 
         res.render('list', { user: req.user,  listData, mode })
     }catch(err){

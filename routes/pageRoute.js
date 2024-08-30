@@ -74,6 +74,7 @@ router.get("/list/create", ensureLogIn.ensureLoggedIn('/login'), ensureAuthorize
     }
 
     res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+    res.locals.permissions = { "list": { "edit": isAuthorized("list", "edit", req.user?.roleId) } }
 
     res.render('list', {user: req.user, listData, mode: 'create'})
 })

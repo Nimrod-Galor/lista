@@ -1,6 +1,9 @@
 function renderList(){
     const listaMain = document.getElementById('lista-main')
     listaMain.innerHTML = ''
+
+    document.getElementById('meta-title').textContent = listData.title
+    document.getElementById('meta-description').textContent = listData.description
     createDomList(listaMain, listData.body)
 }
 
@@ -32,9 +35,8 @@ function createDomList(parentDom, currentList){
             const templateDom = document.getElementById(`${currentItemObj.type}-edit-template`)
             const editItemDom = templateDom.content.cloneNode(true)
             if(currentItemObj.edit === true){
-                // update edite item title
-                const editItemTitle = editItemDom.querySelector('.edit-item-title')
-                editItemTitle.textContent = editItemTitle.textContent.replace('Add', 'Edit')
+                // update edit item title
+                editItemDom.querySelector('.edit-item-title').textContent = editItemTitle.textContent.replace('Add', 'Edit')
             }
             switch(currentItemObj.type){
                 case 'link':
@@ -330,7 +332,7 @@ function newItemObject(type){
 function saveList(){
     // check title not empty
     const listTitle = document.getElementById('listTitle')
-    if(listTitle.value.trim() === ''){
+    if(listData.title === undefined || listData.title === ''){
         listTitle.classList.remove('is-valid')
         listTitle.classList.add('is-invalid')
         return
@@ -360,12 +362,12 @@ function saveList(){
         return
     }
 
-    listData.title = listTitle.value.trim()
-    listData.description = document.getElementById('listDescription').value
+    // listData.title = listTitle.value.trim()
+    // listData.description = document.getElementById('listDescription').value
     const dataToSend = listData
     
     // POST list
-    fetchData(`/api/${mode}/list`, 'POST', dataToSend)
+    fetchData(`/api/list/${mode}`, 'POST', dataToSend)
     .then(data => {
         if(data){
             if(data.messageType === 'success'){
@@ -387,6 +389,7 @@ function saveList(){
 
 function titleChanged(event){
     // console.log(event.currentTarget.value)
+    listData.title = event.currentTarget.value.trim()
     if("id" in listData){
         // publish update
         saveList()
@@ -394,7 +397,8 @@ function titleChanged(event){
 }
 
 function descriptionChanged(event){
-    // console.log(event.currentTarget.value)
+    //  console.log(event.currentTarget.value)
+    listData.description = event.currentTarget.value.trim()
     if("id" in listData){
         // publish update
         saveList()
@@ -487,6 +491,7 @@ function userShowList(){
     document.body.classList.remove('edit')
     document.body.classList.add('show')
     mode = 'show'
+    renderList()
 }
 
 function userEditList(){
