@@ -64,8 +64,6 @@ router.get("/list/create", ensureLogIn.ensureLoggedIn('/login'), ensureAuthorize
         "body": {
             "id": (Math.random()*10000000).toString(16).split('.')[0],
             "type": "ul",
-            "title": "",
-            "description": "",
             "items": []
         },
         "viewers": [],
@@ -73,8 +71,8 @@ router.get("/list/create", ensureLogIn.ensureLoggedIn('/login'), ensureAuthorize
         "dir": "ltr"
     }
 
-    res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
-    res.locals.permissions = { "list": { "edit": isAuthorized("list", "edit", req.user?.roleId) } }
+    res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) },
+                                 "list": { "edit": isAuthorized("list", "edit", req.user?.roleId) } }
 
     res.render('list', {user: req.user, listData, mode: 'create'})
 })

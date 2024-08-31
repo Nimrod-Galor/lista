@@ -36,7 +36,8 @@ function createDomList(parentDom, currentList){
             const editItemDom = templateDom.content.cloneNode(true)
             if(currentItemObj.edit === true){
                 // update edit item title
-                editItemDom.querySelector('.edit-item-title').textContent = editItemTitle.textContent.replace('Add', 'Edit')
+                editItemTitle = editItemDom.querySelector('.edit-item-title')
+                editItemTitle.textContent = editItemTitle.textContent.replace('Add', 'Edit')
             }
             switch(currentItemObj.type){
                 case 'link':
@@ -201,19 +202,26 @@ function updateItem(objId){
 }
 
 function deleteItem(objId, currentList = listData.body){
+    runDeleteItem(objId, currentList)
+    // re render DOM
+    renderList()
+}
+
+function runDeleteItem(objId, currentList){
     for(let i = 0 ; i < currentList.items.length; i++){
         if(currentList.items[i].id === objId){
             // remove this object from array
             currentList.items.splice(i, 1)
-            break
+            return true
         }
         if("items" in currentList.items[i]){
-            deleteItem(objId, currentList.items[i])
+            const res = runDeleteItem(objId, currentList.items[i])
+            if(res === true){
+                return true
+            }
         }
     }
-
-    // re render DOM
-    renderList()
+    return
 }
 
 function removeEditItems(currentList = listData.body){
@@ -228,7 +236,10 @@ function removeEditItems(currentList = listData.body){
             return false
         }
         if("items" in currentList.items[i]){
-            return removeEditItems(currentList.items[i])
+            const res =  removeEditItems(currentList.items[i])
+            if(res === true){
+                return true
+            }
         }
     }
     return
@@ -298,7 +309,6 @@ function getObjectById(objId, currentItemObj){
             }
         }
     }
-    
 }
 
 function newItemObject(type){
@@ -362,8 +372,6 @@ function saveList(){
         return
     }
 
-    // listData.title = listTitle.value.trim()
-    // listData.description = document.getElementById('listDescription').value
     const dataToSend = listData
     
     // POST list
@@ -371,11 +379,6 @@ function saveList(){
     .then(data => {
         if(data){
             if(data.messageType === 'success'){
-                // topAlert('success', data.messageTitle, data.messageBody)
-                // document.getElementById('meta-title').textContent = listData.title
-                // document.getElementById('meta-description').textContent = listData.description
-                // document.body.classList.remove('create', 'edit')
-                // document.body.classList.add('show')
                 document.querySelector('.toast .toast-body').textContent = data.messageBody
                 toast.show()
             }else if(data.messageType === 'redirect'){
@@ -388,7 +391,6 @@ function saveList(){
 }
 
 function titleChanged(event){
-    // console.log(event.currentTarget.value)
     listData.title = event.currentTarget.value.trim()
     if("id" in listData){
         // publish update
@@ -397,7 +399,6 @@ function titleChanged(event){
 }
 
 function descriptionChanged(event){
-    //  console.log(event.currentTarget.value)
     listData.description = event.currentTarget.value.trim()
     if("id" in listData){
         // publish update
@@ -439,13 +440,17 @@ function userEditItem(objectId){
 function userMoveItemUp(objectId){
     reorderItem(objectId, listData.body, 'up')
     renderList()
-    debouncedSaveList()
+    if("id" in listData){
+        debouncedSaveList()
+    }
 }
 
 function userMoveItemDown(objectId){
     reorderItem(objectId, listData.body, 'down')
     renderList()
-    debouncedSaveList()
+    if("id" in listData){
+        debouncedSaveList()
+    }
 }
 
 function reorderItem(objectId, currentList, dir){
@@ -511,24 +516,6 @@ function inviteuser(event){
     }
 
     return true
-    // const email = document.getElementById('inviteEmail').value
-
-    // const dataToSend = {
-    //     listId: listData.id,
-    //     email
-    // }
-
-    // fetchData('/api/invite', "POST", dataToSend)
-    // .then(data => {
-    //     if(data.messageType === 'success'){
-    //         // add invite to invite list
-    //         const inviteTemplate = document.getElementById('invite-item')
-    //         const inviteDom = inviteTemplate.content.cloneNode(true)
-    //         inviteDom.querySelector('#email').textContent = email
-    //         document.getElementById('pendingInvites').appendChild(inviteDom)
-    //     }
-    //     topAlert(data.messageType, data.messageTitle, data.messageBody)
-    // })
 }
 
 function userLangDirChange(dir){
@@ -543,7 +530,7 @@ function userLangDirChange(dir){
     }
     ['float-end', 'float-start'].map(item => document.querySelector('.save-btn').classList.toggle(item))
     
-    if(mode !='create'){
+    if("id" in listData){
         debouncedSaveList()
     }
 }
