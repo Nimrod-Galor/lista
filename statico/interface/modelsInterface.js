@@ -82,6 +82,7 @@ const modelsInterface = {
             createDate: true,
             updated: true,
             title: true,
+            description: true,
             body: true,
             publish: true,
             viewCount: true,

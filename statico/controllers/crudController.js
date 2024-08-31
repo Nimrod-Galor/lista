@@ -6,6 +6,136 @@ import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteR
 import { isAllowed, isAuthorized } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
 
+
+
+// Create
+export function createDataType(dataType){
+    return async function(req, res, next){
+        switch(dataType){
+            case 'list':
+                // Convert publish checkbox to boolean
+                req.objectData.publish = req.objectData.publish ? true : false
+                req.objectData.author = { connect: {id: req.user.id} }
+                break
+            case 'page':
+                if(req.objectData.slug != ''){
+                    // check if slug exist
+                    const pageWithSlug = await findUnique('page', { slug: req.objectData.slug })
+                    if(pageWithSlug){
+                        // page with same slug exist
+                        req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+                        return next()
+                    }
+                }
+            break
+        }
+
+        try{
+            // Create Object
+            const newObject = await createRow(dataType, req.objectData)
+
+            req.newObjectId = newObject.id
+
+            // Send Success json
+            req.crud_response = {messageBody: `${dataType} was created successfuly`, messageTitle: `${dataType} Created`, messageType: 'success'}
+        }catch(errorMsg){
+            //  Send Error json
+            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+        }finally{
+            next()
+        }
+    }
+}
+
+// Update
+export function updateDataType(dataType){
+    return async function(req, res, next){
+        
+        switch(dataType){
+            case 'user':
+                // Convert emailverified checkbox to boolean
+                req.objectData.emailverified = req.objectData.emailverified ? true : false
+                if(req.objectData.password != ''){
+                    // Hash passowrd
+                    const salt = crypto.randomBytes(16)
+                    const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
+        
+                    req.objectData.password = key.toString('hex')
+                    req.objectData.salt = salt.toString('hex')
+                }
+            break
+            case 'list':
+                // Convert publish checkbox to boolean
+                req.objectData.publish = req.objectData.publish ? true : false
+                // check if user have publisg permission
+                if(!isAuthorized('publish_list', req.user.roleId)){
+                    delete req.objectData.publish
+                }
+            break
+        }
+    
+        try{
+            const id = req.objectData.id
+            delete req.objectData.id
+            //  Update data type
+            await updateRow(dataType, { id }, req.objectData)
+    
+            // Send Success json
+            req.crud_response = {messageBody: `${dataType} was successfuly updated`, messageTitle: `${dataType} Updated`, messageType: 'success'}
+        }catch(errorMsg){
+            // Send Error json
+            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+        }
+        finally{
+            next()
+        }
+    }
+}
+
+// Delete
+export function deleteDataType(dataType){
+    return async function(req, res, next){
+       try{
+            //  Delete List
+            await deleteRow(dataType, { id: req.objectData.id })
+    
+            // Send Success json
+            req.crud_response = {messageBody: `${dataType} was successfuly deleted`, messageTitle: `${dataType} Deleted`, messageType: 'success'}
+        }catch(errorMsg){
+            // Send Error json
+            req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+        }
+        finally{
+            next()
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*  admin list content  */
 export function listContent(contentType){
     return async function(req, res, next){
@@ -112,16 +242,18 @@ export function listContent(contentType){
 
 /** Create User */
 export async function createUser(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        // dont send varification Email
-        req.sendVerificationMail = false
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
+    // const result = validationResult(req);
+    // if (!result.isEmpty()) {
+    //     // dont send varification Email
+    //     req.sendVerificationMail = false
+    //     //  Send Error json
+    //     req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+    //     return next()
+    // }
+    // //  Get user data
+    // let {email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
     //  Get user data
-    let {email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
+    let {email, username, password, role, emailverified} = req.objectData
 
     // sendVerificationMail will determine if send verification 
     req.sendVerificationMail = emailverified ? true : false
@@ -186,77 +318,65 @@ export async function createUser(req, res, next){
     }
 }
 
-export async function editUser(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
+// export async function editUser(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
 
-    //  Get user data
-    let {id, email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
+//     //  Get user data
+//     let {id, email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
 
-    // Convert emailverified checkbox to boolean
-    emailverified = emailverified ? true : false
+//     // Convert emailverified checkbox to boolean
+//     emailverified = emailverified ? true : false
 
-    try{
-        //  Set user object
-        const tmpUser = {
-            email,
-            emailVerified: emailverified,
-            userName: username,
-            role: {
-                connect: {id: role}
-            }
-        }
+//     try{
+//         //  Set user object
+//         const tmpUser = {
+//             email,
+//             emailVerified: emailverified,
+//             userName: username,
+//             role: {
+//                 connect: {id: role}
+//             }
+//         }
 
-        if(password != ''){
-            // Hash passowrd
-            const salt = crypto.randomBytes(16)
-            const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
+//         if(password != ''){
+//             // Hash passowrd
+//             const salt = crypto.randomBytes(16)
+//             const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
 
-            tmpUser.password = key.toString('hex')
-            tmpUser.salt = salt.toString('hex')
-        }
+//             tmpUser.password = key.toString('hex')
+//             tmpUser.salt = salt.toString('hex')
+//         }
 
-        //  Update user
-        await updateRow('user', {id}, tmpUser)
+//         //  Update user
+//         await updateRow('user', {id}, tmpUser)
 
-        // Send Success json
-        req.crud_response = {messageBody: `User ${username} was successfuly updated`, messageTitle: 'User Updated', messageType: 'success'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
+//         // Send Success json
+//         req.crud_response = {messageBody: `User ${username} was successfuly updated`, messageTitle: 'User Updated', messageType: 'success'}
+//     }catch(errorMsg){
+//         // Send Error json
+//         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//     }
+//     finally{
+//         next()
+//     }
+// }
 
 export async function deleteUser(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-
     //  Get user data
-    let {id, header} = matchedData(req, { includeOptionals: true });
+    let { id, header } = req.objectData
 
     try{
-        //  Validate user data
-        // validateDeleteData(id, header)
-
-        // Delete all user Comments
-        await deleteRows('comment', {authorId: id})
-
-        // Delete all user Posts
-        await deleteRows('post', {authorId: id})
+        // Todo
+        // Delete all user Lists
+        // await deleteRows('post', {authorId: id})
 
         //  Delete user
-        await deleteRow('user', {id})
+        await deleteRow('user', { id })
 
         // Send Success json
         req.crud_response = {messageBody: `User "${header}" was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'}
@@ -274,143 +394,143 @@ export async function deleteUser(req, res, next){
 /****************************************/
 
 /*  Create Page */
-export async function createPage(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    //  Get user data
-    let {title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
+// export async function createPage(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//     //  Get user data
+//     let {title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
     
-    // Convert publish checkbox to boolean
-    publish = publish ? true : false
+//     // Convert publish checkbox to boolean
+//     publish = publish ? true : false
     
-    try{
-        if(slug != ''){
-            // check if slug exist
-            const pageWithSlug = await findUnique('page', {slug})
-            if(pageWithSlug){
-                // page with same slug exist
-                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
+//     try{
+//         if(slug != ''){
+//             // check if slug exist
+//             const pageWithSlug = await findUnique('page', {slug})
+//             if(pageWithSlug){
+//                 // page with same slug exist
+//                 req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+//                 return
+//             }
 
-            const postWithSlug = await findUnique('post', {slug})
-            if(postWithSlug){
-                // post with same slug exist
-                req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
-        }
+//             const postWithSlug = await findUnique('post', {slug})
+//             if(postWithSlug){
+//                 // post with same slug exist
+//                 req.crud_response = {messageBody: 'post with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+//                 return
+//             }
+//         }
 
-        // Set new Post object
-        const tmpPage = {
-            title,
-            body,
-            publish,
-            slug,
-            metatitle,
-            metadescription
-        }
+//         // Set new Post object
+//         const tmpPage = {
+//             title,
+//             body,
+//             publish,
+//             slug,
+//             metatitle,
+//             metadescription
+//         }
 
-        // Create Page
-        await createRow('page', tmpPage)
+//         // Create Page
+//         await createRow('page', tmpPage)
 
-        // Send Success json
-        req.crud_response = {messageBody: `Page "${title}" was created successfuly`, messageTitle: 'Page Created', messageType: 'success'}
-    }catch(errorMsg){
-        //  Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
+//         // Send Success json
+//         req.crud_response = {messageBody: `Page "${title}" was created successfuly`, messageTitle: 'Page Created', messageType: 'success'}
+//     }catch(errorMsg){
+//         //  Send Error json
+//         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//     }
+//     finally{
+//         next()
+//     }
+// }
 
 /*  Edit Page */
-export async function editPage(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    //  Get user data
-    let {id, title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
+// export async function editPage(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//     //  Get user data
+//     let {id, title, body, publish, slug, metatitle, metadescription} = matchedData(req, { includeOptionals: true });
 
-    // Convert publish checkbox to boolean
-    publish = publish ? true : false
+//     // Convert publish checkbox to boolean
+//     publish = publish ? true : false
 
-    try{
-        // Validate user Post
-        const selectedPage = await findUnique('page', {id})
-        if(!selectedPage){
-            throw new Error('Invalid Page')
-        }
+//     try{
+//         // Validate user Post
+//         const selectedPage = await findUnique('page', {id})
+//         if(!selectedPage){
+//             throw new Error('Invalid Page')
+//         }
 
-        // Set new Page object
-        const tmpPage = {
-            title,
-            body,
-            publish,
-            metatitle,
-            metadescription
-        }
+//         // Set new Page object
+//         const tmpPage = {
+//             title,
+//             body,
+//             publish,
+//             metatitle,
+//             metadescription
+//         }
 
 
-        if(slug != '' && slug != selectedPage.slug){
-            // check if slug exist
-            const pageWithSlug = await findUnique('page', {slug})
-            if(pageWithSlug){
-                // page with same slug exist
-                req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
-                return
-            }
+//         if(slug != '' && slug != selectedPage.slug){
+//             // check if slug exist
+//             const pageWithSlug = await findUnique('page', {slug})
+//             if(pageWithSlug){
+//                 // page with same slug exist
+//                 req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
+//                 return
+//             }
 
-            // update page object
-            tmpPage.slug = slug
-        }
+//             // update page object
+//             tmpPage.slug = slug
+//         }
 
-        // Update Page
-        await updateRow('page', {id: selectedPage.id}, tmpPage)
+//         // Update Page
+//         await updateRow('page', {id: selectedPage.id}, tmpPage)
 
-        // Send Success json
-        req.crud_response = {messageBody: `Page "${title}" was updated successfuly`, messageTitle: 'Page Updated', messageType: 'success'}
-    }catch(errorMsg){
-        //  Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
+//         // Send Success json
+//         req.crud_response = {messageBody: `Page "${title}" was updated successfuly`, messageTitle: 'Page Updated', messageType: 'success'}
+//     }catch(errorMsg){
+//         //  Send Error json
+//         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//     }
+//     finally{
+//         next()
+//     }
+// }
 
 /*  Delete Page */
-export async function deletePage(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    //  Get user data
-    let {id, header} = matchedData(req, { includeOptionals: true });
+// export async function deletePage(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//     //  Get user data
+//     let {id, header} = matchedData(req, { includeOptionals: true });
 
-    try{
-        await deleteRow('page', {id})
+//     try{
+//         await deleteRow('page', {id})
 
-        // Send Success json
-        req.crud_response = {messageBody: `Page "${header}" was successfuly deleted`, messageTitle: 'Page Delete', messageType: 'success'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
+//         // Send Success json
+//         req.crud_response = {messageBody: `Page "${header}" was successfuly deleted`, messageTitle: 'Page Delete', messageType: 'success'}
+//     }catch(errorMsg){
+//         // Send Error json
+//         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//     }
+//     finally{
+//         next()
+//     }
+// }
 
 
 /****************************************/
@@ -418,136 +538,126 @@ export async function deletePage(req, res, next){
 /****************************************/
 
 /*  Create list */
-export async function createList(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    //  Get user data
-    let {dir, title, description, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
+// export async function createList(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//     //  Get user data
+//     let {dir, title, description, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
 
-    // Convert publish checkbox to boolean
-    publish = publish ? true : false
+//     // Convert publish checkbox to boolean
+//     publish = publish ? true : false
 
-    try{
+//     try{
 
-        // Set new List object
-        const tmpList = {
-            dir,
-            title,
-            description,
-            body,
-            publish,
-            author: {
-                connect: {id: req.user.id}
-            },
-            viewPermission,
-            editPermission
-        }
+//         // Set new List object
+//         const tmpList = {
+//             dir,
+//             title,
+//             description,
+//             body,
+//             publish,
+//             author: {
+//                 connect: {id: req.user.id}
+//             },
+//             viewPermission,
+//             editPermission
+//         }
 
-        // Create List
-        const newList = await createRow('list', tmpList)
+//         // Create List
+//         const newList = await createRow('list', tmpList)
 
-        req.newListId = newList.id
+//         req.newListId = newList.id
 
-        // Send Success json
-        req.crud_response = {messageBody: `List "${title}" was created successfuly`, messageTitle: 'List Created', messageType: 'success'}
-    }catch(errorMsg){
-        //  Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
+//         // Send Success json
+//         req.crud_response = {messageBody: `List "${title}" was created successfuly`, messageTitle: 'List Created', messageType: 'success'}
+//     }catch(errorMsg){
+//         //  Send Error json
+//         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//     }
+//     finally{
+//         next()
+//     }
+// }
 
 /*  Edit List */
-export async function editList(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    //  Get user data
-    let {id, dir, title, description, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
+// export async function editList(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//     //  Get user data
+//     let {id, dir, title, body, publish, viewPermission, editPermission} = matchedData(req, { includeOptionals: true });
 
-    // Convert publish checkbox to boolean
-    publish = publish ? true : false
+//     // Convert publish checkbox to boolean
+//     publish = publish ? true : false
 
-    try{
-        // Validate user List
-        const selectedList = await findUnique('list', { id })
-        if(!selectedList){
-            throw new Error('Invalid List')
-        }
+//     try{
+//         // Validate user List
+//         const selectedList = await findUnique('list', { id })
+//         if(!selectedList){
+//             throw new Error('Invalid List')
+//         }
 
-        // check user Authorized to edit this list
-        // if(req.session.userPermissions.list.edit.allow === false 
-        //     || ("authorId" in req.session.userPermissions.list.edit.where && req.session.userPermissions.list.edit.where.authorId != selectedList.authorId)
-        //     || ("viewers" in req.session.userPermissions.list.edit.where && !selectedList.viewers.includes(req.user.id) )
-        // ){
-        if(!isAuthorized(req, selectedList)){
-            next(createError(403))
-        }
+//         // Set new List object
+//         const tmpList = {
+//             dir,
+//             title,
+//             body,
+//             publish,
+//             viewPermission,
+//             editPermission
+//         }
 
-        // Set new List object
-        const tmpList = {
-            dir,
-            title,
-            description,
-            body,
-            publish,
-            viewPermission,
-            editPermission
-        }
+//         // check if user have publisg permission
+//         if(isAuthorized('publish_list', req.user.roleId)){
+//             tmpList.publish = publish
+//         }
 
-        // check if user have publisg permission
-        if(isAllowed('publish_list', req.user.roleId)){
-            tmpList.publish = publish
-        }
+//         // Update List
+//         await updateRow('list', { id: selectedList.id }, tmpList)
 
-        // Update List
-        await updateRow('list', { id: selectedList.id }, tmpList)
+//         // Send Success json
+//         req.crud_response = {messageBody: `List "${ title }" was updated successfuly`, messageTitle: 'List Updated', messageType: 'success'}
+//     }catch(errorMsg){
+//         //  Send Error json
+//         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//     }
+//     finally{
+//         next()
+//     }
+// }
 
-        // Send Success json
-        req.crud_response = {messageBody: `List "${ title }" was updated successfuly`, messageTitle: 'List Updated', messageType: 'success'}
-    }catch(errorMsg){
-        //  Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
+// /*  Delete List */
+// export async function deleteList(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//      //  Get user data
+//      let {id, header} = matchedData(req, { includeOptionals: true });
 
-/*  Delete List */
-export async function deleteList(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-     //  Get user data
-     let {id, header} = matchedData(req, { includeOptionals: true });
-
-     try{
-         //  Delete List
-         await deleteRow('list', {id})
+//      try{
+//          //  Delete List
+//          await deleteRow('list', {id})
  
-         // Send Success json
-         req.crud_response = {messageBody: `List "${ header }" was successfuly deleted`, messageTitle: 'List Delete', messageType: 'success'}
-     }catch(errorMsg){
-         // Send Error json
-         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-     }
-     finally{
-        next()
-    }
-}
+//          // Send Success json
+//          req.crud_response = {messageBody: `List "${ header }" was successfuly deleted`, messageTitle: 'List Delete', messageType: 'success'}
+//      }catch(errorMsg){
+//          // Send Error json
+//          req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//      }
+//      finally{
+//         next()
+//     }
+// }
 
 
 /****************************************/
@@ -588,14 +698,8 @@ export async function pendingInvitesRecived(req, res, next){
 
 // Accept Invite
 export async function acceptInvite(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
     //  Get user data
-    let { inviteid, listid } = matchedData(req, { includeOptionals: true });
+    let { inviteid, listid } = req.objectData
 
     try{
         // add  user to list viewer
@@ -621,14 +725,8 @@ export async function acceptInvite(req, res, next){
 
 // Decline Invite
 export async function declineInvite(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
     //  Get user data
-    let { inviteid } = matchedData(req, { includeOptionals: true });
+    let { inviteid } = req.objectData
 
     try{
         //delete invite
@@ -647,14 +745,8 @@ export async function declineInvite(req, res, next){
 
 // Cancel Invite
 export async function cancelInvite(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
     //  Get user data
-    let { inviteid } = matchedData(req, { includeOptionals: true });
+    let { inviteid } = req.objectData
 
     try{
         //delete invite
@@ -673,15 +765,8 @@ export async function cancelInvite(req, res, next){
 
 // Send Invite to user
 export async function inviteUser(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-
     //  Get user data
-    let { listId, email } = matchedData(req, { includeOptionals: true });
+    let { listId, email } = req.objectData
 
     // check intivitaion is not already open.
     try{
@@ -732,17 +817,9 @@ export async function inviteUser(req, res, next){
 
 // Rmove viewer from list
 export async function removeViewer(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-
     //  Get user data
-    let { listid, userid, header } = matchedData(req, { includeOptionals: true });
+    let { listid, userid, header } = req.objectData
 
-    
     try{
         // Update the list to disconnect the user from the viewLists relation
 
@@ -787,27 +864,27 @@ export async function listRoles(req, res, next){
 }
 
 // Edit Role
-export async function editeRole(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    const {id, name, description} = matchedData(req, { includeOptionals: true });
+// export async function editeRole(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//     const {id, name, description} = matchedData(req, { includeOptionals: true });
 
-    try {
-        await updateRow('role', {id}, { name, description })
+//     try {
+//         await updateRow('role', {id}, { name, description })
 
-        req.crud_response = {messageBody: `Rolet ${name} was successfuly updated`, messageTitle: 'Role updated', messageType: 'success'}
-    }catch(errorMsg){
-        // Send Error json
-        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
-    }
-    finally{
-        next()
-    }
-}
+//         req.crud_response = {messageBody: `Rolet ${name} was successfuly updated`, messageTitle: 'Role updated', messageType: 'success'}
+//     }catch(errorMsg){
+//         // Send Error json
+//         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+//     }
+//     finally{
+//         next()
+//     }
+// }
 
 // Delete
 export function bulkDelete(contentType){
