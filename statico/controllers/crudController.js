@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
-import { isAllowed, isAuthorized } from '../permissions/permissions.js'
+import { isAuthorized } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
 
 
