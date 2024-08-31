@@ -1,6 +1,6 @@
 import modelsInterface from '../interface/modelsInterface.js'
 import { countsRows } from '../../db.js'
-import { isAllowed, getPermissionFilter } from '../permissions/permissions.js'
+import { isAuthorized, getPermissionFilter } from '../permissions/permissions.js'
 
 // get name of all models
 const modelsName = Object.keys(modelsInterface)
@@ -20,7 +20,7 @@ export function admin_dashboard(contentType){
         const countModels = []
         const countSelectes = []
         for(let i = 0; i <modelsName.length; i++){
-            if(isAllowed(modelsName[i], 'list', req.user.roleId)){
+            if(isAuthorized(modelsName[i], 'list', req.user.roleId)){
                 countModels.push(modelsName[i])
                 countSelectes.push(getPermissionFilter(modelsName[i], req.user))
             }

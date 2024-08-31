@@ -81,14 +81,6 @@ app.use(async (req, res, next) => {
     }
 })
 
-// Set user permissions
-app.use((req, res, next) => {
-    if (!req.session.userPermissions && req.user) {
-        req.session.userPermissions = setRolePermissions(req, res, next)
-    }
-    next()
-})
-
 // Session-persisted message middleware
 app.use(function(req, res, next) {
     var msgs = req.session.messages || [];
