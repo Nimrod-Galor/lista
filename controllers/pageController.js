@@ -20,7 +20,7 @@ export async function mylists(req, res, next){
     // res.locals.contentType = req.contentType || contentType || ''
     res.locals.numberOfPages = numberOfDocuments ? Math.ceil(numberOfDocuments / 10) : 0
     res.locals.currentPage = parseInt(req.query.page) || 1
-    res.locals.permissions = req.session.userPermissions
+    // res.locals.permissions = req.session.userPermissions
     res.locals.pendingInvitesRecived = req.pendingInvitesRecived
     // res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
