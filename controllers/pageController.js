@@ -37,7 +37,7 @@ export async function getPage(req, res, next){
             return next()
         }
 
-        res.locals.permissions = { "admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
+        res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
         //unescape body
         pageData.body = he.decode(pageData.body)
@@ -86,7 +86,7 @@ export function errorPage(err, req, res, next){
         // return json response
         res.json(err)
     }else{
-        res.locals.permissions = {"admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
+        res.locals.permissions = {"admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
         // render Error page
         res.render('error', { user: req.user });
     }
@@ -117,6 +117,6 @@ export async function profile(req, res, next){
         return next(createError(404))
     }
 
-    res.locals.permissions = { "admin_page": { "view": isAllowed("admin_page", "view", req.user?.roleId) } }
+    res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
     res.render('profile', { user: req.user, userData })
 }

@@ -55,11 +55,7 @@ export function isAllowed(contentType, key, roleId){
     }
 }
 
-<<<<<<< HEAD
-export function ensureallowed(contentType, key, redirect = '/'){
-=======
 export function ensureAuthorized(contentType, key){
->>>>>>> simple
     return function(req, res, next){
         if(isAllowed(contentType, key, req.user.roleId)){
             next()
@@ -105,12 +101,7 @@ export function filterByPermissions(contentType){
     }
 }
 
-<<<<<<< HEAD
-
-export function setRolePermissions(req, res, next){
-=======
 export function getRolePermissions(req, res, next){
->>>>>>> simple
     // Get permissions
     const tmpPermissions = structuredClone(permissions[req.user.roleId])
     // update authorId -> user.id with current user id
@@ -134,13 +125,9 @@ export function getRolePermissions(req, res, next){
         }
     }
 
-<<<<<<< HEAD
-    return tmpPermissions
-=======
     // return tmpPermissions
     res.locals.permissions = tmpPermissions
     next()
->>>>>>> simple
 }
 
 export async function allRolesPermissions(req, res, next){

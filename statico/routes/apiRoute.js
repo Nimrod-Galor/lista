@@ -33,7 +33,7 @@ router.post('/refresh-token', ensureLoggedIn('/login'), refreshToken)
 /*  LIST    */
 /************/
 // List lists
-router.get(["/lists", "lists?/*"], ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureallowed('list', 'list'), filterByPermissions('list'), listContent('list'), (req, res) => {
+router.get(["/lists", "lists?/*"], ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), (req, res) => {
     res.json(req.crud_response)
 })
 //  Create list
@@ -57,7 +57,7 @@ router.delete("/list/delete",ensureLogIn.ensureLoggedIn('/api/notloggedin'), pas
 /*  ROLE    */
 /************/
 // List Roles
-router.get("/roles", ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureallowed('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
+router.get("/roles", ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
     res.json(req.crud_response)
 })
 

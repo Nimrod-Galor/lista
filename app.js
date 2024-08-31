@@ -13,11 +13,7 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
 import { errorPage } from './controllers/pageController.js'
-<<<<<<< HEAD
-import { setRolePermissions } from './statico/permissions/permissions.js'
-=======
 import { getRolePermissions } from './statico/permissions/permissions.js'
->>>>>>> simple
 
 // routes
 import pageRouter from './routes/pageRoute.js'
