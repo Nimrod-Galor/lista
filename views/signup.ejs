@@ -123,28 +123,6 @@
         </div>
     </footer>
 
-    <script type="text/javascript" src="/scripts/themea.js"></script>
-    <script type="text/javascript" src="/scripts/global.js"></script>
-    <script type="text/javascript">
-        function confirmPasswords(){
-            // Check if password and confirm password match
-            var password = document.getElementById('signup-password').value;
-            var confirmPassword = document.getElementById('confirmPassword')
-
-            if (password !== confirmPassword.value) {
-                event.preventDefault()
-                event.stopPropagation()
-
-                // Show custom validation message
-                confirmPassword.setCustomValidity('Passwords do not match')
-                confirmPassword.classList.add('is-invalid')
-
-            } else {
-                confirmPassword.setCustomValidity('')
-                confirmPassword.classList.remove('is-invalid')
-                confirmPassword.classList.add('is-valid')
-            }
-        }
-    </script>
+    <script type="text/javascript" src="/scripts/lista.js"></script>
 </body>
 </html>
