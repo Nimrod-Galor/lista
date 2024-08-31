@@ -26,44 +26,9 @@
                     <span class="fs-4"> Lista</span>
                 </a>
             </div>
-    
-            <ul class="nav col-auto">
-                <%if(user){%>
-                    <li class="nav-item"><a href="/mylists" class="nav-link link-body-emphasis px-2">My Lists</a></li>
-                    <li class="nav-item"><a href="/list/create" class="nav-link link-body-emphasis px-2">Create List</a></li>
-                <%}%>
-            </ul>
-
-            <!-- <div class="col-10 col-md-3">
-                <form action="/search" method="GET" class="col-12 col-lg-auto my-2" role="search">
-                    <div class="input-group">
-                        <input type="search" name="search" class="form-control" placeholder="Search..." aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </div>
-                </form>
-            </div> -->
-    
-            <%if(user){%>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#headerNavbarTop" aria-controls="headerNavbarTop" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="col-12 col-md-auto">
-                    <div id="headerNavbarTop" class="collapse navbar-collapse">
-                        <ul class="navbar-nav me-auto">
-                            <%if(permissions.admin_page.view){%>
-                                <li class="nav-item"><a href="/admin" class="nav-link link-body-emphasis px-2">Admin</a></li>
-                            <%}%>
-                            <li class="nav-item"><a href="/profile" class="nav-link link-body-emphasis px-2">My Profile</a></li>
-                            <li class="nav-item"><a href="/logout" class="nav-link link-body-emphasis px-2">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            <%}else{%>
-                <div class="col-auto">
-                    <a href="/login" class="btn btn-outline-primary me-2">Login</a>
-                    <a href="/signup" class="btn btn-primary">Sign up</a>
-                </div>
-            <%}%>
+            <div class="col-auto">
+                <a href="/signup" class="btn btn-primary">Sign up</a>
+            </div>
         </div>
     </nav>
 

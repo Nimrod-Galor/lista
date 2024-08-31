@@ -11,20 +11,19 @@ import {
 } from '../statico/controllers/formValidations.js'
 
 import {    
-            listContent,
-            deleteDataType,
-            setSessionMessages,
-            pendingInvitesRecived,
-            acceptInvite,
-            declineInvite,
-            cancelInvite,
-            inviteUser,
-            removeViewer
-        } from '../statico/controllers/crudController.js'
+    listContent,
+    deleteDataType,
+    setSessionMessages,
+    pendingInvitesRecived,
+    acceptInvite,
+    declineInvite,
+    cancelInvite,
+    inviteUser,
+    removeViewer
+} from '../statico/controllers/crudController.js'
 
 import {    
     getRolePermissions,
-    filterByPermissions,
     ensureAuthorized,
     isAuthorized
 } from '../statico/permissions/permissions.js'
@@ -32,8 +31,7 @@ import {
 import {
     getPage,
     getList,
-    mylists,
-    profile
+    mylists
 } from '../controllers/pageController.js'
 
 
@@ -120,7 +118,7 @@ router.post('/invite/cancel', ensureLogIn.ensureLoggedIn('/login'), ensureAuthor
 /*  PAGES   */
 /************/
 
-router.get('/profile', ensureLogIn.ensureLoggedIn('/login'), profile)
+// router.get('/profile', ensureLogIn.ensureLoggedIn('/login'), profile)
 
 router.get(['/', '/home'],  getPage)
 

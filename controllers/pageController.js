@@ -92,31 +92,31 @@ export function errorPage(err, req, res, next){
     }
 }
 
-export async function profile(req, res, next){
-    //  Get user data
-    const userData = await findUnique('user', { id: req.user.id }, {
-        id: true,
-        userName: true,
-        createDate: true,
-        email: true,
-        _count: {
-            select: { 
-                posts: true,
-                comments: true
-            }
-        },
-        role: {
-            select: {
-                id: true,
-                name: true
-            }
-        }
-    })
-    if(!userData){
-        // user not found.
-        return next(createError(404))
-    }
+// export async function profile(req, res, next){
+//     //  Get user data
+//     const userData = await findUnique('user', { id: req.user.id }, {
+//         id: true,
+//         userName: true,
+//         createDate: true,
+//         email: true,
+//         _count: {
+//             select: { 
+//                 posts: true,
+//                 comments: true
+//             }
+//         },
+//         role: {
+//             select: {
+//                 id: true,
+//                 name: true
+//             }
+//         }
+//     })
+//     if(!userData){
+//         // user not found.
+//         return next(createError(404))
+//     }
 
-    res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
-    res.render('profile', { user: req.user, userData })
-}
+//     res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
+//     res.render('profile', { user: req.user, userData })
+// }
