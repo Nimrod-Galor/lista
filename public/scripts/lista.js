@@ -683,6 +683,10 @@ function confirmPasswords(){
 //     }
 // }
 
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register("/serviceworker.js")
+}
+
 Array.prototype.move = function (from, to) {
     this.splice(to, 0, this.splice(from, 1)[0]);
 }

@@ -1,6 +1,9 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Lista",
+    "short_name": "Lista",
+    "description": "Create and share lists",
+    "scope": "./",
+    "start_url": "./",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
