@@ -75,26 +75,31 @@ export function auth_post_login(req, res, next){
         return next(err)
       }
 
+      let expiresIn = '90m'
+      let maxAge =  1000 * 60 * 90  // 90 minutes session expiry by default
+      if (req.body.remember) {  
+        try{
+          // remember me
+
+          expiresIn = '14d'
+          maxAge =  14 * 24 * 60 * 60 * 1000 // 14 days
+          const token = crypto.randomBytes(32).toString('hex')
+          await createRow('RememberMeToken', { token, userId: req.user.id })
+          res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge });
+        }catch(err){
+          return next(err)
+        }
+      }
+
       // refresh token
-      const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_SECRET, { expiresIn: '7d' })
+      const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_SECRET, { expiresIn })
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,      // Prevents access by JavaScript
         secure: process.env.NODE_ENV === 'production',  // Use Secure in production
         sameSite: 'Strict',  // Prevents CSRF attacks
-        maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
+        maxAge
       })
-
-      if (req.body.remember) {  
-        try{
-          // remember me
-          const token = crypto.randomBytes(32).toString('hex')
-          await createRow('RememberMeToken', { token, userId: req.user.id })
-          res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 14 * 24 * 60 * 60 * 1000 }); // 14 days
-        }catch(err){
-          return next(err)
-        }
-      }
 
       // Redirect to the my lists page
       return res.redirect('/mylists')
