@@ -80,7 +80,6 @@ export function auth_post_login(req, res, next){
       if (req.body.remember) {  
         try{
           // remember me
-
           expiresIn = '14d'
           maxAge =  14 * 24 * 60 * 60 * 1000 // 14 days
           const token = crypto.randomBytes(32).toString('hex')
