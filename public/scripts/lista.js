@@ -519,18 +519,18 @@ function inviteuser(event){
 }
 
 function userLangDirChange(dir){
-    console.log(dir)
     listData.dir = dir
+    const bootstrapLink = document.getElementById('bootstrap-link')
     if(dir==='ltr'){
         document.documentElement.lang = 'en'
         document.documentElement.dir = 'ltr'
-        document.getElementById('bootstrap-link').integrity = 'sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH'
-        document.getElementById('bootstrap-link').href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'
+        bootstrapLink.integrity = 'sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH'
+        bootstrapLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'
     }else{
         document.documentElement.lang = 'he'
         document.documentElement.dir = 'rtl'
-        document.getElementById('bootstrap-link').integrity = 'sha384-dpuaG1suU0eT09tx5plTaGMLBsfDLzUCCUXOY2j/LSvXYuG6Bqs43ALlhIqAJVRb'
-        document.getElementById('bootstrap-link').href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css'
+        bootstrapLink.integrity = 'sha384-dpuaG1suU0eT09tx5plTaGMLBsfDLzUCCUXOY2j/LSvXYuG6Bqs43ALlhIqAJVRb'
+        bootstrapLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css'
     }
     // ['float-end', 'float-start'].map(item => document.querySelector('.save-btn').classList.toggle(item))
     

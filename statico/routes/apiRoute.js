@@ -38,7 +38,7 @@ router.get(["/lists", "lists?/*"], ensureLoggedIn('/login'), passport.authentica
 //  Create list
 router.post("/list/create",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'create'), listValidation(),  checkValidation, createDataType('list'), setSessionMessages, (req, res) => {
     if(req.crud_response. messageType === 'success'){
-        res.json({messageBody: `/list/${req.newListId}`, messageTitle: 'List Created', messageType: 'redirect'})
+        res.json({messageBody: `/list/${req.newObjectId}`, messageTitle: 'List Created', messageType: 'redirect'})
     }else{
         res.json(req.crud_response)
     }
