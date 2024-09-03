@@ -28,7 +28,6 @@ export async function mylists(req, res, next){
 }
 
 export async function getPage(req, res, next){
-    
     try{
         //  Get page data
         const pageData = await findUnique('page', { slug: 'home' })

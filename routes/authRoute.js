@@ -1,7 +1,8 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
 import { userValidation } from '../statico/controllers/formValidations.js'
-import { createUser, setSessionMessages } from '../statico/controllers/crudController.js'
+import { setSessionMessages } from '../statico/controllers/crudController.js'
+import { createUser } from '../statico/controllers/adminController.js'
 import { auth_post_login, auth_logout, auth_post_singup, verifyEmail } from '../controllers/authController.js'
 import { sendVerificationMailMiddleware } from '../statico/controllers/mailController.js'
 

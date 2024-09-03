@@ -11,10 +11,9 @@ import {
 import  { 
     listContent, 
     createDataType, updateDataType, deleteDataType,
-    setSessionMessages,
-    listRoles
+    setSessionMessages
  } from '../controllers/crudController.js'
-
+import { listRoles } from '../controllers/adminController.js'
 import {ensureAuthorized, filterByPermissions} from '../permissions/permissions.js'
 import { api_login, refreshToken } from '../../controllers/authController.js'
 

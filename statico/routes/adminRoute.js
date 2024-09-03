@@ -13,12 +13,12 @@ import {
 import  { 
     listContent,
     updateDataType, createDataType, deleteDataType,
-    createUser, deleteUser,
-    bulkDelete, bulkPublish, bulkDeleteUser,
     setSessionMessages
 } from '../controllers/crudController.js'
 import { initialize } from '../setup/initialize.js'
-import { admin_dashboard } from '../controllers/adminController.js'
+import { admin_dashboard,
+     createUser, deleteUser,
+     bulkDelete, bulkPublish, bulkDeleteUser } from '../controllers/adminController.js'
 import { ensureAuthorized, filterByPermissions, allRolesPermissions, getRolePermissions } from '../permissions/permissions.js'
 import { sendVerificationMailMiddleware } from '../controllers/mailController.js'
 
