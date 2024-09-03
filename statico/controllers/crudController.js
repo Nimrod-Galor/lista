@@ -119,7 +119,8 @@ export function listContent(contentType){
             contentType = contentType || req.params.contentType || Object.keys(modelsInterface)[0]
             
             // get selected model
-            const selectedModel = Object.entries(modelsInterface).find(([modelName, model]) => modelName === contentType)[1]
+            // const selectedModel = Object.entries(modelsInterface).find(([modelName, model]) => modelName === contentType)[1]
+            const selectedModel = modelsInterface[contentType]
         
             // check we didnt get here by mistake
             if(selectedModel === undefined){

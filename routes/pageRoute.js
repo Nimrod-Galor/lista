@@ -48,7 +48,7 @@ function filterMyLists(req, res, next){
     next()
 }
 
-router.get('/mylists', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterMyLists, getRolePermissions, listContent('list'), pendingInvitesRecived, mylists, (req, res) => {
+router.get(['/mylists', "/mylists?/*"], ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterMyLists, getRolePermissions, listContent('list'), pendingInvitesRecived, mylists, (req, res) => {
     const baseUrl = `${req.baseUrl}/mylists`
     const path = req.path
     res.render('mylists', {user: req.user, baseUrl, path })

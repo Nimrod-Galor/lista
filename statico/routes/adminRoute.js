@@ -31,7 +31,7 @@ const router = express.Router()
 /*  USER    */
 /************/
 // list Users
-router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list'), filterByPermissions('user'), listContent('user'), getRolePermissions, admin_dashboard(), (req, res) => {
+router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list'), filterByPermissions('user'), getRolePermissions, listContent('user'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/user`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })

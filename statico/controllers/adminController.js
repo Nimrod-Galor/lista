@@ -52,7 +52,8 @@ export function admin_dashboard(contentType){
         res.locals.contentType = req.contentType || contentType || ''
         res.locals.numberOfPages = (req.contentType in sidebarData) ? Math.ceil(sidebarData[req.contentType].count / 10) : 0
         res.locals.currentPage = parseInt(req.query.page) || 1
-        res.locals.permissions = req.session.userPermissions
+        // res.locals.permissions = req.session.userPermissions
+        
         
         next()
     }
