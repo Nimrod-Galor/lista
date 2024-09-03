@@ -1,6 +1,5 @@
 // This code executes in its own worker or thread
 self.addEventListener("install", event => {
-   console.log("Service worker installed");
    if (caches) {
       try{
          const urlsToCache = [
@@ -33,11 +32,9 @@ self.addEventListener("install", event => {
 
 // network first
 self.addEventListener("fetch", event => {
-   console.log("Handling fetch event for", event.request.url);
    // Let the browser do its default thing
    // for non-GET requests.
    if (event.request.method !== "GET" || event.request.url.indexOf('?') > -1){
-      console.log(event.request.url)
       return
    } 
 
