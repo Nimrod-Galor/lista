@@ -17,7 +17,7 @@ import { listRoles } from '../controllers/adminController.js'
 import {ensureAuthorized, filterByPermissions} from '../permissions/permissions.js'
 import { api_login, refreshToken } from '../../controllers/authController.js'
 
-const ensureLoggedIn = ensureLogIn.ensureLoggedIn
+// const ensureLoggedIn = ensureLogIn.ensureLoggedIn
 const router = express.Router()
 
 
@@ -32,7 +32,7 @@ router.post('/refresh-token', ensureLoggedIn('/login'), refreshToken)
 /*  LIST    */
 /************/
 // List lists
-router.get(["/lists", "lists?/*"], ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), (req, res) => {
+router.get(["/lists", "lists?/*"], ensureLogIn.ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), (req, res) => {
     res.json(req.crud_response)
 })
 //  Create list
@@ -56,7 +56,7 @@ router.delete("/list/delete",ensureLogIn.ensureLoggedIn('/api/notloggedin'), pas
 /*  ROLE    */
 /************/
 // List Roles
-router.get("/roles", ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
+router.get("/roles", ensureLogIn.ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
     res.json(req.crud_response)
 })
 
@@ -65,8 +65,8 @@ router.post("/edit/role",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passpor
     res.json(req.crud_response)
 })
 
-
 router.get('/notloggedin', (req, res, next) => {
     res.json({messageBody: 'you are trying to access a login-protected page when not logged in', messageTitle: '401 Unauthorized', messageType: 'danger'})
 })
+
 export default router
