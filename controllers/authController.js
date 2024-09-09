@@ -100,6 +100,12 @@ export function auth_post_login(req, res, next){
         maxAge
       })
 
+      res.cookie('userId', req.user.id, {
+        httpOnly: false,
+        sameSite: 'Strict',  // Prevents CSRF attacks
+        maxAge
+      })
+
       // Redirect to the my lists page
       return res.redirect('/mylists')
     })

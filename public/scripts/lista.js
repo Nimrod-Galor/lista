@@ -109,15 +109,15 @@ function createDomList(parentDom, currentList){
         var itemWrapperDom
         if(currentList.type === 'div'){
             itemWrapperDom = itemTemplateClone//itemTemplate.content.cloneNode(true)
-            itemWrapperDom.querySelector('.d-flex').classList.add('simpleList')
-            itemWrapperDom.querySelector('.d-flex').tabIndex = 1
+            const tmpList = itemWrapperDom.querySelector('.d-flex')
+            tmpList.classList.add('simpleList')
+            tmpList.tabIndex = 1
         }else{
             itemWrapperDom = document.createElement('li')
             itemWrapperDom.appendChild(itemTemplateClone)
         }
         const itemInner = itemWrapperDom.querySelector('.list-item')
 
-        
         var itemDom
         var labelDom
         switch(currentItemObj.type){
@@ -137,8 +137,11 @@ function createDomList(parentDom, currentList){
             case 'checkbox':
                 let tmpCheckbox = document.getElementById('checkbox-item-template')
                 itemDom = tmpCheckbox.content.cloneNode(true);
-                itemDom.querySelector('.form-check-input').id = objectId
-                itemDom.querySelector('.form-check-input').checked = currentItemObj.checked
+                const formCheckInput = itemDom.querySelector('.form-check-input')
+                formCheckInput.id = objectId
+                formCheckInput.checked = currentItemObj.checked
+                // formCheckInput.addEventListener('beforechange', userCheckboxClick)
+                formCheckInput.addEventListener('change', userCheckboxChanged)
                 const labelDom = itemDom.querySelector('.form-check-label')
                 labelDom.htmlFor = objectId
                 labelDom.textContent = currentItemObj.label
@@ -152,18 +155,11 @@ function createDomList(parentDom, currentList){
                 itemInner.appendChild(itemDom)
             break
             case 'div':
-                itemWrapperDom.querySelector('.justify-content-between').classList.remove('align-items-center')
-                itemWrapperDom.querySelector('.justify-content-between').classList.add('align-items-start')
-                createDomList(itemInner, currentItemObj)
-            break
             case 'ul':
-                itemWrapperDom.querySelector('.justify-content-between').classList.remove('align-items-center')
-                itemWrapperDom.querySelector('.justify-content-between').classList.add('align-items-start')
-                createDomList(itemInner, currentItemObj)
-            break
             case 'ol':
-                itemWrapperDom.querySelector('.justify-content-between').classList.remove('align-items-center')
-                itemWrapperDom.querySelector('.justify-content-between').classList.add('align-items-start')
+                const tmpItem = itemWrapperDom.querySelector('.justify-content-between')
+                tmpItem.classList.remove('align-items-center')
+                tmpItem.classList.add('align-items-start')
                 createDomList(itemInner, currentItemObj)
             break
         }
@@ -171,6 +167,37 @@ function createDomList(parentDom, currentList){
         itemWrapperDom.tabIndex = 1
         listDom.appendChild(itemWrapperDom)
         parentDom.appendChild(listDom)
+    }
+}
+
+// function userCheckboxClick(event){
+//     // console.log('checkbox changed', event.currentTarget.id)
+//     if(!userIsAudience()){
+//         event.stopImmediatePropagation()
+//         event.preventDefault()
+//         event.stopPropagation()
+//         // return
+//     }
+// }
+function userCheckboxChanged(event){
+    // console.log('checkbox changed', event.currentTarget.id)
+    if(!userIsAudience()){
+        // event.preventDefault()
+        // event.stopPropagation()
+        // event.stopImmediatePropagation()
+        event.currentTarget.checked = !event.currentTarget.checked
+        const toastwrapper = document.querySelector('.toast')
+        toastwrapper.classList.remove('text-bg-success')
+        toastwrapper.classList.add('text-bg-danger')
+        document.querySelector('.toast-body').innerHTML = 'Unauthorized operation!<br/>Please login to update list.'
+        toast.show()
+        return
+    }
+    const currentObj = getObjectById(event.currentTarget.id, listData.body)
+    currentObj.checked = event.currentTarget.checked
+    if("id" in listData && userIsAudience()){
+        // publish update
+        saveList()
     }
 }
 
@@ -185,7 +212,6 @@ function updateItem(objId){
         break
         case 'checkbox':
             currentObj.label = document.getElementById(currentObj.id).value
-            currentObj.checked = document.getElementById(currentObj.id).checked
         break
         case 'link':
             currentObj.href = document.getElementById(`href-${currentObj.id}`).value
@@ -377,12 +403,15 @@ function saveList(){
     }
 
     const dataToSend = listData
-    
+    const action = mode === 'create' ? 'create' : 'edit'
     // POST list
-    fetchData(`/api/list/${mode}`, 'POST', dataToSend)
+    fetchData(`/api/list/${action}`, 'POST', dataToSend)
     .then(data => {
         if(data){
             if(data.messageType === 'success'){
+                const toastwrapper = document.querySelector('.toast')
+                toastwrapper.classList.add('text-bg-success')
+                toastwrapper.classList.remove('text-bg-danger')
                 document.querySelector('.toast .toast-body').textContent = data.messageBody
                 toast.show()
             }else if(data.messageType === 'redirect'){
@@ -679,17 +708,18 @@ function confirmPasswords(){
     }
 }
 
-// function profileDropdownClick(){
-//     event.stopPropagation()
-//     let obj = document.getElementById("profileDropdown")
-//     if(obj.classList.contains("show")){
-//         obj.classList.remove("show")
-//         document.body.removeEventListener('click', profileDropdownClick)
-//     }else{
-//         obj.classList.add("show")
-//         document.body.addEventListener('click', profileDropdownClick)
-//     }
-// }
+function userIsAudience(){
+    const userId = getCookie('userId')
+    // check if author
+    if(listData.authorId === userId){
+        return true
+    }
+    // check if audience
+    if(listData.viewersIDs.includes(userId)){
+        return true
+    }
+    return false
+}
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register("/serviceworker.js")
