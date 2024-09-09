@@ -1,7 +1,5 @@
 import createError from 'http-errors'
 import crypto from 'crypto'
-import jwt from 'jsonwebtoken'
-import { validationResult, matchedData } from 'express-validator'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
 import { isAuthorized } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
@@ -15,7 +13,7 @@ export function createDataType(dataType){
             case 'list':
                 // Convert publish checkbox to boolean
                 req.objectData.publish = req.objectData.publish ? true : false
-                req.objectData.author = { connect: {id: req.user.id} }
+                req.objectData.author = { connect: { id: req.user.id } }
                 break
             case 'page':
                 if(req.objectData.slug != ''){
@@ -54,8 +52,14 @@ export function updateDataType(dataType){
         switch(dataType){
             case 'user':
                 // Convert emailverified checkbox to boolean
-                req.objectData.emailverified = req.objectData.emailverified ? true : false
-                if(req.objectData.password != ''){
+                req.objectData.emailVerified = req.objectData.emailverified ? true : false
+                delete req.objectData.emailverified
+                req.objectData.userName = req.objectData.username
+                delete req.objectData.username
+                req.objectData.role = { connect: { id: req.objectData.role }}
+                if(req.objectData.password === ''){
+                    delete req.objectData.password
+                }else{
                     // Hash passowrd
                     const salt = crypto.randomBytes(16)
                     const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
@@ -75,10 +79,14 @@ export function updateDataType(dataType){
         }
     
         try{
-            const id = req.objectData.id
+            // const id = req.objectData.id
+            
+            const query = { id: req.objectData.id, AND: req.where }
+            
             delete req.objectData.id
+            
             //  Update data type
-            await updateRow(dataType, { id }, req.objectData)
+            await updateRow(dataType, query, req.objectData)
     
             // Send Success json
             req.crud_response = {messageBody: `${dataType} was successfuly updated`, messageTitle: `${dataType} Updated`, messageType: 'success'}

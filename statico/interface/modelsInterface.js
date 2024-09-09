@@ -86,6 +86,7 @@ const modelsInterface = {
             body: true,
             publish: true,
             viewCount: true,
+            viewersIDs: true,
             author: {
                 select: {
                     userName: true

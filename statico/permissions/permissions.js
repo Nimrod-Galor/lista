@@ -16,6 +16,10 @@ export function updatePermissions(newPermissionsObj){
     permissions = newPermissionsObj
 }
 
+// export async function hasPermissions(req, res, next){
+
+// }
+
 export function isAuthorized(contentType, key, roleId){
     try{
         return permissions[roleId][contentType][key].allow
@@ -34,12 +38,12 @@ export function ensureAuthorized(contentType, key){
     }
 }
 
-export function getPermissionFilter(contentType, user){
+export function getPermissionFilter(contentType, permissionType, user){
     try{
         let where = {}
-        if(permissions[user.roleId][contentType].list.where.length === 1){
+        if(permissions[user.roleId][contentType][permissionType].where.length === 1){
             where.authorId = user.id
-        }else if(permissions[user.roleId][contentType].list.where.length >= 2){
+        }else if(permissions[user.roleId][contentType][permissionType].where.length >= 2){
             where = { OR: [ { authorId: user.id }, { viewersIDs: { has: user.id } } ] }
         }
 
@@ -49,10 +53,10 @@ export function getPermissionFilter(contentType, user){
     }
 }
 
-export function filterByPermissions(contentType){
+export function filterByPermissions(contentType, permissionType){
     return function(req, res, next){
         try{
-            req.where = getPermissionFilter(contentType, req.user)
+            req.where = getPermissionFilter(contentType, permissionType, req.user)
         }catch(err){
             req.where = {id: "00a00000a00aa0aaaaa0000a"}
         }

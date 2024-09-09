@@ -25,14 +25,14 @@ const router = express.Router()
 router.post('/login', api_login)
 
 
-router.post('/refresh-token', ensureLoggedIn('/login'), refreshToken)
+router.post('/refresh-token', ensureLogIn.ensureLoggedIn('/login'), refreshToken)
 
 
 /************/
 /*  LIST    */
 /************/
 // List lists
-router.get(["/lists", "lists?/*"], ensureLogIn.ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), (req, res) => {
+router.get(["/lists", "lists?/*"], ensureLogIn.ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'list'), filterByPermissions('list', 'list'), listContent('list'), (req, res) => {
     res.json(req.crud_response)
 })
 //  Create list
@@ -44,7 +44,7 @@ router.post("/list/create",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passp
     }
 })
 //  Edit list
-router.post("/list/edit",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'edit'), listValidation(), checkValidation, updateDataType('list'), (req, res) => {
+router.post("/list/edit",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'edit'), listValidation(), checkValidation, filterByPermissions('list', 'edit'), updateDataType('list'), (req, res) => {
     res.json(req.crud_response)
 })
 //  Delete list
@@ -56,7 +56,7 @@ router.delete("/list/delete",ensureLogIn.ensureLoggedIn('/api/notloggedin'), pas
 /*  ROLE    */
 /************/
 // List Roles
-router.get("/roles", ensureLogIn.ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'list'), filterByPermissions('role'), listRoles, (req, res, next) => {
+router.get("/roles", ensureLogIn.ensureLoggedIn('/login'), passport.authenticate('jwt', { session: false }), ensureAuthorized('role', 'list'), filterByPermissions('role', 'list'), listRoles, (req, res, next) => {
     res.json(req.crud_response)
 })
 

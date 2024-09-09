@@ -31,7 +31,7 @@ const router = express.Router()
 /*  USER    */
 /************/
 // list Users
-router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list'), filterByPermissions('user'), getRolePermissions, listContent('user'), getRolePermissions, admin_dashboard(), (req, res) => {
+router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorized('user', 'list'), filterByPermissions('user', 'list'), getRolePermissions, listContent('user'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/user`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -66,7 +66,7 @@ router.post("/user/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 /*  PAGE    */
 /************/
 // list Pages
-router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list'), filterByPermissions('page'), listContent('page'), getRolePermissions, admin_dashboard(), (req, res) => {
+router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('page', 'list'), filterByPermissions('page', 'list'), listContent('page'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/page`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -100,7 +100,7 @@ router.post("/page/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 /*  LIST    */
 /************/
 // list Lists
-router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterByPermissions('list'), listContent('list'), getRolePermissions, admin_dashboard(), (req, res) => {
+router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('list', 'list'), filterByPermissions('list', 'list'), listContent('list'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/list`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -130,7 +130,7 @@ router.post("/list/bulk/unpublish", ensureLoggedIn('/login'), ensureAuthorized('
 /*  INVITE  */
 /************/
 // list invites
-router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized('invite', 'list'), filterByPermissions('invite'), listContent('invite'), getRolePermissions, admin_dashboard(), (req, res) => {
+router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized('invite', 'list'), filterByPermissions('invite', 'list'), listContent('invite'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/invite`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
@@ -140,7 +140,7 @@ router.get(["/invite", "/invite?/*"], ensureLoggedIn('/login'), ensureAuthorized
 /*  ROLE    */
 /************/
 // list Roles
-router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list'), filterByPermissions('role'), listContent('role'), getRolePermissions, admin_dashboard(), (req, res) => {
+router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('role', 'list'), filterByPermissions('role', 'list'), listContent('role'), getRolePermissions, admin_dashboard(), (req, res) => {
     const baseUrl = `${req.baseUrl}/role`
     const path = req.path
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })

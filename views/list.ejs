@@ -104,8 +104,7 @@
 
     <%}%>
 
-    <div class="container pt-3">
-        
+    <div class="container p-0">
         <div id="top-alert" class="top-alert <%- locals.hasMessages ? ' open ' : '' %>" role="alert">
             <div>
                 <div id="top-alert-alert" class="alert alert-<%-locals.messageType%>">
@@ -126,84 +125,89 @@
             </div>
         </div>
 
-        <main>
-        
-            <%if(permissions.list.edit && mode != 'create'){%>
-                <div id="listAudience" class="collapse">
-                    
-                        <ul id="list-viewers" class="list-group list-group-flush">
-                            <%if(listData.viewers.length != 0){%>
-                                <li class="list-group-item active fw-bold">
-                                        Users that can see and edit this list:
-                                </li>
-                                <%for(user of listData.viewers){%>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div id="mail">
-                                            <%=user.email%>
-                                        </div>
-                                        <form action="/list/remove/viewer" method="POST" onsubmit="return confirm('Remove user from list?')">
-                                            <input type="hidden" name="listid" value="<%=listData.id%>" />
-                                            <input type="hidden" name="userid" value="<%=user.id%>" />
-                                            <button type="submit" class="btn btn-danger">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
-                                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
-                                                    <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </li>
-                                <%}%>
-                            <%}%>
-                        </ul>
-                    
-                        <ul id="pendingInvites" class="list-group list-group-flush">
-                            <%if(listData.pendingInvites.length != 0){%>
-                                <li class="list-group-item active fw-bold">
-                                    Pending Invites:
-                                </li>
-                                <%for(invite of listData.pendingInvites){%>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div id="mail">
-                                            <%=invite.recipient.email%>
-                                        </div>
-                                        <form action="/invite/cancel" method="POST" onsubmit="return confirm(`are you sure you wish to cancel this invitation`)">
-                                            <input type="hidden" name="inviteid" value="<%=invite.id%>" />
-                                            <button type="submit" class="btn btn-danger">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
-                                                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
-                                                    <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </li>
-                                <%}%>
-                            <%}%>
-                        </ul>
-                    
-        
-                    <form action="/invite/create" method="POST" onsubmit="return inviteuser(event)">
-                        <input type="hidden" name="listId" value="<%=listData.id%>">
-                        <div class="row g-2 align-items-center my-3">
-                            <div class="col">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="inviteEmail" name="email" placeholder="name@example.com" pattern="[a-z0-9\._%+\-]+@[a-z0-9\.\-]+\.[a-z]{2,4}" required>
-                                    <label for="inviteEmail">Email address</label>
-                                    <div class="valid-feedback">
-                                        Looks good!
+        <%if(permissions.list.edit && mode != 'create'){%>
+            <div id="listAudience" class="collapse">
+                
+                    <ul id="list-viewers" class="list-group list-group-flush">
+                        <%if(listData.viewers.length != 0){%>
+                            <li class="list-group-item active fw-bold">
+                                    Users that can see and edit this list:
+                            </li>
+                            <%for(user of listData.viewers){%>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div id="mail">
+                                        <%=user.email%>
                                     </div>
-                                    <div class="invalid-feedback">
-                                        Invalid email address
-                                    </div> 
+                                    <form action="/list/remove/viewer" method="POST" onsubmit="return confirm('Remove user from list?')">
+                                        <input type="hidden" name="listid" value="<%=listData.id%>" />
+                                        <input type="hidden" name="userid" value="<%=user.id%>" />
+                                        <button type="submit" class="btn btn-danger">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                                                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                                                <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </li>
+                            <%}%>
+                        <%}%>
+                    </ul>
+                
+                    <ul id="pendingInvites" class="list-group list-group-flush">
+                        <%if(listData.pendingInvites.length != 0){%>
+                            <li class="list-group-item active fw-bold">
+                                Pending Invites:
+                            </li>
+                            <%for(invite of listData.pendingInvites){%>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div id="mail">
+                                        <%=invite.recipient.email%>
+                                    </div>
+                                    <form action="/invite/cancel" method="POST" onsubmit="return confirm(`are you sure you wish to cancel this invitation`)">
+                                        <input type="hidden" name="inviteid" value="<%=invite.id%>" />
+                                        <button type="submit" class="btn btn-danger">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                                                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+                                                <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </li>
+                            <%}%>
+                        <%}%>
+                    </ul>
+                
+
+                <form action="/invite/create" method="POST" onsubmit="return inviteuser(event)">
+                    <input type="hidden" name="listId" value="<%=listData.id%>">
+                    <div class="row g-2 align-items-center m-1">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="inviteEmail" name="email" placeholder="name@example.com" pattern="[a-z0-9\._%+\-]+@[a-z0-9\.\-]+\.[a-z]{2,4}" required>
+                                <label for="inviteEmail">Email address</label>
+                                <div class="valid-feedback">
+                                    Looks good!
                                 </div>
-                            </div>
-                            <div class="col-auto">
-                                <button type="submit" class="btn btn-primary">Add User</button>
+                                <div class="invalid-feedback">
+                                    Invalid email address
+                                </div> 
                             </div>
                         </div>
-                    </form>
-                </div>
-                
-            <%}%>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Add User</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+        <%}%>
+    </div>
+
+    <div class="container pt-3">
+        
+
+        <main>
+        
 
             <%if(permissions.list.edit){%>
 
