@@ -60,7 +60,9 @@ function createDomList(parentDom, currentList){
                 case 'checkbox':
                     editItemDom.querySelector('input').id = objectId
                     editItemDom.querySelector('input').value = currentItemObj.label || ''
+                    editItemDom.querySelector('input').checked = currentItemObj.checked
                     editItemDom.querySelector('label').htmlFor = objectId
+                    
                 break
                 default:
                     editItemDom.querySelector('input').id = objectId
@@ -136,6 +138,7 @@ function createDomList(parentDom, currentList){
                 let tmpCheckbox = document.getElementById('checkbox-item-template')
                 itemDom = tmpCheckbox.content.cloneNode(true);
                 itemDom.querySelector('.form-check-input').id = objectId
+                itemDom.querySelector('.form-check-input').checked = currentItemObj.checked
                 const labelDom = itemDom.querySelector('.form-check-label')
                 labelDom.htmlFor = objectId
                 labelDom.textContent = currentItemObj.label
@@ -182,6 +185,7 @@ function updateItem(objId){
         break
         case 'checkbox':
             currentObj.label = document.getElementById(currentObj.id).value
+            currentObj.checked = document.getElementById(currentObj.id).checked
         break
         case 'link':
             currentObj.href = document.getElementById(`href-${currentObj.id}`).value
@@ -322,7 +326,7 @@ function newItemObject(type){
             return { type, id, value: '', edit }
         break
         case 'checkbox':
-            return { type, id, label: '', edit }
+            return { type, id, label: '', checked: false, edit }
         break
         case 'link':
             return { type, id, href: '', anchor: '', edit }
