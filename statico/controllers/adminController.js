@@ -288,28 +288,42 @@ export async function bulkDeleteUser(req, res, next){
         if(Array.isArray(id)){
             messageBody = []
             for(let i=0; i< id.length; i++){
-                // Delete all user Comments
-                await deleteRows('comment', { authorId: id[i] })
+                // get User email
+                const userEmail = await findUnique('user', { id }, { email: true })
+                // Delete pending invites
+                const deletedPending = await deleteRows('invite', { recipientEmail: userEmail.email })
 
-                // Delete all user Posts
-                await deleteRows('post', { authorId: id[i] })
+                // Delete invites senet
+                const invitesSent = await deleteRows('invite', { authorId: id })
+
+                // Delete all users lists connections 
+
+                // Delete all user Lists
+                const deletedLists = await deleteRows('list', { authorId: id })
 
                 //  Delete user
-                await deleteRow('user', { id: id[i] })
+                const deletedUser = await deleteRow('user', { id })
 
-                messageBody.push(`User "${header[i]}" was successfuly deleted`)
+                messageBody.push(`User "${header[i]}", ${deletedPending} pending Invites, ${invitesSent} sent invites, ${deletedLists} user lists, was successfuly deleted`)
             }
         }else{
-            // Delete all user Comments
-            await deleteRows('comment', { authorId: id })
+            // get User email
+            const userEmail = await findUnique('user', { id }, { email: true })
+            // Delete pending invites
+            const deletedPending = await deleteRows('invite', { recipientEmail: userEmail.email })
 
-            // Delete all user Posts
-            await deleteRows('post', { authorId: id })
+            // Delete invites senet
+            const invitesSent = await deleteRows('invite', { authorId: id })
+
+            // Delete all users lists connections 
+
+            // Delete all user Lists
+            const deletedLists = await deleteRows('list', { authorId: id })
 
             //  Delete user
-            await deleteRow('user', { id })
+            const deletedUser = await deleteRow('user', { id })
 
-            messageBody = `User "${header}" was successfuly deleted`
+            messageBody = `User "${header}", ${deletedPending} pending Invites, ${invitesSent} sent invites, ${deletedLists} user lists, was successfuly deleted`
         }
 
         // Send Success json
