@@ -45,7 +45,7 @@ router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'ed
     res.redirect('/admin/user')
 })
 //  Delete User
-router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'delete'), deleteValidation(), deleteUser, setSessionMessages, (req, res) => {
+router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'delete'), deleteValidation(), checkValidation, deleteUser, setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 // bulk delete

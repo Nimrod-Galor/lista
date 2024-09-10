@@ -154,7 +154,7 @@ const modelsInterface = {
                     userName: true
                 }
             },
-            recipientId: true,
+            recipientEmail: true,
             listId: true
         },
         destructur: (item) => ({

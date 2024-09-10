@@ -2,7 +2,7 @@ import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { validationResult, matchedData } from 'express-validator'
 import modelsInterface from '../interface/modelsInterface.js'
-import { countsRows, createRow, readRow, readRows, updateRow, deleteRow, deleteRows } from '../../db.js'
+import { countsRows, createRow, readRow, readRows, updateRow, deleteRow, deleteRows, findUnique } from '../../db.js'
 import { isAuthorized, getPermissionFilter } from '../permissions/permissions.js'
 
 // get name of all models
@@ -137,15 +137,24 @@ export async function deleteUser(req, res, next){
     let { id, header } = req.objectData
 
     try{
-        // Todo
+        // get User email
+        const userEmail = await findUnique('user', { id }, { email: true })
+        // Delete pending invites
+        const deletedPending = await deleteRows('invite', { recipientEmail: userEmail.email })
+        
+        // Delete invites senet
+        const invitesSent = await deleteRows('invite', { authorId: id })
+        
+        // Delete all users lists connections 
+
         // Delete all user Lists
-        // await deleteRows('post', {authorId: id})
+        const deletedLists = await deleteRows('list', { authorId: id })
 
         //  Delete user
-        await deleteRow('user', { id })
+        const deletedUser = await deleteRow('user', { id })
 
         // Send Success json
-        req.crud_response = {messageBody: `User "${header}" was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'}
+        req.crud_response = {messageBody: `User "${header}", ${deletedPending} pending Invites, ${invitesSent} sent invites, ${deletedLists} user lists, was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
