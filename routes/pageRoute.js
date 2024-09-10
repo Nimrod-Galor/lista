@@ -118,8 +118,6 @@ router.post('/invite/cancel', ensureLogIn.ensureLoggedIn('/login'), ensureAuthor
 /*  PAGES   */
 /************/
 
-// router.get('/profile', ensureLogIn.ensureLoggedIn('/login'), profile)
-
 router.get(['/', '/home'],  getPage)
 
 export default router

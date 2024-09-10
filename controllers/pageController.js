@@ -1,7 +1,7 @@
 import createError from 'http-errors'
 import he from 'he'
 import { findUnique, countRows } from '../db.js'
-import { isAuthorized, getPermissionFilter } from '../statico/permissions/permissions.js'
+import { isAuthorized } from '../statico/permissions/permissions.js'
 import modelsInterface from '../statico/interface/modelsInterface.js'
 
 export async function mylists(req, res, next){
@@ -17,12 +17,9 @@ export async function mylists(req, res, next){
 
     res.locals.modelHeaders = req.selectedModel?.displayFields || []
     res.locals.modelsData = req.modelsData || []
-    // res.locals.contentType = req.contentType || contentType || ''
     res.locals.numberOfPages = numberOfDocuments ? Math.ceil(numberOfDocuments / 10) : 0
     res.locals.currentPage = parseInt(req.query.page) || 1
-    // res.locals.permissions = req.session.userPermissions
     res.locals.pendingInvitesRecived = req.pendingInvitesRecived
-    // res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
 
     next()
 }
@@ -90,32 +87,3 @@ export function errorPage(err, req, res, next){
         res.render('error', { user: req.user });
     }
 }
-
-// export async function profile(req, res, next){
-//     //  Get user data
-//     const userData = await findUnique('user', { id: req.user.id }, {
-//         id: true,
-//         userName: true,
-//         createDate: true,
-//         email: true,
-//         _count: {
-//             select: { 
-//                 posts: true,
-//                 comments: true
-//             }
-//         },
-//         role: {
-//             select: {
-//                 id: true,
-//                 name: true
-//             }
-//         }
-//     })
-//     if(!userData){
-//         // user not found.
-//         return next(createError(404))
-//     }
-
-//     res.locals.permissions = { "admin_page": { "view": isAuthorized("admin_page", "view", req.user?.roleId) } }
-//     res.render('profile', { user: req.user, userData })
-// }

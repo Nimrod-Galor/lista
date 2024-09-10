@@ -53,20 +53,23 @@ function createDomList(parentDom, currentList){
                     labels[1].htmlFor = `anchor-${objectId}`
                 break
                 case 'bigtext':
-                    editItemDom.querySelector('textarea').id = objectId
-                    editItemDom.querySelector('textarea').textContent = currentItemObj.value
+                    const tarea = editItemDom.querySelector('textarea')
+                    tarea.id = objectId
+                    tarea.textContent = currentItemObj.value
                     editItemDom.querySelector('label').htmlFor = objectId
                 break
                 case 'checkbox':
-                    editItemDom.querySelector('input').id = objectId
-                    editItemDom.querySelector('input').value = currentItemObj.label || ''
-                    editItemDom.querySelector('input').checked = currentItemObj.checked
+                    const cInpt = editItemDom.querySelector('input')
+                    cInpt.id = objectId
+                    cInpt.value = currentItemObj.label || ''
+                    cInpt.checked = currentItemObj.checked
                     editItemDom.querySelector('label').htmlFor = objectId
                     
                 break
                 default:
-                    editItemDom.querySelector('input').id = objectId
-                    editItemDom.querySelector('input').value = currentItemObj.value || ''
+                    const iInpt = editItemDom.querySelector('input')
+                    iInpt.id = objectId
+                    iInpt.value = currentItemObj.value || ''
                     editItemDom.querySelector('label').htmlFor = objectId
                 break
             }
@@ -170,21 +173,8 @@ function createDomList(parentDom, currentList){
     }
 }
 
-// function userCheckboxClick(event){
-//     // console.log('checkbox changed', event.currentTarget.id)
-//     if(!userIsAudience()){
-//         event.stopImmediatePropagation()
-//         event.preventDefault()
-//         event.stopPropagation()
-//         // return
-//     }
-// }
 function userCheckboxChanged(event){
-    // console.log('checkbox changed', event.currentTarget.id)
     if(!userIsAudience()){
-        // event.preventDefault()
-        // event.stopPropagation()
-        // event.stopImmediatePropagation()
         event.currentTarget.checked = !event.currentTarget.checked
         const toastwrapper = document.querySelector('.toast')
         toastwrapper.classList.remove('text-bg-success')
@@ -205,11 +195,7 @@ function updateItem(objId){
     const currentObj = getObjectById(objId, listData.body)
     switch(currentObj.type){
         case 'text':
-            currentObj.value = document.getElementById(currentObj.id).value
-        break
         case 'bigtext':
-            currentObj.value = document.getElementById(currentObj.id).value
-        break
         case 'checkbox':
             currentObj.label = document.getElementById(currentObj.id).value
         break
@@ -565,8 +551,7 @@ function userLangDirChange(dir){
         bootstrapLink.integrity = 'sha384-dpuaG1suU0eT09tx5plTaGMLBsfDLzUCCUXOY2j/LSvXYuG6Bqs43ALlhIqAJVRb'
         bootstrapLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css'
     }
-    // ['float-end', 'float-start'].map(item => document.querySelector('.save-btn').classList.toggle(item))
-    
+
     if("id" in listData){
         debouncedSaveList()
     }
@@ -644,14 +629,6 @@ function validateForm(event){
     
     return true
 }
-
-// const shadowTextArea = document.createElement('textarea');
-
-// // Function to decode HTML entities
-// function decodeHTML(str) {
-//     shadowTextArea.innerHTML = str;
-//     return shadowTextArea.value;
-// }
 
 function setCookie(cname, cvalue, exdays) {
     const d = new Date()

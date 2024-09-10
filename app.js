@@ -2,6 +2,8 @@ import 'dotenv/config'
 import createError from 'http-errors'
 import express from 'express'
 import path from 'path'
+import compression from 'compression'
+import RateLimit from 'express-rate-limit'
 import { fileURLToPath } from 'url'
 import passport from 'passport'
 import './statico/strategy/localStrategy.js';  // Import the Local strategy
@@ -13,17 +15,21 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import logger  from 'morgan'
 import { errorPage } from './controllers/pageController.js'
-import { getRolePermissions } from './statico/permissions/permissions.js'
 
 // routes
 import pageRouter from './routes/pageRoute.js'
-// import postRouter from './routes/postRoute.js'
 import authRouter from './routes/authRoute.js'
 import adminRouter from './statico/routes/adminRoute.js'
 import apiRouter from './statico/routes/apiRoute.js'
-// import jsonAlerts from './statico/routes/jsonalerts.js'
 
 const app = express()
+
+const limiter = RateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 20,
+})
+// Apply rate limiter to all requests
+app.use(limiter)
 
 // view engine setup
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +40,9 @@ app.set('view engine', 'ejs')
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+
+// Compress all routes
+app.use(compression())
 
 // public static files
 app.use(express.static(path.join(__dirname, 'public')))
@@ -95,21 +104,11 @@ app.use(function(req, res, next) {
     next();
 });
 
-// set role permissions
-// app.use((req, res, next) => {
-//     if(!req.session.userPermissions){
-//         req.session.userPermissions = getRolePermissions(req, res, next)
-//     }
-//     next();
-// })
-
 // Routes
 app.use('/api', apiRouter)
 app.use('/admin', adminRouter)
 app.use('/', authRouter)
 app.use('/', pageRouter)
-// app.use('/', postRouter)
-// app.use('/json-alert', jsonAlerts)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

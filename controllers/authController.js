@@ -4,8 +4,6 @@ import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { createRow, deleteRow, deleteRows, findUnique, updateRow } from '../db.js'
 
-
-
 export function refreshToken(req, res){
   const refreshToken = req.cookies.refreshToken;
 
@@ -119,90 +117,22 @@ export async function auth_logout(req, res, next) {
     await deleteRow('RememberMeToken', {userId: req.user.id})
   }catch(err){
     // no token do nothing
-  }
-  finally{
-
-
-
+  }finally{
     req.logout((err) => {
       if (err) {
-          return next(err)
+        return next(err)
       }
       req.session.destroy((err) => {
-          if (err) {
-              return next(err)
-          }
-          // clear remember me coockie
-          res.clearCookie('remember_me')
-          res.clearCookie('refreshToken')
-          res.clearCookie('connect.sid') // Clear session cookie
-          res.redirect('/')
+        if (err) {
+          return next(err)
+        }
+        // clear remember me coockie
+        res.clearCookie('remember_me')
+        res.clearCookie('refreshToken')
+        res.clearCookie('connect.sid') // Clear session cookie
+        res.redirect('/')
       })
-  })
-
-
-
-
-
-    // req.session.destroy(function(err) {
-      // cannot access session here
-    //   if (err) {
-    //     next(err)
-    //   } else {
-    //     // clear remember me coockie
-    //     res.clearCookie('remember_me')
-    //     res.clearCookie('refreshToken')
-    //     // Clear the cookie manually
-    //     res.clearCookie('connect.sid', { path: '/' });
-    //     res.redirect('/')
-    //   }
-    // })
-
-    // req.logout(function(err) {
-    //   if (err) {
-    //     return next(err)
-    //   }
-    // })
-     
-
-  
-    
-    // clear the user from the session object and save.
-    // this will ensure that re-using the old session id
-    // does not have a logged in user
-    // req.session.user = null
-    // req.session.save(function (err) {
-    //   if (err){
-    //     next(err)
-    //   }
-
-    //     // regenerate the session, which is good practice to help
-    //     // guard against forms of session fixation
-    //   req.session.regenerate(function (err) {
-    //     if (err){
-    //       next(err)
-    //     }
-    //   // res.redirect('/')
-    //     req.logout(function(err) {
-    //       if (err) {
-    //         return next(err)
-    //       }
-    
-    //       res.redirect('/')
-    //     })
-
-    //   })
-    // })
-
-
-
-    // req.logout(function(err) {
-    //   if (err) {
-    //     return next(err)
-    //   }
-
-    //   res.redirect('/')
-    // })
+    })
   }
 }
 

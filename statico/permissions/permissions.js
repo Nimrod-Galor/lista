@@ -1,6 +1,5 @@
 import createError from 'http-errors'
 import { readRows } from '../../db.js'
-// import permissions from './permissions.json' assert { type: "json" }
 import { readFile } from 'fs/promises';
 
 var permissions = {}
@@ -15,10 +14,6 @@ await readFile("./statico/permissions/permissions.json", "utf8")
 export function updatePermissions(newPermissionsObj){
     permissions = newPermissionsObj
 }
-
-// export async function hasPermissions(req, res, next){
-
-// }
 
 export function isAuthorized(contentType, key, roleId){
     try{
@@ -72,12 +67,6 @@ export function getRolePermissions(req, res, next){
     // update authorId -> user.id with current user id
     for (const [contentType, typePermissions] of Object.entries(tmpPermissions)) {
         for (const [key, operation] of Object.entries(typePermissions)) {
-            // if("where" in operation && "authorId" in operation.where){
-            //     operation.where.authorId = req.user.id
-            // }
-            // if("where" in operation && "viewers" in operation.where){
-            //     operation.where.viewers = req.user.id
-            // }
             if("where" in operation){
                 for(let i=0; i< operation.where.length; i++){
                     if(operation.where[i] === "authorId"){

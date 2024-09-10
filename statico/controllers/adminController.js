@@ -55,9 +55,7 @@ export function admin_dashboard(contentType){
         res.locals.contentType = req.contentType || contentType || ''
         res.locals.numberOfPages = (req.contentType in sidebarData) ? Math.ceil(sidebarData[req.contentType].count / 10) : 0
         res.locals.currentPage = parseInt(req.query.page) || 1
-        // res.locals.permissions = req.session.userPermissions
-        
-        
+
         next()
     }
 }
@@ -144,8 +142,6 @@ export async function deleteUser(req, res, next){
         
         // Delete invites senet
         const invitesSent = await deleteRows('invite', { authorId: id })
-        
-        // Delete all users lists connections 
 
         // Delete all user Lists
         const deletedLists = await deleteRows('list', { authorId: id })

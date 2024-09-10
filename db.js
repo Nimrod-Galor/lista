@@ -86,22 +86,6 @@ export function countsRows(collectionsName, where){
   return Promise.all(parr)
 }
 
-/*  Count relations 
-export function countRelations(collectionsName, select){
-  let parr = []
-  for(let i=0; i<collectionsName.length; i++){
-    parr.push(prisma[collectionsName[i]].findMany({
-        select: {
-          _count: {
-            select: select[i]
-          }
-        }
-      })
-    )
-  }
-  return Promise.all(parr)
-}*/
-
 /*  Find Unique */
 export function findUnique(collectionName, where, select){
   const obj = { where }

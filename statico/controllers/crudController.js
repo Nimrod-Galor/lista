@@ -79,8 +79,6 @@ export function updateDataType(dataType){
         }
     
         try{
-            // const id = req.objectData.id
-            
             const query = { id: req.objectData.id, AND: req.where }
             
             delete req.objectData.id
@@ -127,7 +125,6 @@ export function listContent(contentType){
             contentType = contentType || req.params.contentType || Object.keys(modelsInterface)[0]
             
             // get selected model
-            // const selectedModel = Object.entries(modelsInterface).find(([modelName, model]) => modelName === contentType)[1]
             const selectedModel = modelsInterface[contentType]
         
             // check we didnt get here by mistake
@@ -381,7 +378,6 @@ export async function removeViewer(req, res, next){
 
     try{
         // Update the list to disconnect the user from the viewLists relation
-
         await updateRow('list', { id: listid }, { viewers: {
                 disconnect: { id: userid }
             }

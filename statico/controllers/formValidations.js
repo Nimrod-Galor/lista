@@ -32,9 +32,7 @@ export const bulkValidation = () => [
                 return [value];
             }
             return value;
-        }),
-    // body('header.*')
-    //     .isAlphanumeric().withMessage('Header must be Alphanumeric')
+        })
 ]
 
 export const postIdValidation = () => [
@@ -126,10 +124,7 @@ export const listValidation = () => [
         .isLength({ min: 3, max: 128 }).withMessage('Title must be at least 3 characters and max 128.')
         .escape(),
     body('body')
-        // .isJSON({ allow_primitives: true }).withMessage('Body is not JSON.'),
-        // .trim()
         .notEmpty().withMessage('Body can not be empty.'),
-        // .escape(),
     body('description')
         .optional()
         .trim()
@@ -204,7 +199,6 @@ export const roleValidation = () => [
     body('description')
         .trim()
         .isLength({ min: 3 }).withMessage('Role description must be at least 3 characters.')
-        // .isAlphanumeric().withMessage('Role description must be Alphanumeric.')
 ]
 
 /*  Search  */
