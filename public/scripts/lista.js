@@ -196,6 +196,8 @@ function updateItem(objId){
     switch(currentObj.type){
         case 'text':
         case 'bigtext':
+            currentObj.value = document.getElementById(currentObj.id).value
+        break
         case 'checkbox':
             currentObj.label = document.getElementById(currentObj.id).value
         break
