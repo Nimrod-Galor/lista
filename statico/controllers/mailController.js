@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
+    host: "email-smtp.eu-central-1.amazonaws.com",
     port: 587,
     secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
@@ -26,7 +26,7 @@ async function sendMail(from, to, subject, text, html){
 export function sendVerificationMailMiddleware(req, res, next){
     if(req.sendVerificationMail === true){
         //  Get user data
-        let {email, username} = req.body
+        let { email, username } =  req.objectData
         const verificationToken = req.verificationToken
         const host = req.host
         sendVerificationMail(email, username, host, verificationToken)
@@ -36,7 +36,7 @@ export function sendVerificationMailMiddleware(req, res, next){
 
 // export function sendVerificationMail(req, res, next){
 export function sendVerificationMail(email, username, host, verificationToken){
-    const from = '"Lista Admin" <admin@lista.com>'
+    const from = '"Lista Admin" <info@listnow.net>'
     const to = email
     const subject = "Lista Email verification"
     const text = `Hello ${username}
