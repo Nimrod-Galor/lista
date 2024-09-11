@@ -150,6 +150,7 @@ export async function auth_post_singup(req, res, next) {
       res.locals.messages = [req.crud_response.messageBody]
       res.locals.messageType = req.crud_response.messageType
       res.locals.messageTitle = req.crud_response.messageTitle
+      res.locals.hasMessages = true
       res.render('signup')
     }
   }catch(err){

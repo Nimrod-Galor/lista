@@ -65,7 +65,18 @@ export function admin_dashboard(contentType){
 
 /** Create User */
 export async function createUser(req, res, next){
-    let {email, username, password, role, emailverified} = req.objectData
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
+    //  Get user data
+    req.objectData = matchedData(req, { includeOptionals: true });
+
+
+    let {email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
 
     // sendVerificationMail will determine if send verification 
     req.sendVerificationMail = emailverified ? true : false

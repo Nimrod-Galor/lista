@@ -28,7 +28,7 @@ router.get('/signup', ensureLogIn.ensureLoggedOut('/signup'), (req, res, next) =
 router.post('/signup', ensureLogIn.ensureLoggedOut('/signup'), (req, res, next) => {
     req.body.emailverified = true
     next()
-}, userValidation(), checkValidation, createUser, sendVerificationMailMiddleware, auth_post_singup)
+}, userValidation(), createUser, sendVerificationMailMiddleware, auth_post_singup)
 
 // Email verification GET
 router.get('/verify/:token', verifyEmail, setSessionMessages, (req, res, next) => {
