@@ -1,3 +1,4 @@
+import { validationResult, matchedData } from 'express-validator'
 import createError from 'http-errors'
 import crypto from 'crypto'
 import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
@@ -9,16 +10,25 @@ import modelsInterface from '../interface/modelsInterface.js'
 // Create
 export function createDataType(dataType){
     return async function(req, res, next){
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            //  Send Error json
+            req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+            return next()
+        }
+        //  Get user data
+        const objectData = matchedData(req, { includeOptionals: true })
+
         switch(dataType){
             case 'list':
                 // Convert publish checkbox to boolean
-                req.objectData.publish = req.objectData.publish ? true : false
-                req.objectData.author = { connect: { id: req.user.id } }
+                objectData.publish = objectData.publish ? true : false
+                objectData.author = { connect: { id: req.user.id } }
                 break
             case 'page':
-                if(req.objectData.slug != ''){
+                if(objectData.slug != ''){
                     // check if slug exist
-                    const pageWithSlug = await findUnique('page', { slug: req.objectData.slug })
+                    const pageWithSlug = await findUnique('page', { slug: objectData.slug })
                     if(pageWithSlug){
                         // page with same slug exist
                         req.crud_response = {messageBody: 'page with the same slug already been taken.', messageTitle: 'Alert', messageType: 'warning'}
@@ -30,7 +40,7 @@ export function createDataType(dataType){
 
         try{
             // Create Object
-            const newObject = await createRow(dataType, req.objectData)
+            const newObject = await createRow(dataType, objectData)
 
             req.newObjectId = newObject.id
 
@@ -48,43 +58,51 @@ export function createDataType(dataType){
 // Update
 export function updateDataType(dataType){
     return async function(req, res, next){
-        
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            //  Send Error json
+            req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+            return next()
+        }
+        //  Get user data
+        const objectData = matchedData(req, { includeOptionals: true })
+
         switch(dataType){
             case 'user':
                 // Convert emailverified checkbox to boolean
-                req.objectData.emailVerified = req.objectData.emailverified ? true : false
-                delete req.objectData.emailverified
-                req.objectData.userName = req.objectData.username
-                delete req.objectData.username
-                req.objectData.role = { connect: { id: req.objectData.role }}
-                if(req.objectData.password === ''){
-                    delete req.objectData.password
+                objectData.emailVerified = objectData.emailverified ? true : false
+                delete objectData.emailverified
+                objectData.userName = objectData.username
+                delete objectData.username
+                objectData.role = { connect: { id: objectData.role }}
+                if(objectData.password === ''){
+                    delete objectData.password
                 }else{
                     // Hash passowrd
                     const salt = crypto.randomBytes(16)
                     const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
         
-                    req.objectData.password = key.toString('hex')
-                    req.objectData.salt = salt.toString('hex')
+                    objectData.password = key.toString('hex')
+                    objectData.salt = salt.toString('hex')
                 }
             break
             case 'list':
                 // Convert publish checkbox to boolean
-                req.objectData.publish = req.objectData.publish ? true : false
+                objectData.publish = objectData.publish ? true : false
                 // check if user have publisg permission
                 if(!isAuthorized('publish_list', req.user.roleId)){
-                    delete req.objectData.publish
+                    delete objectData.publish
                 }
             break
         }
     
         try{
-            const query = { id: req.objectData.id, AND: req.where }
+            const query = { id: objectData.id, AND: req.where }
             
-            delete req.objectData.id
+            delete objectData.id
             
             //  Update data type
-            await updateRow(dataType, query, req.objectData)
+            await updateRow(dataType, query, objectData)
     
             // Send Success json
             req.crud_response = {messageBody: `${dataType} was successfuly updated`, messageTitle: `${dataType} Updated`, messageType: 'success'}
@@ -101,10 +119,20 @@ export function updateDataType(dataType){
 // Delete
 export function deleteDataType(dataType){
     return async function(req, res, next){
-       try{
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
+            //  Send Error json
+            req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+            return next()
+        }
+        //  Get user data
+        const { id } = matchedData(req, { includeOptionals: true })
+
+        try{
+
             //  Delete List
-            await deleteRow(dataType, { id: req.objectData.id })
-    
+            await deleteRow(dataType, { id })
+
             // Send Success json
             req.crud_response = {messageBody: `${dataType} was successfuly deleted`, messageTitle: `${dataType} Deleted`, messageType: 'success'}
         }catch(errorMsg){
@@ -254,8 +282,15 @@ export async function pendingInvitesRecived(req, res, next){
 
 // Accept Invite
 export async function acceptInvite(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
     //  Get user data
-    let { inviteid, listid } = req.objectData
+    let { inviteid, listid } = matchedData(req, { includeOptionals: true })
 
     try{
         // add  user to list viewer
@@ -281,12 +316,19 @@ export async function acceptInvite(req, res, next){
 
 // Decline Invite
 export async function declineInvite(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
     //  Get user data
-    let { inviteid } = req.objectData
+    let { inviteid } = matchedData(req, { includeOptionals: true })
 
     try{
         //delete invite
-        await deleteRow('invite', {id: inviteid } )
+        await deleteRow('invite', { id: inviteid } )
 
         // Send Success json
         req.crud_response = {messageBody: `invitation was declined`, messageTitle: 'Invitation Declined', messageType: 'success'}
@@ -301,12 +343,19 @@ export async function declineInvite(req, res, next){
 
 // Cancel Invite
 export async function cancelInvite(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
     //  Get user data
-    let { inviteid } = req.objectData
+    let { inviteid } = matchedData(req, { includeOptionals: true })
 
     try{
         //delete invite
-        await deleteRow('invite', {id: inviteid } )
+        await deleteRow('invite', { id: inviteid } )
 
         // Send Success json
         req.crud_response = {messageBody: `invitation was canceled`, messageTitle: 'Invitation Canceled', messageType: 'success'}
@@ -321,8 +370,15 @@ export async function cancelInvite(req, res, next){
 
 // Send Invite to user
 export async function inviteUser(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
     //  Get user data
-    let { listId, email } = req.objectData
+    let { listId, email } = matchedData(req, { includeOptionals: true })
 
     // check intivitaion is not already open.
     try{
@@ -373,8 +429,15 @@ export async function inviteUser(req, res, next){
 
 // Rmove viewer from list
 export async function removeViewer(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    
     //  Get user data
-    let { listid, userid, header } = req.objectData
+    let { listid, userid, header } = matchedData(req, { includeOptionals: true })
 
     try{
         // Update the list to disconnect the user from the viewLists relation

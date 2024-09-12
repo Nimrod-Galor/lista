@@ -1,4 +1,5 @@
 import createError from 'http-errors'
+import { validationResult, matchedData } from 'express-validator'
 import he from 'he'
 import { findUnique, countRows } from '../db.js'
 import { isAuthorized } from '../statico/permissions/permissions.js'
@@ -47,7 +48,14 @@ export async function getPage(req, res, next){
 }
 
 export async function getList(req, res, next){
-    const { mode = 'show' } = req.objectData
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    //  Get user data
+    const { mode = 'show' } = matchedData(req, { includeOptionals: true })
     
     const id = req.params.id
     try{

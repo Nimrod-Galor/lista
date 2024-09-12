@@ -1,7 +1,6 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import { 
-    checkValidation,
+import {
     userValidation, 
     deleteValidation, 
     bulkValidation, 
@@ -37,15 +36,15 @@ router.get(["/", "/user", "/user?/*"], ensureLoggedIn('/login'), ensureAuthorize
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create User
-router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), userValidation(), checkValidation, createUser, setSessionMessages, sendVerificationMailMiddleware, (req, res) => {
+router.post("/create/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'create'), userValidation(), createUser, setSessionMessages, sendVerificationMailMiddleware, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Edit User
-router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'edit'), userValidation(), checkValidation, updateDataType('user'), setSessionMessages, (req, res) => {
+router.post("/edit/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'edit'), userValidation(), updateDataType('user'), setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 //  Delete User
-router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'delete'), deleteValidation(), checkValidation, deleteUser, setSessionMessages, (req, res) => {
+router.post("/delete/user", ensureLoggedIn('/login'), ensureAuthorized('user', 'delete'), deleteValidation(), deleteUser, setSessionMessages, (req, res) => {
     res.redirect('/admin/user')
 })
 // bulk delete
@@ -72,15 +71,15 @@ router.get(["/page", "/page?/*"], ensureLoggedIn('/login'), ensureAuthorized('pa
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Create Page
-router.post("/create/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'create'), postValidation(), checkValidation, createDataType('page'), setSessionMessages, (req, res) => {
+router.post("/create/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'create'), postValidation(), createDataType('page'), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //  Edit Page
-router.post("/edit/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'edit'), postValidation(), checkValidation, updateDataType('page'), setSessionMessages, (req, res) => {
+router.post("/edit/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'edit'), postValidation(), updateDataType('page'), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 //  Delete Page
-router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'delete'), deleteValidation(), checkValidation, deleteDataType('page'), setSessionMessages, (req, res) => {
+router.post("/delete/page", ensureLoggedIn('/login'), ensureAuthorized('page', 'delete'), deleteValidation(), deleteDataType('page'), setSessionMessages, (req, res) => {
     res.redirect('/admin/page')
 })
 // bulk delete
@@ -106,11 +105,11 @@ router.get(["/list", "/list?/*"], ensureLoggedIn('/login'), ensureAuthorized('li
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 //  Edit list
-router.post("/edit/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), listValidation(), checkValidation, updateDataType('list'), setSessionMessages, (req, res) => {
+router.post("/edit/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), listValidation(), updateDataType('list'), setSessionMessages, (req, res) => {
     res.redirect('/admin/list')
 })
 //  Delete list
-router.post("/delete/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(),  checkValidation, deleteDataType('list'), setSessionMessages, (req, res) => {
+router.post("/delete/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteDataType('list'), setSessionMessages, (req, res) => {
     res.redirect('/admin/list')
 })
 // bulk delete
@@ -146,7 +145,7 @@ router.get(["/role", "/role?/*"], ensureLoggedIn('/login'), ensureAuthorized('ro
     res.render('dashboard', {user: req.user, baseUrl, path , caption: '' })
 })
 // Edit Role
-router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), roleValidation(), checkValidation, updateDataType('role'), setSessionMessages, (req, res) => {
+router.post("/edit/role", ensureLoggedIn('/login'), ensureAuthorized('role', 'edit'), roleValidation(), updateDataType('role'), setSessionMessages, (req, res) => {
     res.redirect('/admin/role')
 })
 

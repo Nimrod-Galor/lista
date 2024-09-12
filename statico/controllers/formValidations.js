@@ -227,15 +227,15 @@ export const modeValidation = () => [
         }) 
 ]
 
-export function checkValidation(req, res, next){
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-        //  Send Error json
-        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-        return next()
-    }
-    //  Get user data
-    req.objectData = matchedData(req, { includeOptionals: true });
+// export function checkValidation(req, res, next){
+//     const result = validationResult(req);
+//     if (!result.isEmpty()) {
+//         //  Send Error json
+//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+//         return next()
+//     }
+//     //  Get user data
+//     req.objectData = matchedData(req, { includeOptionals: true })
 
-    next()
-}
+//     next()
+// }

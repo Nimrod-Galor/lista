@@ -67,16 +67,14 @@ export function admin_dashboard(contentType){
 export async function createUser(req, res, next){
     const result = validationResult(req);
     if (!result.isEmpty()) {
+        // dont send varification Email
+        req.sendVerificationMail = false
         //  Send Error json
         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
         return next()
     }
 
-    //  Get user data
-    req.objectData = matchedData(req, { includeOptionals: true });
-
-
-    let {email, username, password, role, emailverified} = matchedData(req, { includeOptionals: true });
+    let { email, username, password, role, emailverified } = matchedData(req, { includeOptionals: true });
 
     // sendVerificationMail will determine if send verification 
     req.sendVerificationMail = emailverified ? true : false
@@ -142,8 +140,15 @@ export async function createUser(req, res, next){
 }
 
 export async function deleteUser(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+
     //  Get user data
-    let { id, header } = req.objectData
+    let { id, header } = matchedData(req, { includeOptionals: true })
 
     try{
         // get User email

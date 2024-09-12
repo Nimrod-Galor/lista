@@ -1,7 +1,6 @@
 import express from 'express'
 import ensureLogIn from 'connect-ensure-login'
-import {    
-    checkValidation,
+import {
     modeValidation,
     deleteValidation,
     inviteSendValidation,
@@ -76,19 +75,19 @@ router.get("/list/create", ensureLogIn.ensureLoggedIn('/login'), ensureAuthorize
 })
 
 // delete list
-router.post('/list/delete', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(),  checkValidation, deleteDataType('list'), setSessionMessages, (req, res) => {
+router.post('/list/delete', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteDataType('list'), setSessionMessages, (req, res) => {
     res.redirect('/mylists')
 })
 
 // read list
-router.get('/list/:id', modeValidation(),  checkValidation, getList)
+router.get('/list/:id', modeValidation(), getList)
 
 // remove list from my lists
-router.post('/list/remove',  ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), removeViewerValidation(),  checkValidation, removeViewer, setSessionMessages, (req, res) => {
+router.post('/list/remove',  ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // remove Viewer form list
-router.post('/list/remove/viewer', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('invite', 'edit'), removeViewerValidation(),  checkValidation, removeViewer, setSessionMessages, (req, res) => {
+router.post('/list/remove/viewer', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('invite', 'edit'), removeViewerValidation(), removeViewer, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 
@@ -97,19 +96,19 @@ router.post('/list/remove/viewer', ensureLogIn.ensureLoggedIn('/login'), ensureA
 /************/
 
 // Invite viewer
-router.post('/invite/create', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('invite', 'create'), inviteSendValidation(),  checkValidation, inviteUser, setSessionMessages, (req, res) => {
+router.post('/invite/create', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('invite', 'create'), inviteSendValidation(), inviteUser, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Accept Invite
-router.post('/invite/accept', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), acceptInviteidValidation(),  checkValidation, acceptInvite, setSessionMessages, (req, res) => {
+router.post('/invite/accept', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'edit'), acceptInviteidValidation(), acceptInvite, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Decline Invite
-router.post('/invite/decline', ensureLogIn.ensureLoggedIn('/login'), cancelInviteidValidation(),  checkValidation, declineInvite, setSessionMessages, (req, res) => {
+router.post('/invite/decline', ensureLogIn.ensureLoggedIn('/login'), cancelInviteidValidation(), declineInvite, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 // Cancel Invite
-router.post('/invite/cancel', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('invite', 'create'), cancelInviteidValidation(),  checkValidation, cancelInvite, setSessionMessages, (req, res) => {
+router.post('/invite/cancel', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('invite', 'create'), cancelInviteidValidation(), cancelInvite, setSessionMessages, (req, res) => {
     res.redirect('back')
 })
 
