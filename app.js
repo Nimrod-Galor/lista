@@ -24,7 +24,6 @@ import apiRouter from './statico/routes/apiRoute.js'
 
 const app = express()
 app.set('trust proxy', 1) /* number of proxies between user and server */
-app.get('/ip', (request, response) => response.send(request.ip))
 
 const limiter = RateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
