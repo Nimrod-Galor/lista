@@ -45,11 +45,11 @@ function createDomList(parentDom, currentList){
                     const labels = editItemDom.querySelectorAll('label')
 
                     inputs[0].id = `href-${objectId}`
-                    inputs[0].value = currentItemObj.href
+                    inputs[0].value = decodeHTML(currentItemObj.href)
                     labels[0].htmlFor = `href-${objectId}`
 
                     inputs[1].id = `anchor-${objectId}`
-                    inputs[1].value = currentItemObj.anchor
+                    inputs[1].value = decodeHTML(currentItemObj.anchor)
                     labels[1].htmlFor = `anchor-${objectId}`
                 break
                 case 'bigtext':
@@ -61,7 +61,7 @@ function createDomList(parentDom, currentList){
                 case 'checkbox':
                     const cInpt = editItemDom.querySelector('input')
                     cInpt.id = objectId
-                    cInpt.value = currentItemObj.label || ''
+                    cInpt.value = decodeHTML(currentItemObj.label) || ''
                     cInpt.checked = currentItemObj.checked
                     editItemDom.querySelector('label').htmlFor = objectId
                     
@@ -69,7 +69,7 @@ function createDomList(parentDom, currentList){
                 default:
                     const iInpt = editItemDom.querySelector('input')
                     iInpt.id = objectId
-                    iInpt.value = currentItemObj.value || ''
+                    iInpt.value = decodeHTML(currentItemObj.value) || ''
                     editItemDom.querySelector('label').htmlFor = objectId
                 break
             }
@@ -127,14 +127,14 @@ function createDomList(parentDom, currentList){
             case 'text':
                 itemDom = document.createElement('div')
                 itemDom.id = objectId
-                itemDom.innerText = currentItemObj.value
+                itemDom.innerText = decodeHTML(currentItemObj.value)
                 itemInner.appendChild(itemDom)
             break
             case 'bigtext':
                 itemDom = document.createElement('div')
                 itemDom.id = objectId
                 itemDom.style.whiteSpace = 'pre-wrap'
-                itemDom.textContent = currentItemObj.value
+                itemDom.textContent = decodeHTML(currentItemObj.value)
                 itemInner.appendChild(itemDom)
             break
             case 'checkbox':
@@ -147,14 +147,14 @@ function createDomList(parentDom, currentList){
                 formCheckInput.addEventListener('change', userCheckboxChanged)
                 const labelDom = itemDom.querySelector('.form-check-label')
                 labelDom.htmlFor = objectId
-                labelDom.textContent = currentItemObj.label
+                labelDom.textContent = decodeHTML(currentItemObj.label)
                 itemInner.appendChild(itemDom)
             break
             case 'link':
                 itemDom = document.createElement('a')
                 itemDom.id = objectId
                 itemDom.href = currentItemObj.href
-                itemDom.innerText = currentItemObj.anchor
+                itemDom.innerText = decodeHTML(currentItemObj.anchor)
                 itemInner.appendChild(itemDom)
             break
             case 'div':
@@ -196,14 +196,14 @@ function updateItem(objId){
     switch(currentObj.type){
         case 'text':
         case 'bigtext':
-            currentObj.value = document.getElementById(currentObj.id).value
+            currentObj.value = encodeHTML(document.getElementById(currentObj.id).value)
         break
         case 'checkbox':
-            currentObj.label = document.getElementById(currentObj.id).value
+            currentObj.label = encodeHTML(document.getElementById(currentObj.id).value)
         break
         case 'link':
             currentObj.href = document.getElementById(`href-${currentObj.id}`).value
-            currentObj.anchor = document.getElementById(`anchor-${currentObj.id}`).value
+            currentObj.anchor = encodeHTML(document.getElementById(`anchor-${currentObj.id}`).value)
         break
     }
 
@@ -698,6 +698,20 @@ function userIsAudience(){
         return true
     }
     return false
+}
+
+const shadowTextArea = document.createElement('textarea');
+function decodeHTML(str) {
+    shadowTextArea.innerHTML = str;
+    return shadowTextArea.value;
+}
+
+function encodeHTML(str) {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#39;');
 }
 
 if ('serviceWorker' in navigator) {
