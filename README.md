@@ -1,3 +1,3 @@
 # Lista
 create and share Lists
-https://www.listnow.net
+https://listnow.net
