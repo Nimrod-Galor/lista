@@ -25,7 +25,7 @@ export function admin_dashboard(contentType){
         for(let i = 0; i <modelsName.length; i++){
             if(isAuthorized(modelsName[i], 'list', req.user.roleId)){
                 countModels.push(modelsName[i])
-                countSelectes.push(getPermissionFilter(modelsName[i], req.user))
+                countSelectes.push(getPermissionFilter(modelsName[i], 'list', req.user))
             }
         }
         const documentsCount = await countsRows(countModels, countSelectes)
@@ -166,7 +166,7 @@ export async function deleteUser(req, res, next){
         const deletedUser = await deleteRow('user', { id })
 
         // Send Success json
-        req.crud_response = {messageBody: `User "${header}", ${deletedPending} pending Invites, ${invitesSent} sent invites, ${deletedLists} user lists, was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'}
+        req.crud_response = {messageBody: `User "${header}", ${deletedPending.count} pending Invites, ${invitesSent.count} sent invites, ${deletedLists.count} user lists, was successfuly deleted`, messageTitle: 'User Delete', messageType: 'success'}
     }catch(errorMsg){
         // Send Error json
         req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
@@ -175,6 +175,7 @@ export async function deleteUser(req, res, next){
         next()
     }
 }
+
 
 
 /****************************************/
@@ -211,15 +212,32 @@ export function bulkDelete(contentType){
         let messageBody = ''
         try{
             //  Delete
-            if(Array.isArray(id)){
-                messageBody = []
-                for(let i=0; i< id.length; i++){
-                    await deleteRow(contentType, { id: id[i] })
-                    messageBody.push(`${contentType} "${header[i]}" was successfuly deleted`)
+            // if(Array.isArray(id)){
+            //     messageBody = []
+            //     for(let i=0; i< id.length; i++){
+            //         await deleteRow(contentType, { id: id[i] })
+            //         messageBody.push(`${contentType} "${header[i]}" was successfuly deleted`)
+            //     }
+            // }else{
+            //     await deleteRow(contentType, { id })
+            //     messageBody = `${contentType} "${header}" was successfuly deleted`
+            // }
+
+            if(!Array.isArray(id)){
+                id = [id]
+                header = [header]
+            }
+
+            messageBody = []
+            for(let i=0; i< id.length; i++){
+                switch(contentType){
+                    case 'list':
+                        // Delete invites senet
+                        const invites = await deleteRows('invite', { listId: id[i] })
+                    break
                 }
-            }else{
-                await deleteRow(contentType, { id })
-                messageBody = `${contentType} "${header}" was successfuly deleted`
+                await deleteRow(contentType, { id: id[i] })
+                messageBody.push(`${contentType} "${header[i]}" was successfuly deleted`)
             }
 
             // Send Success json
@@ -297,28 +315,12 @@ export async function bulkDeleteUser(req, res, next){
     let messageBody = ''
     try{
         //  Delete
-        if(Array.isArray(id)){
-            messageBody = []
-            for(let i=0; i< id.length; i++){
-                // get User email
-                const userEmail = await findUnique('user', { id }, { email: true })
-                // Delete pending invites
-                const deletedPending = await deleteRows('invite', { recipientEmail: userEmail.email })
-
-                // Delete invites senet
-                const invitesSent = await deleteRows('invite', { authorId: id })
-
-                // Delete all users lists connections 
-
-                // Delete all user Lists
-                const deletedLists = await deleteRows('list', { authorId: id })
-
-                //  Delete user
-                const deletedUser = await deleteRow('user', { id })
-
-                messageBody.push(`User "${header[i]}", ${deletedPending} pending Invites, ${invitesSent} sent invites, ${deletedLists} user lists, was successfuly deleted`)
-            }
-        }else{
+        if(!Array.isArray(id)){
+            id = [id]
+            header = [header]
+        }
+        messageBody = []
+        for(let i=0; i< id.length; i++){
             // get User email
             const userEmail = await findUnique('user', { id }, { email: true })
             // Delete pending invites
@@ -335,8 +337,27 @@ export async function bulkDeleteUser(req, res, next){
             //  Delete user
             const deletedUser = await deleteRow('user', { id })
 
-            messageBody = `User "${header}", ${deletedPending} pending Invites, ${invitesSent} sent invites, ${deletedLists} user lists, was successfuly deleted`
+            messageBody.push(`User "${header[i]}", ${deletedPending.count} pending Invites, ${invitesSent.count} sent invites, ${deletedLists.count} user lists, was successfuly deleted`)
         }
+        // }else{
+        //     // get User email
+        //     const userEmail = await findUnique('user', { id }, { email: true })
+        //     // Delete pending invites
+        //     const deletedPending = await deleteRows('invite', { recipientEmail: userEmail.email })
+
+        //     // Delete invites senet
+        //     const invitesSent = await deleteRows('invite', { authorId: id })
+
+        //     // Delete all users lists connections 
+
+        //     // Delete all user Lists
+        //     const deletedLists = await deleteRows('list', { authorId: id })
+
+        //     //  Delete user
+        //     const deletedUser = await deleteRow('user', { id })
+
+        //     messageBody = `User "${header}", ${deletedPending} pending Invites, ${invitesSent} sent invites, ${deletedLists} user lists, was successfuly deleted`
+        // }
 
         // Send Success json
         req.crud_response = { messageBody, messageTitle: `User Delete`, messageType: 'success' }

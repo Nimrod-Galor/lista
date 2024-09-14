@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/styles/style.css">
     <title>Lista - Admin Dashboard</title>
 </head>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 <%=contentType%>">
     
         <header id="top-header" class="top-header">
             <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
@@ -35,7 +35,7 @@
         </header>
 
     <div class="row gx-0">
-        <div id="sidebar" class="col-md-3 col-lg-2 <%-contentType%>">
+        <div id="sidebar" class="col-md-3 col-lg-2 <%=contentType%>">
             <ul class="list-group list-group-flush">
                 <%for (const [modelName, model] of Object.entries(sidebarData)) {%>
                     <%if(permissions[modelName].list.allow === true){%>
@@ -348,8 +348,12 @@
                                     <%}%>
                                     <% modelHeaders.forEach((field) => {%>
                                         <td>
-                                            <% if(field.linkRelation){ %>
+                                            <% if(field.linkRelation && field.filter){ %>
                                                 <a href="/admin/<%-field.linkRelation + '/' + field.filter + '/' + data[field.filterKey]%>">
+                                                    <%-data[field.key]%>
+                                                </a>
+                                            <%}else if(field.linkRelation){ %>
+                                                <a href="/<%-field.linkRelation + '/'+ data[field.filterKey]%>">
                                                     <%-data[field.key]%>
                                                 </a>
                                             <%}else if(field.key === 'slug'){%>
@@ -373,7 +377,7 @@
                                                 <%}%>
                                                 
                                                 <%if(!("authorId" in permissions[contentType].edit.where) || permissions[contentType].edit.where.authorId === data.authorId){%>
-                                                    <button type="button" class="btn btn-primary" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
+                                                    <button type="button" class="btn btn-primary admin-edit-btn" onclick="editItemClick('<%-contentType.toLowerCase()%>', '<%=JSON.stringify(data)%>')">Edit</button>
                                                 <%}%>
                                             </div>
                                         </td>

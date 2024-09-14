@@ -1,7 +1,7 @@
 import { validationResult, matchedData } from 'express-validator'
 import createError from 'http-errors'
 import crypto from 'crypto'
-import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows, countRows } from '../../db.js'
+import { findUnique, readRow, readRows, updateRow, createRow, deleteRow, deleteRows } from '../../db.js'
 import { isAuthorized } from '../permissions/permissions.js'
 import modelsInterface from '../interface/modelsInterface.js'
 
@@ -129,8 +129,7 @@ export function deleteDataType(dataType){
         const { id } = matchedData(req, { includeOptionals: true })
 
         try{
-
-            //  Delete List
+             //  Delete List
             await deleteRow(dataType, { id })
 
             // Send Success json
@@ -241,6 +240,38 @@ export function listContent(contentType){
         finally{
             next()
         }
+    }
+}
+
+/****************************************/
+/** List                                */
+/****************************************/
+
+export async function deleteList(req, res, next){
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        //  Send Error json
+        req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+        return next()
+    }
+    //  Get user data
+    const { id, header } = matchedData(req, { includeOptionals: true })
+
+    try{
+        // Delete invites senet
+        const invites = await deleteRows('invite', { listId: id })
+
+        //  Delete List
+        await deleteRow('list', { id })
+
+        // Send Success json
+        req.crud_response = {messageBody: `List "${header}", ${invites.count} invites was successfuly deleted`, messageTitle: `List Deleted`, messageType: 'success'}
+    }catch(errorMsg){
+        // Send Error json
+        req.crud_response = {messageBody: errorMsg.message, messageTitle: 'Error', messageType: 'danger'}
+    }
+    finally{
+        next()
     }
 }
 

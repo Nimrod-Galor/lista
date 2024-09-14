@@ -11,6 +11,7 @@ import {
 
 import  { 
     listContent,
+    deleteList,
     updateDataType, createDataType, deleteDataType,
     setSessionMessages
 } from '../controllers/crudController.js'
@@ -109,7 +110,7 @@ router.post("/edit/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'ed
     res.redirect('/admin/list')
 })
 //  Delete list
-router.post("/delete/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteDataType('list'), setSessionMessages, (req, res) => {
+router.post("/delete/list", ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteList, setSessionMessages, (req, res) => {
     res.redirect('/admin/list')
 })
 // bulk delete

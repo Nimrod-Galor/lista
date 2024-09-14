@@ -9,7 +9,7 @@ import {
 
 import  { 
     listContent, 
-    createDataType, updateDataType, deleteDataType,
+    createDataType, updateDataType, deleteList,
     setSessionMessages
  } from '../controllers/crudController.js'
 import { listRoles } from '../controllers/adminController.js'
@@ -47,7 +47,7 @@ router.post("/list/edit",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passpor
     res.json(req.crud_response)
 })
 //  Delete list
-router.delete("/list/delete",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'delete'), deleteValidation(), deleteDataType('list'), (req, res) => {
+router.delete("/list/delete",ensureLogIn.ensureLoggedIn('/api/notloggedin'), passport.authenticate('jwt', { session: false }), ensureAuthorized('list', 'delete'), deleteValidation(), deleteList, (req, res) => {
     res.json(req.crud_response)
 })
 

@@ -13,6 +13,7 @@ import {
     listContent,
     deleteDataType,
     setSessionMessages,
+    deleteList,
     pendingInvitesRecived,
     acceptInvite,
     declineInvite,
@@ -75,7 +76,7 @@ router.get("/list/create", ensureLogIn.ensureLoggedIn('/login'), ensureAuthorize
 })
 
 // delete list
-router.post('/list/delete', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteDataType('list'), setSessionMessages, (req, res) => {
+router.post('/list/delete', ensureLogIn.ensureLoggedIn('/login'), ensureAuthorized('list', 'delete'), deleteValidation(), deleteList, setSessionMessages, (req, res) => {
     res.redirect('/mylists')
 })
 
