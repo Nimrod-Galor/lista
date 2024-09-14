@@ -202,3 +202,7 @@ body.create .edit-list-btn, body.edit .edit-list-btn{
 body.show .list-setting-btn{
     display: none;
 }
+
+.list-style-none{
+    list-style: none;
+}

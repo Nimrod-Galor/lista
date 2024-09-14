@@ -163,6 +163,7 @@ function createDomList(parentDom, currentList){
                 const tmpItem = itemWrapperDom.querySelector('.justify-content-between')
                 tmpItem.classList.remove('align-items-center')
                 tmpItem.classList.add('align-items-start')
+                itemWrapperDom.classList.add('list-style-none')
                 createDomList(itemInner, currentItemObj)
             break
         }
