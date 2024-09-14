@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { matchedData } from 'express-validator'
 
 const transporter = nodemailer.createTransport({
     host: "email-smtp.eu-central-1.amazonaws.com",
@@ -26,7 +27,7 @@ async function sendMail(from, to, subject, text, html){
 export function sendVerificationMailMiddleware(req, res, next){
     if(req.sendVerificationMail === true){
         //  Get user data
-        let { email, username } =  req.objectData
+        let { email, username } =  matchedData(req, { includeOptionals: true })
         const verificationToken = req.verificationToken
         const host = req.host
         sendVerificationMail(email, username, host, verificationToken)
