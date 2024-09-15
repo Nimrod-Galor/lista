@@ -5,6 +5,7 @@ function renderList(){
     document.getElementById('meta-title').textContent = listData.title
     document.getElementById('meta-description').textContent = listData.description
     createDomList(listaMain, listData.body)
+    setFocus(listData.body)
 }
 
 function createDomList(parentDom, currentList){
@@ -163,7 +164,9 @@ function createDomList(parentDom, currentList){
                 const tmpItem = itemWrapperDom.querySelector('.justify-content-between')
                 tmpItem.classList.remove('align-items-center')
                 tmpItem.classList.add('align-items-start')
-                itemWrapperDom.classList.add('list-style-none')
+                if(itemWrapperDom.nodeName != '#document-fragment'){
+                    itemWrapperDom.classList.add('list-style-none')
+                }
                 createDomList(itemInner, currentItemObj)
             break
         }
@@ -235,6 +238,24 @@ function runDeleteItem(objId, currentList){
         }
         if("items" in currentList.items[i]){
             const res = runDeleteItem(objId, currentList.items[i])
+            if(res === true){
+                return true
+            }
+        }
+    }
+    return
+}
+
+function setFocus(currentList){
+    for(let i = 0 ; i < currentList.items.length; i++){
+        if("edit" in currentList.items[i]){
+            const id = currentList.items[i].type == 'link' ? `href-${currentList.items[i].id}` : currentList.items[i].id
+            document.getElementById(id).focus()
+
+            return true
+        }
+        if("items" in currentList.items[i]){
+            const res =  setFocus(currentList.items[i])
             if(res === true){
                 return true
             }
