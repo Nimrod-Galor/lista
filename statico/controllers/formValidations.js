@@ -227,15 +227,15 @@ export const modeValidation = () => [
         }) 
 ]
 
-// export function checkValidation(req, res, next){
-//     const result = validationResult(req);
-//     if (!result.isEmpty()) {
-//         //  Send Error json
-//         req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
-//         return next()
-//     }
-//     //  Get user data
-//     req.objectData = matchedData(req, { includeOptionals: true })
+export const emailValidation = () => [
+    body('email')
+        .isEmail().withMessage('Enter a valid email address')
+        .normalizeEmail()   
+]
 
-//     next()
-// }
+export const resetPasswordValidation = () => [
+    body('password')
+        .trim()
+        .isStrongPassword().withMessage('Password must contain at least one number and one special character and one uppercase and lowercase letter, and at least 8 or more characters')//minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1
+        .escape()
+]

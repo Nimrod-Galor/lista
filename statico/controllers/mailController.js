@@ -49,3 +49,19 @@ export function sendVerificationMail(email, username, host, verificationToken){
 
     sendMail(from, to, subject, text, html)
 }
+
+export function sendResetPasswordMail(email, username, resetToken, host){
+    const from = '"Lista Admin" <info@listnow.net>'
+    const to = email
+    const subject = "Lista Reset Password"
+    const text = `Hi ${username},
+                    There was a request to change your ListNow password!
+                    If you did not make this request then please ignore this email.
+                    Otherwise, please click this link to change your password: ${host}/reset-password/${resetToken}`
+    const html = `Hi ${username},
+                    There was a request to change your ListNow password!
+                    If you did not make this request then please ignore this email.
+                    Otherwise, please click this link to change your password: <a href="${host}/reset-password/${resetToken}">Reset Password</a>`
+
+    sendMail(from, to, subject, text, html)
+}

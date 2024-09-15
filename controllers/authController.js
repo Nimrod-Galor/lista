@@ -2,7 +2,9 @@ import createError from 'http-errors'
 import passport from 'passport'
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
+import { validationResult, matchedData } from 'express-validator'
 import { createRow, deleteRow, deleteRows, findUnique, updateRow } from '../db.js'
+import { sendResetPasswordMail } from '../statico/controllers/mailController.js'
 
 export function refreshToken(req, res){
   const refreshToken = req.cookies.refreshToken;
@@ -183,6 +185,83 @@ export async function verifyEmail(req, res, next){
     req.crud_response = {messageBody: `Email verified successfully!`, messageTitle: 'Email Verification', messageType: 'success'}
     next()
   } catch (error) {
+    next( createError(500, 'Server error') );
+  }
+}
+
+/*  forgot password */
+export async function forgotPassword(req, res, next){
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    //  Send Error json
+    req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+    return next()
+  }
+  //  Get user data
+  const {email} = matchedData(req, { includeOptionals: true });
+
+  try{
+    const user = await findUnique('user', { email })
+
+    if(!user){
+      req.crud_response = {messageBody: 'Incorrect E-mail addres', messageTitle: 'User not found', messageType: 'danger'}
+      return next()
+    }
+
+    // Generate JWT token with expiration
+    const resetToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+
+    // Send email with reset link containing the token
+    sendResetPasswordMail(user.email, user.userName, resetToken, req.hostname)
+
+    req.crud_response = {messageBody: `Password reset email sent to: "${user.email}"`, messageTitle: 'Email sent', messageType: 'success'}
+    next()
+  }catch(err){
+    next( createError(500, 'Server error') );
+  }
+}
+
+/* Reset Password */
+export async function resetPassword(req, res, next){
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    //  Send Error json
+    req.crud_response = {messageBody: result.errors.map(err => err.msg), messageTitle: 'Error', messageType: 'danger'}
+    return next()
+  }
+  //  Get user data
+  const { password } = matchedData(req, { includeOptionals: true })
+  const { token } = req.params;
+
+  try{
+    // Verify token without needing to check a database
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    // Find the user by ID
+    const user = await findUnique('user', { id: userId } )
+    if (!user) {
+      req.crud_response = {messageBody: 'User not found', messageTitle: 'User not found', messageType: 'danger'}
+      return next()
+    }
+
+    // Hash passowrd
+    const salt = crypto.randomBytes(16)
+    const key = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
+
+    //  Set new user object
+    const tmpUser = {
+      password: key.toString('hex'),
+      salt: salt.toString('hex')
+    }
+
+    //  Update user
+    await updateRow('user', { id: userId }, tmpUser)
+
+    // Send Success json
+    req.crud_response = {messageBody: `Password ${user.userName} was successfuly updated`, messageTitle: 'Password Updated', messageType: 'success'}
+    next()
+  }catch(err){
     next( createError(500, 'Server error') );
   }
 }
